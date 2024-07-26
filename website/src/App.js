@@ -1,10 +1,8 @@
 
-
-
 function App() {
   return (
-    <div className="bg-black">
-      <h1 className="text-red-600">My first React App</h1>
+    <div className="bg-secondary">
+      <h1 className="text-primary">My first React App</h1>
     </div>
   );
 }
