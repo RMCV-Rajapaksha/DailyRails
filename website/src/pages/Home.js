@@ -1,7 +1,7 @@
 import React from 'react'
 import Navbar from '../components/Navbar'
 import Footer from '../components/Footer'
-import HeroBackground from '../assets/images/HeroBackground.png';
+
 import HeroTrain from '../assets/images/HeroTrain.png';
 import { Link } from 'react-router-dom';
 export const Home = () => {
