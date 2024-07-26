@@ -1,5 +1,6 @@
 import React from 'react'
 import { useState } from 'react';
+import { Link } from 'react-router-dom';
 
 const Navbar=()=> {
     const [menu, setMenu] = useState(false);
@@ -25,19 +26,19 @@ const Navbar=()=> {
   <div class="items-center justify-between hidden w-full md:flex md:w-auto  " >
     <ul class="flex flex-col font-medium p-4 md:p-0 mt-4   md:space-x-8 rtl:space-x-reverse md:flex-row md:mt-0 ">
       <li>
-        <a href="#" class="block py-2 px-3 md:p-0 text-primary font-body hover:text-secondary ">Home</a>
+        <Link to="/" href="#" class="block py-2 px-3 md:p-0 text-primary font-body hover:text-secondary ">Home</Link>
       </li>
       <li>
-      <a href="#" class="block py-2 px-3 md:p-0 text-primary font-body hover:text-secondary ">Booking</a>
+      <Link to="booking" class="block py-2 px-3 md:p-0 text-primary font-body hover:text-secondary ">Booking</Link>
       </li>
       <li>
-      <a href="#" class="block py-2 px-3 md:p-0 text-primary font-body hover:text-secondary">Schedule</a>
+      <Link to="schedule" href="#" class="block py-2 px-3 md:p-0 text-primary font-body hover:text-secondary">Schedule</Link>
       </li>
       <li>
-      <a href="#" class="block py-2 px-3 md:p-0 text-primary font-body hover:text-secondary">Lost and Found</a>
+      <Link to="lost" class="block py-2 px-3 md:p-0 text-primary font-body hover:text-secondary">Lost and Found</Link>
       </li>
       <li>
-      <a href="#" class="block py-2 px-3 md:p-0 text-primary font-body hover:text-secondary">Contact Us</a>
+      <Link to="contact" class="block py-2 px-3 md:p-0 text-primary font-body hover:text-secondary">Contact Us</Link>
       </li>
       
 
