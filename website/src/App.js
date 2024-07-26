@@ -7,6 +7,7 @@ import Found from './pages/Found';
 import Lost from './pages/Lost';
 import Schedule from './pages/Schedule';
 import Contact from './pages/Contact';
+import Map from './pages/Map';
 
 function App() {
   return (
@@ -18,6 +19,7 @@ function App() {
         <Route path="/lost" element={<Lost />} />
         <Route path="/schedule" element={<Schedule />} />
         <Route path="/contact" element={<Contact />} />
+        <Route path="/map" element={<Map />} />
       </Routes>
 
   );
