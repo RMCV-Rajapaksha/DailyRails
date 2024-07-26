@@ -1,5 +1,3 @@
-
-
 import React from 'react';
 
 const Footer = () => {
@@ -9,7 +7,7 @@ const Footer = () => {
         <div class="md:flex md:justify-between">
             <div class="mb-6 md:mb-0">
                 <a href="https://flowbite.com" class="flex items-center">
-                    <img src="https://flowbite.com/docs/images/logo.svg" class="mr-3 h-8" alt="FlowBite Logo" />
+                    {/* <img src="https://flowbite.com/docs/images/logo.svg" class="mr-3 h-8" alt="FlowBite Logo" /> */}
                     <span class="self-center text-2xl font-semibold whitespace-nowrap dark:text-white">Flowbite</span>
                 </a>
             </div>

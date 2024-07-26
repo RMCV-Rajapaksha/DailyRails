@@ -11,7 +11,7 @@ const Navbar=()=> {
 <nav class="bg-white ">
   <div class="max-w-screen-xl flex flex-wrap items-center justify-between mx-auto p-4">
   <a href="https://flowbite.com/" class="flex items-center space-x-3 rtl:space-x-reverse">
-      <img src="https://flowbite.com/docs/images/logo.svg" class="h-8" alt="Flowbite Logo" />
+      {/* <img src="https://flowbite.com/docs/images/logo.svg" class="h-8" alt="Flowbite Logo" /> */}
       <span class="self-center text-2xl font-semibold whitespace-nowrap dark:text-white">Flowbite</span>
   </a>
   <div class="flex md:order-2 space-x-3 md:space-x-0 rtl:space-x-reverse">
@@ -29,16 +29,16 @@ const Navbar=()=> {
         <Link to="/" href="#" class="block py-2 px-3 md:p-0 text-primary font-body hover:text-secondary ">Home</Link>
       </li>
       <li>
-      <Link to="booking" class="block py-2 px-3 md:p-0 text-primary font-body hover:text-secondary ">Booking</Link>
+      <Link to="/booking" class="block py-2 px-3 md:p-0 text-primary font-body hover:text-secondary ">Booking</Link>
       </li>
       <li>
-      <Link to="schedule" href="#" class="block py-2 px-3 md:p-0 text-primary font-body hover:text-secondary">Schedule</Link>
+      <Link to="/schedule" href="#" class="block py-2 px-3 md:p-0 text-primary font-body hover:text-secondary">Schedule</Link>
       </li>
       <li>
-      <Link to="lost" class="block py-2 px-3 md:p-0 text-primary font-body hover:text-secondary">Lost and Found</Link>
+      <Link to="/lost" class="block py-2 px-3 md:p-0 text-primary font-body hover:text-secondary">Lost and Found</Link>
       </li>
       <li>
-      <Link to="contact" class="block py-2 px-3 md:p-0 text-primary font-body hover:text-secondary">Contact Us</Link>
+      <Link to="/contact" class="block py-2 px-3 md:p-0 text-primary font-body hover:text-secondary">Contact Us</Link>
       </li>
       
 
