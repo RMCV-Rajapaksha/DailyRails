@@ -8,6 +8,7 @@ import Lost from './pages/Lost';
 import Schedule from './pages/Schedule';
 import Contact from './pages/Contact';
 import Map from './pages/Map';
+import SubmitItem from './pages/SubmitItem';
 
 function App() {
   return (
@@ -20,6 +21,7 @@ function App() {
         <Route path="/schedule" element={<Schedule />} />
         <Route path="/contact" element={<Contact />} />
         <Route path="/map" element={<Map />} />
+        <Route path="/submit" element={<SubmitItem />} />
       </Routes>
 
   );
