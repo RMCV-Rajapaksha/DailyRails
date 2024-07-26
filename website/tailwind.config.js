@@ -9,6 +9,9 @@ module.exports = {
         'tertiary': '#129197',
         
       },
+      fontFamily: {
+        body: ['Roboto', 'sans-serif'],
+      },
     },
   },
   plugins: [],
