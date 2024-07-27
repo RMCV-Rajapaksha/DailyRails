@@ -28,20 +28,25 @@ export const Home = () => {
         </div>                
     </div>
 </section>
-<section class="bg-white ">
-    <div class="gap-16 items-center py-8 px-4 mx-auto max-w-screen-xl lg:grid lg:grid-cols-2 lg:py-16 lg:px-6 font-body">
-    <div class="grid grid-cols-2 gap-4 mt-8">
-            
-            <img class="mt-4 w-full lg:mt-10 rounded-lg" src={HeroTrain} alt="office content 2"/>
-        </div>
-        <div class="font-light text-gray-500 sm:text-lg dark:text-gray-400">
-            <h2 class="mb-4 text-4xl tracking-tight font-extrabold text-primary ">Your Journey, Streamlined</h2>
-            <p class="mb-4 text-secondary-1">Navigate your daily commute with precision using our Live Map feature. Experience real-time train tracking like never before-watch trains move along their routes, view current locations, and stay updated on any disruptions or blockages. Our interactive map offers a clear, intuitive interface to help you plan your journey, avoid delays, and make informed decisions on the go. With DailyRails, your train travel is always on track!</p>
-         
-        </div>
-        
+
+
+<section className="bg-white">
+  <div className="gap-16 items-center py-8 px-4 mx-auto max-w-screen-xl lg:grid lg:grid-cols-2 lg:py-16 lg:px-6 font-body">
+    <div className="order-2 lg:order-1 md:grid grid-cols-1 gap-4 mt-8 hidden">
+      <img className="mt-4 w-full lg:mt-10 rounded-lg" src={HeroTrain} alt="office content 2" />
     </div>
+    
+    <div className="order-1 lg:order-2 font-light text-gray-500 sm:text-lg dark:text-gray-400">
+      <h2 className="mb-4 text-4xl tracking-tight font-extrabold text-primary">Your Journey, Streamlined</h2>
+      <p className="mb-4 text-secondary-1">Navigate your daily commute with precision using our Live Map feature. Experience real-time train tracking like never before-watch trains move along their routes, view current locations, and stay updated on any disruptions or blockages. Our interactive map offers a clear, intuitive interface to help you plan your journey, avoid delays, and make informed decisions on the go. With DailyRails, your train travel is always on track!</p>
+    </div>
+    <div className="order-2 order-1 md:grid grid-cols-1 gap-4 mt-8 lg:hidden">
+      <img className="mt-4 w-full lg:mt-10 rounded-lg" src={HeroTrain} alt="office content 2" />
+    </div>
+  </div>
 </section>
+
+
 <section class="bg-white ">
     <div class="gap-16 items-center py-8 px-4 mx-auto max-w-screen-xl lg:grid lg:grid-cols-2 lg:py-16 lg:px-6 font-body">
     <div class="font-light text-gray-500 sm:text-lg dark:text-gray-400">
@@ -49,7 +54,7 @@ export const Home = () => {
             <p class="mb-4 text-secondary-1">DailyRails' Timetable feature provides detailed and up-to-date train schedules across Sri Lanka. Users can easily search routes, view departure and arrival times, and find the best connections with an intuitive interface. Continuously updated for changes, including delays and cancellations, the Timetable ensures accurate information. Whether a daily commuter or occasional traveler, DailyRails makes train travel simpler and more reliable.</p>
             
         </div>
-    <div class="grid grid-cols-2 gap-4 mt-8">
+    <div class="grid grid-cols-1 gap-4 mt-8">
             
             <img class="mt-4 w-full lg:mt-10 rounded-lg" src={HeroTrain} alt="office content 2"/>
         </div>
@@ -59,7 +64,7 @@ export const Home = () => {
 </section>
 <section class="bg-white ">
     <div class="gap-16 items-center py-8 px-4 mx-auto max-w-screen-xl lg:grid lg:grid-cols-2 lg:py-16 lg:px-6 font-body">
-    <div class="grid grid-cols-2 gap-4 mt-8">
+    <div class="grid grid-cols-1 gap-4 mt-8">
             
             <img class="mt-4 w-full lg:mt-10 rounded-lg" src={HeroTrain} alt="office content 2"/>
         </div>
@@ -79,7 +84,7 @@ export const Home = () => {
             <p class="mb-4 text-secondary-1">Lost something on your journey? Our Lost & Found Hub is here to help! Quickly report or search for lost items with ease. From misplaced belongings to found objects, our intuitive platform connects you with the right solutions, ensuring your lost items are reunited with you swiftly. DailyRails makes recovering your valuables straightforward and stress-free.</p>
             
         </div>
-    <div class="grid grid-cols-2 gap-4 mt-8">
+    <div class="grid grid-cols-1 gap-4 mt-8">
             
             <img class="mt-4 w-full lg:mt-10 rounded-lg" src={HeroTrain} alt="office content 2"/>
         </div>
