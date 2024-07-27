@@ -25,7 +25,8 @@ function Booking() {
   return (
     <>
       <Navbar />
-      <div className="relative bg-gradient-to-r h-screen text-white overflow-hidden">
+      {/* Hero */}
+      <div className="relative bg-gradient-to-r h-4/55 text-white overflow-hidden  font-body">
         <div className="absolute inset-0">
           <img 
             src={images[currentImageIndex]} 
@@ -35,11 +36,13 @@ function Booking() {
           <div className="absolute inset-0 bg-black opacity-50"></div>
         </div>
         
-        <div className="relative z-10 flex flex-col justify-center items-center h-full text-center">
+        <div className="relative z-10 flex flex-col justify-center items-center h-1/2 md:justify-start">
           <h1 className="text-6xl font-bold leading-tight mb-4">DailyRails</h1>
           <p className="text-lg text-gray-300 mb-8">Online Train Seats Reservation</p>
         </div>
       </div>
+
+      {/* form */}
       <div className='flex items-center justify-center'>
         <form className="w-full max-w-lg p-5">
           <div className="flex flex-wrap -mx-3 mb-6">
@@ -64,7 +67,9 @@ function Booking() {
               <input type="number" id="seats" className="shadow-sm bg-gray-50 border border-secondary-1 text-tertiary text-sm rounded-sm focus:border-primary block w-full p-2.5" placeholder="Enter number of seats" required />
             </div>
           </div>
-          <button />
+          <button type="submit" className="text-white bg-primary hover:bg-secondary p-3 rounded-sm  ">Submit</button>
+          
+          <button type="reset" className="text-white bg-primary hover:bg-secondary p-3 rounded-sm">Reset</button>
         </form>
 
       </div>
