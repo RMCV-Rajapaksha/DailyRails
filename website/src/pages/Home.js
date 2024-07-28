@@ -3,6 +3,12 @@ import Navbar from '../components/Navbar'
 import Footer from '../components/Footer'
 
 import HeroTrain from '../assets/images/HeroTrain.png';
+import GPS from '../assets/images/GPS.png';
+import Schedule from '../assets/images/Schedule.png';
+import Booking from '../assets/images/Booking.png';
+
+import LostAndFound from '../assets/images/LostAndFound.png';
+
 import { Link } from 'react-router-dom';
 export const Home = () => {
   return (
@@ -31,17 +37,17 @@ export const Home = () => {
 
 
 <section className="bg-white">
-  <div className="gap-16 items-center py-8 px-4 mx-auto max-w-screen-xl lg:grid lg:grid-cols-2 lg:py-16 lg:px-6 font-body">
-    <div className="order-2 lg:order-1 md:grid grid-cols-1 gap-4 mt-8 hidden">
-      <img className="mt-4 w-full lg:mt-10 rounded-lg" src={HeroTrain} alt="office content 2" />
+  <div className="items-center max-w-screen-xl gap-16 px-4 py-8 mx-auto lg:grid lg:grid-cols-2 lg:py-16 lg:px-6 font-body">
+    <div className="order-2 hidden grid-cols-1 gap-4 mt-8 lg:order-1 md:grid">
+      <img className="w-full mt-4 rounded-lg lg:mt-10" src={GPS} alt="office content 2" />
     </div>
     
-    <div className="order-1 lg:order-2 font-light text-gray-500 sm:text-lg dark:text-gray-400">
-      <h2 className="mb-4 text-4xl tracking-tight font-extrabold text-primary">Your Journey, Streamlined</h2>
+    <div className="order-1 font-light text-gray-500 lg:order-2 sm:text-lg dark:text-gray-400">
+      <h2 className="mb-4 text-4xl font-extrabold tracking-tight text-primary">Your Journey, Streamlined</h2>
       <p className="mb-4 text-secondary-1">Navigate your daily commute with precision using our Live Map feature. Experience real-time train tracking like never before-watch trains move along their routes, view current locations, and stay updated on any disruptions or blockages. Our interactive map offers a clear, intuitive interface to help you plan your journey, avoid delays, and make informed decisions on the go. With DailyRails, your train travel is always on track!</p>
     </div>
-    <div className="order-2 order-1 md:grid grid-cols-1 gap-4 mt-8 lg:hidden">
-      <img className="mt-4 w-full lg:mt-10 rounded-lg" src={HeroTrain} alt="office content 2" />
+    <div className="order-1 order-2 grid-cols-1 gap-4 mt-8 md:grid lg:hidden">
+      <img className="w-full mt-4 rounded-lg lg:mt-10" src={GPS} alt="office content 2" />
     </div>
   </div>
 </section>
@@ -56,25 +62,27 @@ export const Home = () => {
         </div>
     <div class="grid grid-cols-1 gap-4 mt-8">
             
-            <img class="mt-4 w-full lg:mt-10 rounded-lg" src={HeroTrain} alt="office content 2"/>
+            <img class="mt-4 w-full lg:mt-10 rounded-lg" src={Schedule} alt="office content 2"/>
         </div>
        
         
     </div>
 </section>
-<section class="bg-white ">
-    <div class="gap-16 items-center py-8 px-4 mx-auto max-w-screen-xl lg:grid lg:grid-cols-2 lg:py-16 lg:px-6 font-body">
-    <div class="grid grid-cols-1 gap-4 mt-8">
-            
-            <img class="mt-4 w-full lg:mt-10 rounded-lg" src={HeroTrain} alt="office content 2"/>
-        </div>
-        <div class="font-light text-gray-500 sm:text-lg dark:text-gray-400">
-            <h2 class="mb-4 text-4xl tracking-tight font-extrabold text-primary ">Seamless Ticket Booking</h2>
-            <p class="mb-4 text-secondary-1">Secure your seat with ease using our streamlined ticket booking system. Whether you're on the go or planning ahead, DailyRails makes purchasing your train tickets quick and hassle-free. Enjoy a seamless experience from your mobile app or website, and never miss a train again. Book your journey today and travel with confidence!</p>
-          
-        </div>
-        
+
+<section className="bg-white">
+  <div className="items-center max-w-screen-xl gap-16 px-4 py-8 mx-auto lg:grid lg:grid-cols-2 lg:py-16 lg:px-6 font-body">
+    <div className="order-2 hidden grid-cols-1 gap-4 mt-8 lg:order-1 md:grid">
+      <img className="w-full mt-4 rounded-lg lg:mt-10" src={Booking} alt="office content 2" />
     </div>
+    
+    <div className="order-1 font-light text-gray-500 lg:order-2 sm:text-lg dark:text-gray-400">
+      <h2 className="mb-4 text-4xl font-extrabold tracking-tight text-primary">Seamless Ticket Booking</h2>
+      <p className="mb-4 text-secondary-1">Secure your seat with ease using our streamlined ticket booking system. Whether you're on the go or planning ahead, DailyRails makes purchasing your train tickets quick and hassle-free. Enjoy a seamless experience from your mobile app or website, and never miss a train again. Book your journey today and travel with confidence!</p>
+    </div>
+    <div className="order-1 order-2 grid-cols-1 gap-4 mt-8 md:grid lg:hidden">
+      <img className="w-full mt-4 rounded-lg lg:mt-10" src={Booking} alt="office content 2" />
+    </div>
+  </div>
 </section>
 
 <section class="bg-white ">
@@ -86,7 +94,7 @@ export const Home = () => {
         </div>
     <div class="grid grid-cols-1 gap-4 mt-8">
             
-            <img class="mt-4 w-full lg:mt-10 rounded-lg" src={HeroTrain} alt="office content 2"/>
+            <img class="mt-4 w-full lg:mt-10 rounded-lg" src={LostAndFound} alt="office content 2"/>
         </div>
        
         

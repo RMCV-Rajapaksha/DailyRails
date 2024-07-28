@@ -13,7 +13,7 @@ const FoundItems = ({ p, IF }) => {
    {/* Right */}
    <div className="flex flex-col w-[65%]">
     <h1 className="mb-1 text-xl font-bold md:-2 md:text-2xl text-primary">
-    Lost items 
+    Found items 
     </h1>
     <div className="flex items-center justify-between mb-2 space-x-4 text-sm font-semibold text-secondary-1 md:mb-4">
     <p>@chamara </p>
