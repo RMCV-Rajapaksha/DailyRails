@@ -13,6 +13,18 @@ const images = [
 
 function Booking() {
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
+  const [from, setFrom] = useState('');
+  const [to, setTo] = useState('');
+  const [date, setDate] = useState('');
+  const [seats, setSeats] = useState(0);
+
+
+  const reset = () => { 
+    setFrom('');
+    setTo('');
+    setDate('');
+    setSeats(0);
+  }
 
   useEffect(() => {
     const interval = setInterval(() => {
@@ -26,7 +38,7 @@ function Booking() {
     <>
       <Navbar />
       {/* Hero */}
-      <div className="relative bg-gradient-to-r h-4/55 text-white overflow-hidden  font-body">
+      <div className="relative h-screen overflow-hidden text-white bg-gradient-to-r font-body">
         <div className="absolute inset-0">
           <img 
             src={images[currentImageIndex]} 
@@ -36,43 +48,42 @@ function Booking() {
           <div className="absolute inset-0 bg-black opacity-50"></div>
         </div>
         
-        <div className="relative z-10 flex flex-col justify-center items-center h-1/2 md:justify-start">
-          <h1 className="text-6xl font-bold leading-tight mb-4">DailyRails</h1>
-          <p className="text-lg text-gray-300 mb-8">Online Train Seats Reservation</p>
+        <div className="relative z-10 flex flex-col items-center justify-center h-1/2 md:justify-start">
+          <h1 className="mb-4 text-6xl font-bold leading-tight">DailyRails</h1>
+          <p className="mb-8 text-lg text-gray-300">Online Train Seats Reservation</p>
         </div>
       </div>
 
-      {/* form */}
-      <div className='flex items-center justify-center'>
+      {/* Form */}
+      <div className="flex items-center justify-center">
         <form className="w-full max-w-lg p-5">
-          <div className="flex flex-wrap -mx-3 mb-6">
+          <div className="flex flex-wrap mb-6 -mx-3">
             <div className="w-full px-3 mb-5">
               <label htmlFor="from" className="block mb-2 text-sm text-primary font-body">From</label>
-              <input type="text" id="from" className="shadow-sm bg-gray-50 border border-secondary-1 text-tertiary text-sm rounded-sm focus:border-primary block w-full p-2.5" placeholder="Enter departure station" required />
+              <input onChange={(e)=>setFrom(e.target.value)} type="text" id="from" className="shadow-sm bg-gray-50 border border-secondary-1 text-tertiary text-sm rounded-sm focus:border-primary block w-full p-2.5" placeholder="Enter departure station" required />
             </div>
             <div className="w-full px-3 mb-5">
               <label htmlFor="to" className="block mb-2 text-sm text-primary font-body">To</label>
-              <input type="text" id="to" className="shadow-sm bg-gray-50 border border-secondary-1 text-tertiary text-sm rounded-sm focus:border-primary block w-full p-2.5" placeholder="Enter destination station" required />
+              <input onChange={(e)=>setTo(e.target.value)} type="text" id="to" className="shadow-sm bg-gray-50 border border-secondary-1 text-tertiary text-sm rounded-sm focus:border-primary block w-full p-2.5" placeholder="Enter destination station" required />
             </div>
           </div>
-          <div className="flex flex-wrap -mx-3 mb-6">
+          <div className="flex flex-wrap mb-6 -mx-3">
             <div className="w-full px-3 mb-5">
               <label htmlFor="date" className="block mb-2 text-sm text-primary font-body">Date</label>
-              <input type="date" id="date" className="shadow-sm bg-gray-50 border border-secondary-1 text-tertiary text-sm rounded-sm focus:border-primary block w-full p-2.5" required />
+              <input onChange={(e)=>setDate(e.target.value)} type="date" id="date" className="shadow-sm bg-gray-50 border border-secondary-1 text-tertiary text-sm rounded-sm focus:border-primary block w-full p-2.5" required />
             </div>
           </div>
-          <div className="flex flex-wrap -mx-3 mb-6">
+          <div className="flex flex-wrap mb-6 -mx-3">
             <div className="w-full px-3 mb-5">
               <label htmlFor="seats" className="block mb-2 text-sm text-primary font-body">Seats</label>
-              <input type="number" id="seats" className="shadow-sm bg-gray-50 border border-secondary-1 text-tertiary text-sm rounded-sm focus:border-primary block w-full p-2.5" placeholder="Enter number of seats" required />
+              <input onChange={(e)=>setSeats(e.target.value)} type="number" id="seats" className="shadow-sm bg-gray-50 border border-secondary-1 text-tertiary text-sm rounded-sm focus:border-primary block w-full p-2.5" placeholder="Enter number of seats" required />
             </div>
           </div>
-          <button type="submit" className="text-white bg-primary hover:bg-secondary p-3 rounded-sm  ">Submit</button>
-          
-          <button type="reset" className="text-white bg-primary hover:bg-secondary p-3 rounded-sm">Reset</button>
+          <button type="submit" className="p-3 mr-2 text-white rounded-sm bg-primary hover:bg-secondary">Submit</button>
+          <button onClick={reset} type="reset" className="p-3 text-white rounded-sm bg-primary hover:bg-secondary">Reset</button>
         </form>
-
       </div>
+      
       <Footer />
     </>
   );
