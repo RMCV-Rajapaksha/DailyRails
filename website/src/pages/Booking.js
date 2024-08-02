@@ -48,10 +48,10 @@ function Booking() {
           <div className="absolute inset-0 bg-black opacity-50"></div>
         </div>
         
-        <div className="relative z-10 flex flex-col items-center justify-center h-1/2 md:justify-start">
-          <h1 className="mb-4 text-6xl font-bold leading-tight">DailyRails</h1>
-          <p className="mb-8 text-lg text-gray-300">Online Train Seats Reservation</p>
-        </div>
+        <div className="relative z-10 flex flex-col items-start justify-center h-1/2 p-1/4">
+    <h1 className="mb-4 text-6xl font-bold leading-tight text-left">DailyRails</h1>
+    <p className="mb-8 text-lg text-left text-gray-300">Online Train Seats Reservation</p>
+</div>
       </div>
 
       {/* Form */}

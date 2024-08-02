@@ -14,24 +14,24 @@ export const Home = () => {
   return (
     <>
     <Navbar/>
-    <section class="bg-white ">
-    <div class="grid max-w-screen-xl px-4 py-8 mx-auto lg:gap-8 xl:gap-0 lg:py-16 lg:grid-cols-12">
-        <div class="mr-auto place-self-center lg:col-span-7 font-body ">
-            <h1 class="max-w-2xl mb-4 text-4xl font-extrabold tracking-tight leading-none md:text-5xl xl:text-6xl text-primary font-body">Daily Rails</h1>
-            <h2 class="max-w-xl mb-4 text-lg font-extrabold tracking-tight leading-none md:text-3xl xl:text-4xl text-primary font-body">Navigate your day, one train at a time</h2>
-            <p class="max-w-2xl mb-6 font-light  lg:mb-8 md:text-lg lg:text-xl text:secondary-1 font-body">Welcome to DailyRails, your ultimate solution for real-time train tracking across Sri Lanka. DailyRails enhances your commute with up-to-the-minute train locations, notifications for breakdowns and cancellations, detailed schedules, and predicted arrival times. Always stay informed and plan your journeys with confidence. Features like online ticket booking make train travel more efficient and stress-free. Join us in transforming train commuting with DailyRails, making your travels smoother and more reliable nationwide.</p>
-            <Link to="/map" class="fon-body inline-flex items-center justify-center px-5 py-3 mx-3 text-base font-medium text-center text-white bg-primary hover:bg-secondary rounded-sm">
+    <section className="bg-white">
+    <div className="grid max-w-screen-xl px-4 py-8 mx-auto lg:gap-8 xl:gap-0 lg:py-16 lg:grid-cols-12">
+        <div className="mr-auto place-self-center lg:col-span-7 font-body">
+        <h1 className="max-w-2xl mb-4 text-6xl font-extrabold leading-none tracking-tight md:text-7xl xl:text-7xl text-primary font-body">Daily Rails</h1>
+            <h2 className="max-w-xl mb-4 text-lg font-extrabold leading-none tracking-tight md:text-3xl xl:text-4xl text-primary font-body">Navigate your day, one train at a time</h2>
+            <p className="max-w-2xl mb-6 font-light lg:mb-8 md:text-lg lg:text-xl text-secondary-1 font-body">Welcome to DailyRails, your ultimate solution for real-time train tracking across Sri Lanka. DailyRails enhances your commute with up-to-the-minute train locations, notifications for breakdowns and cancellations, detailed schedules, and predicted arrival times. Always stay informed and plan your journeys with confidence. Features like online ticket booking make train travel more efficient and stress-free. Join us in transforming train commuting with DailyRails, making your travels smoother and more reliable nationwide.</p>
+            <Link to="/map" className="inline-flex items-center justify-center px-5 py-3 mx-3 text-base font-medium text-center text-white rounded-sm font-body bg-primary hover:bg-secondary">
                 Map
             </Link> 
-            <Link to="/schedule" class="font-body inline-flex items-center justify-center px-5 py-3 text-base font-medium text-center text-primary bg-white border-2 border-primary rounded-sm">
-           Schedule
-</Link>
+            <Link to="/schedule" className="inline-flex items-center justify-center px-5 py-3 text-base font-medium text-center bg-white border-2 rounded-sm font-body text-primary border-primary">
+                Schedule
+            </Link>
         </div>
-        <div class="hidden lg:mt-0 lg:col-span-5 lg:flex">
-        <img className='z-10' src={HeroTrain} alt="mockup"/>
-            
-           
-        </div>                
+        <div className=" lg:mt-0 lg:col-span-5 lg:flex">
+       
+    <img className="z-10 w-1/2 h-1/2 lg:w-3/4 lg:h-3/4" src={HeroTrain} alt="mockup"/>
+
+</div>             
     </div>
 </section>
 
@@ -39,7 +39,7 @@ export const Home = () => {
 <section className="bg-white">
   <div className="items-center max-w-screen-xl gap-16 px-4 py-8 mx-auto lg:grid lg:grid-cols-2 lg:py-16 lg:px-6 font-body">
     <div className="order-2 hidden grid-cols-1 gap-4 mt-8 lg:order-1 md:grid">
-      <img className="w-full mt-4 rounded-lg lg:mt-10" src={GPS} alt="office content 2" />
+      <img className="w-full mt-4 rounded-lg lg:mt-10 " src={GPS} alt="office content 2" />
     </div>
     
     <div className="order-1 font-light text-gray-500 lg:order-2 sm:text-lg dark:text-gray-400">
