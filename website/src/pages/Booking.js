@@ -36,7 +36,7 @@ function Booking() {
 
   return (
     <>
-      <Navbar />
+     
       {/* Hero */}
       <div className="relative h-screen overflow-hidden text-white bg-gradient-to-r font-body">
         <div className="absolute inset-0">
@@ -84,7 +84,7 @@ function Booking() {
         </form>
       </div>
       
-      <Footer />
+  
     </>
   );
 }

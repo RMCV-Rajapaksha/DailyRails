@@ -1,6 +1,5 @@
 import React from 'react'
-import Navbar from '../components/Navbar'
-import Footer from '../components/Footer'
+
 
 import HeroTrain from '../assets/images/HeroTrain.png';
 import GPS from '../assets/images/GPS.png';
@@ -13,7 +12,7 @@ import { Link } from 'react-router-dom';
 export const Home = () => {
   return (
     <>
-    <Navbar/>
+  
     <section className="bg-white">
     <div className="grid max-w-screen-xl px-4 py-8 mx-auto lg:gap-8 xl:gap-0 lg:py-16 lg:grid-cols-12">
         <div className="mr-auto place-self-center lg:col-span-7 font-body">
@@ -103,7 +102,7 @@ export const Home = () => {
 
 
 
-    <Footer/>
+ 
     </>
   )
 }

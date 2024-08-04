@@ -5,7 +5,7 @@ import Footer from '../components/Footer';
 function Map() {
   return (
     <>
-      <Navbar />
+      
       <main className="relative h-screen text-gray-600 body-font">
         <div className="absolute inset-0 bg-gray-300">
           <iframe

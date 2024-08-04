@@ -1,11 +1,10 @@
 import React from 'react';
-import Navbar from '../components/Navbar';
-import Footer from '../components/Footer';
+
 
 function Schedule() {
   return (
     <>
-      <Navbar />
+    
       <div className="flex flex-col items-center p-4 mx-4 my-8 md:flex-row md:mx-auto md:max-w-4xl">
         <div className="flex items-center flex-1 px-4 py-2 md:py-0">
           <input type="text" id="start-location" className="shadow-sm bg-gray-50 border border-secondary-1 text-tertiary text-sm rounded-sm focus:border-primary block w-full p-2.5" placeholder="Start Location" required />
@@ -60,7 +59,6 @@ function Schedule() {
         </table>
       </div>
 
-      <Footer />
     </>
   );
 }

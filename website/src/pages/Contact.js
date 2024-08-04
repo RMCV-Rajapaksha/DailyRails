@@ -4,9 +4,9 @@ import Footer from '../components/Footer'
 function Contact() {
   return (
     <>
-    <Navbar/>
+  
     <div>contact</div>
-    <Footer/>
+  
     </>
   )
 }

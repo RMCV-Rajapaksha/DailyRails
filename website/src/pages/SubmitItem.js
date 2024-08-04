@@ -1,6 +1,5 @@
 import React from 'react';
-import Navbar from '../components/Navbar';
-import Footer from '../components/Footer';
+
 import  { useState } from 'react';
 function SubmitItem() {
   const [name, setName] = useState('');
@@ -10,7 +9,7 @@ function SubmitItem() {
 
   return (
     <>
-      <Navbar />
+    
       <div className='mt-20 mb-20 font-body'>
         <form className="max-w-sm mx-auto">
           <div className="mb-5">
@@ -42,7 +41,7 @@ function SubmitItem() {
           <button type="submit" className="p-3 text-white rounded-sm bg-primary hover:bg-secondary">Submit</button>
         </form>
       </div>
-      <Footer />
+   
     </>
   );
 }
