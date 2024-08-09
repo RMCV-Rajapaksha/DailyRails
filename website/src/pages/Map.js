@@ -1,6 +1,40 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
+import { database } from "../firebase";
 
 function Map() {
+  const [location, setLocation] = useState({ latitude: null, longitude: null });
+
+  useEffect(() => {
+    const locationRef = database.ref("location");
+
+    const handleData = (snapshot) => {
+      const data = snapshot.val();
+      console.log("Firebase Data:", data); // Log Firebase data
+      if (data) {
+        setLocation({
+          latitude: data.latitude,
+          longitude: data.longitude,
+        });
+      }
+    };
+
+    locationRef.on("value", handleData);
+
+    // Clean up the listener on unmount
+    return () => {
+      locationRef.off("value", handleData);
+    };
+  }, []);
+
+  const generateMapSrc = () => {
+    const { latitude, longitude } = location;
+    if (latitude && longitude) {
+      return `https://maps.google.com/maps?q=${latitude},${longitude}&z=15&output=embed`;
+    }
+    // Default location or loading state
+    return `https://maps.google.com/maps?q=0,0&z=1&output=embed`;
+  };
+
   return (
     <>
       <main className="relative h-screen text-gray-600 body-font">
@@ -13,7 +47,7 @@ function Map() {
             marginWidth="0"
             title="map"
             scrolling="no"
-            src="https://maps.google.com/maps?width=100%&height=600&hl=en&q=%C4%B0zmir+(My%20Business%20Name)&ie=UTF8&t=&z=14&iwloc=B&output=embed"
+            src={generateMapSrc()}
             style={{ border: 0 }}
           ></iframe>
         </div>
