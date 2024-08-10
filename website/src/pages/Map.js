@@ -1,11 +1,13 @@
 import React, { useEffect, useState } from "react";
-import { database } from "../firebase";
+import { database, ref } from "../firebase";
+import { onValue, off } from "firebase/database";
 
 function Map() {
+  const [train, setTrain] = useState("");
   const [location, setLocation] = useState({ latitude: null, longitude: null });
 
-  useEffect(() => {
-    const locationRef = database.ref("location");
+  const getLocation = () => {
+    const locationRef = ref(database, train);
 
     const handleData = (snapshot) => {
       const data = snapshot.val();
@@ -18,13 +20,19 @@ function Map() {
       }
     };
 
-    locationRef.on("value", handleData);
+    onValue(locationRef, handleData);
 
     // Clean up the listener on unmount
     return () => {
-      locationRef.off("value", handleData);
+      off(locationRef, handleData);
     };
-  }, []);
+  };
+
+  useEffect(() => {
+    if (train) {
+      getLocation();
+    }
+  }, [train]);
 
   const generateMapSrc = () => {
     const { latitude, longitude } = location;
@@ -42,9 +50,6 @@ function Map() {
           <iframe
             width="100%"
             height="100%"
-            frameBorder="0"
-            marginHeight="0"
-            marginWidth="0"
             title="map"
             scrolling="no"
             src={generateMapSrc()}
@@ -54,47 +59,36 @@ function Map() {
         <div className="container flex px-5 py-24 mx-auto">
           <div className="relative z-10 flex flex-col w-full p-8 mt-10 bg-white rounded-lg shadow-md lg:w-1/3 md:w-1/2 md:ml-auto md:mt-0">
             <h2 className="mb-1 text-lg font-medium text-gray-900 title-font">
-              Feedback
+              Locate Your Train in Real-Time
             </h2>
             <p className="mb-5 leading-relaxed text-gray-600">
-              We value your feedback to improve our services.
+              Stay ahead of your schedule with DailyRails your daily commute
+              companion.
             </p>
             <div className="relative mb-4">
               <label
-                htmlFor="email"
+                htmlFor="train"
                 className="text-sm leading-7 text-primary font-body"
               >
-                Email
+                Name of the train or No
               </label>
               <input
-                type="email"
-                id="email"
-                name="email"
+                onChange={(e) => setTrain(e.target.value)}
+                type="text"
+                id="train"
+                name="train"
                 className="w-full px-3 py-1 text-base leading-8 text-gray-700 transition-colors duration-200 ease-in-out border rounded-sm outline-none bg-gray-50 border-secondary-1 focus:border-primary focus:ring-2 focus:ring-primary-200"
               />
             </div>
-            <div className="relative mb-4">
-              <label
-                htmlFor="message"
-                className="text-sm leading-7 text-primary font-body"
-              >
-                Message
-              </label>
-              <textarea
-                id="message"
-                name="message"
-                className="w-full h-32 px-3 py-1 text-base leading-6 text-gray-700 transition-colors duration-200 ease-in-out border rounded-sm outline-none resize-none bg-gray-50 border-secondary-1 focus:border-primary focus:ring-2 focus:ring-primary-200"
-              ></textarea>
-            </div>
+
             <button
+              onClick={getLocation}
               className="px-6 py-2 text-lg text-white border-0 rounded-sm bg-primary focus:outline-none hover:bg-secondary"
-              aria-label="Submit feedback"
+              aria-label="Get Updates"
             >
-              Submit
+              Get Updates
             </button>
-            <p className="mt-3 text-xs text-gray-500">
-              Thank you for helping us improve DailyRails.
-            </p>
+            <p className="mt-3 text-xs text-gray-500"></p>
           </div>
         </div>
       </main>
