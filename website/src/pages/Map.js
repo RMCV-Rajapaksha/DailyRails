@@ -6,6 +6,18 @@ function Map() {
   const [train, setTrain] = useState("");
   const [location, setLocation] = useState({ latitude: null, longitude: null });
 
+  useEffect(() => {
+    const script = document.createElement("script");
+    script.src =
+      "https://maps.googleapis.com/maps/api/js?key=${process.env.REACT_APP_GOOGLE_MAPS_API_KEY}";
+    script.async = true;
+    document.body.appendChild(script);
+
+    return () => {
+      document.body.removeChild(script);
+    };
+  }, []);
+
   const getLocation = () => {
     const locationRef = ref(database, train);
 
@@ -39,7 +51,6 @@ function Map() {
     if (latitude && longitude) {
       return `https://maps.google.com/maps?q=${latitude},${longitude}&z=15&output=embed`;
     }
-    // Default location or loading state
     return `https://maps.google.com/maps?q=0,0&z=1&output=embed`;
   };
 
