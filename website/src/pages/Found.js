@@ -1,21 +1,19 @@
-import React from 'react'
+import React from "react";
 
-import Navbar from '../components/Navbar'
-import Footer from '../components/Footer'
-import FoundItems from '../components/FoundItems'
+import { FoundItemsData } from "../data";
+import FoundItems from "../components/FoundItems";
 
 function Found() {
   return (
     <>
-    <Navbar/>
-    <div className="px-8 md:px-[200px] min-h-[80vh] mt-20">
-        <FoundItems/>
-        <FoundItems/>
-        <FoundItems/>
-               </div>
-    <Footer/>
+      <div className="px-8 md:px-[200px] min-h-[80vh] mt-20">
+        {FoundItemsData &&
+          FoundItemsData.map((item) => (
+            <FoundItems key={item.id} FoundItems={item} />
+          ))}
+      </div>
     </>
-  )
+  );
 }
 
-export default Found
+export default Found;
