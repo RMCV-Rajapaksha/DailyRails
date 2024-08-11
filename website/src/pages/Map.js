@@ -4,31 +4,56 @@ import { onValue, off } from "firebase/database";
 
 function Map() {
   const [train, setTrain] = useState("");
-  const [location, setLocation] = useState({ latitude: null, longitude: null });
+  const [location, setLocation] = useState({ lat: null, lng: null });
+  const [path, setPath] = useState([]); // Array to store the path
+  const [map, setMap] = useState(null); // To store the map instance
+  const [polyline, setPolyline] = useState(null); // To store the polyline instance
 
   useEffect(() => {
     const script = document.createElement("script");
-    script.src =
-      "https://maps.googleapis.com/maps/api/js?key=${process.env.REACT_APP_GOOGLE_MAPS_API_KEY}";
+    script.src = `https://maps.googleapis.com/maps/api/js?key=AIzaSyAr8aKdJM4aYjfOwVqP2wz9WC4vC0Qu05s`;
     script.async = true;
+
+    const initMap = () => {
+      const mapInstance = new window.google.maps.Map(
+        document.getElementById("map"),
+        {
+          zoom: 15,
+          center: { lat: 0, lng: 0 },
+        }
+      );
+      setMap(mapInstance);
+
+      const polylineInstance = new window.google.maps.Polyline({
+        map: mapInstance,
+        path: [],
+        strokeColor: "#FF0000",
+        strokeOpacity: 1.0,
+        strokeWeight: 2,
+      });
+      setPolyline(polylineInstance);
+    };
+
+    script.onload = initMap; // Initialize the map after the script is loaded
     document.body.appendChild(script);
 
     return () => {
       document.body.removeChild(script);
     };
-  }, []);
+  }, []); // Empty dependency array since we only want this to run once
 
   const getLocation = () => {
+    if (!train) return;
+
     const locationRef = ref(database, train);
 
     const handleData = (snapshot) => {
       const data = snapshot.val();
       console.log("Firebase Data:", data); // Log Firebase data
       if (data) {
-        setLocation({
-          latitude: data.latitude,
-          longitude: data.longitude,
-        });
+        const newLocation = { lat: data.latitude, lng: data.longitude };
+        setLocation(newLocation);
+        setPath((prevPath) => [...prevPath, newLocation]);
       }
     };
 
@@ -41,31 +66,25 @@ function Map() {
   };
 
   useEffect(() => {
-    if (train) {
-      getLocation();
-    }
-  }, [train]);
+    if (!location.lat || !location.lng || !map || !polyline) return;
 
-  const generateMapSrc = () => {
-    const { latitude, longitude } = location;
-    if (latitude && longitude) {
-      return `https://maps.google.com/maps?q=${latitude},${longitude}&z=15&output=embed`;
-    }
-    return `https://maps.google.com/maps?q=0,0&z=1&output=embed`;
-  };
+    map.setCenter(location);
+
+    new window.google.maps.Marker({
+      position: location,
+      map: map,
+      title: "Train Location",
+    });
+
+    // Update the polyline path
+    polyline.setPath(path);
+  }, [location, path, map, polyline]); // Dependency array includes 'location', 'path', 'map', and 'polyline'
 
   return (
     <>
       <main className="relative h-screen text-gray-600 body-font">
         <div className="absolute inset-0 bg-gray-300">
-          <iframe
-            width="100%"
-            height="100%"
-            title="map"
-            scrolling="no"
-            src={generateMapSrc()}
-            style={{ border: 0 }}
-          ></iframe>
+          <div id="map" style={{ width: "100%", height: "100%" }}></div>
         </div>
         <div className="container flex px-5 py-24 mx-auto">
           <div className="relative z-10 flex flex-col w-full p-8 mt-10 bg-white rounded-lg shadow-md lg:w-1/3 md:w-1/2 md:ml-auto md:mt-0">
