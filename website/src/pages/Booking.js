@@ -41,7 +41,7 @@ function Booking() {
           <div className="absolute inset-0 bg-black opacity-50"></div>
         </div>
 
-        <div className="relative z-10 flex flex-col items-start justify-center h-1/2 p-1/4">
+        <div className="relative z-10 flex flex-col items-start justify-center mx-8 mt-48 lg:mx-28 lg:mt-48 h-1/2 p-1/4">
           <h1 className="mb-4 text-6xl font-bold leading-tight text-left">
             DailyRails
           </h1>

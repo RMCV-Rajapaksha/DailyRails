@@ -1,9 +1,12 @@
 import React from "react";
+import Loader from "../components/Loader";
 
 function Contact() {
   return (
     <>
-      <div>contact</div>
+      <div>
+        <Loader />
+      </div>
     </>
   );
 }
