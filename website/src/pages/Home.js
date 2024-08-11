@@ -12,9 +12,9 @@ export const Home = () => {
   return (
     <>
       <section className="bg-white">
-        <div className="grid max-w-screen-xl px-4 py-8 mx-auto lg:gap-8 xl:gap-0 lg:py-16 lg:grid-cols-12">
+        <div className="grid max-w-screen-xl px-4 py-8 mx-auto mt-10 mb-20 lg:gap-8 xl:gap-0 lg:py-16 lg:grid-cols-12">
           <div className="mr-auto place-self-center lg:col-span-7 font-body">
-            <h1 className="max-w-2xl mb-4 text-6xl font-extrabold leading-none tracking-tight md:text-7xl xl:text-7xl text-primary font-body">
+            <h1 className="max-w-2xl mb-4 text-6xl font-extrabold leading-none tracking-tight md:text-7xl xl:text-8xl text-primary font-body">
               Daily Rails
             </h1>
             <h2 className="max-w-xl mb-4 text-lg font-extrabold leading-none tracking-tight md:text-3xl xl:text-4xl text-primary font-body">
@@ -44,9 +44,9 @@ export const Home = () => {
               Schedule
             </Link>
           </div>
-          <div className=" lg:mt-0 lg:col-span-5 lg:flex">
+          <div className="hidden lg:mt-0 lg:col-span-5 lg:flex">
             <img
-              className="z-10 w-1/2 h-1/2 lg:w-3/4 lg:h-3/4"
+              className="z-10 w-3/4 h-3/4 lg:w-full lg:h-full"
               src={HeroTrain}
               alt="mockup"
             />
@@ -68,7 +68,7 @@ export const Home = () => {
             <h2 className="mb-4 text-4xl font-extrabold tracking-tight text-primary">
               Your Journey, Streamlined
             </h2>
-            <p className="mb-4 text-secondary-1">
+            <p className="mb-4 text-xl text-secondary-1">
               Navigate your daily commute with precision using our Live Map
               feature. Experience real-time train tracking like never
               before-watch trains move along their routes, view current
@@ -94,7 +94,7 @@ export const Home = () => {
             <h2 class="mb-4 text-4xl tracking-tight font-extrabold text-primary ">
               Your Reliable Train Timetable
             </h2>
-            <p class="mb-4 text-secondary-1">
+            <p class="mb-4 text-xl text-secondary-1">
               DailyRails' Timetable feature provides detailed and up-to-date
               train schedules across Sri Lanka. Users can easily search routes,
               view departure and arrival times, and find the best connections
@@ -128,7 +128,7 @@ export const Home = () => {
             <h2 className="mb-4 text-4xl font-extrabold tracking-tight text-primary">
               Seamless Ticket Booking
             </h2>
-            <p className="mb-4 text-secondary-1">
+            <p className="mb-4 text-xl text-secondary-1">
               Secure your seat with ease using our streamlined ticket booking
               system. Whether you're on the go or planning ahead, DailyRails
               makes purchasing your train tickets quick and hassle-free. Enjoy a
@@ -153,7 +153,7 @@ export const Home = () => {
             <h2 class="mb-4 text-4xl tracking-tight font-extrabold text-primary ">
               Lost & Found Hub
             </h2>
-            <p class="mb-4 text-secondary-1">
+            <p class="mb-4 text-xl text-secondary-1">
               Lost something on your journey? Our Lost & Found Hub is here to
               help! Quickly report or search for lost items with ease. From
               misplaced belongings to found objects, our intuitive platform
