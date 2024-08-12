@@ -20,6 +20,43 @@ function Map() {
         {
           zoom: 15,
           center: { lat: 0, lng: 0 },
+          styles: [
+            {
+              featureType: "all",
+              elementType: "labels",
+              stylers: [{ visibility: "off" }],
+            },
+            {
+              featureType: "administrative",
+              elementType: "geometry",
+              stylers: [{ visibility: "off" }],
+            },
+            {
+              featureType: "landscape",
+              elementType: "geometry",
+              stylers: [{ visibility: "off" }],
+            },
+            {
+              featureType: "poi",
+              elementType: "geometry",
+              stylers: [{ visibility: "on" }],
+            },
+            {
+              featureType: "road",
+              elementType: "geometry",
+              stylers: [{ visibility: "off" }],
+            },
+            {
+              featureType: "transit.line",
+              elementType: "geometry",
+              stylers: [{ visibility: "on" }, { color: "#000000" }], // Change color to black
+            },
+            {
+              featureType: "water",
+              elementType: "geometry",
+              stylers: [{ visibility: "on" }],
+            },
+          ],
         }
       );
       setMap(mapInstance);
