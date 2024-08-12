@@ -1,51 +1,56 @@
-import React from 'react';
-import { createBrowserRouter, RouterProvider } from 'react-router-dom';
-import MainLayOut from '../LayOut/LayOut';
-import Home from '../pages/Home';
-import Booking from '../pages/Booking';
-import Found from '../pages/Found';
-import Lost from '../pages/Lost';
-import Schedule from '../pages/Schedule';
-import Contact from '../pages/Contact';
-import Map from '../pages/Map';
-import SubmitItem from '../pages/SubmitItem';
+import React from "react";
+import { createBrowserRouter, RouterProvider } from "react-router-dom";
+import MainLayOut from "../LayOut/LayOut";
+import Home from "../pages/Home";
+import Booking from "../pages/Booking";
+import Found from "../pages/Found";
+import Lost from "../pages/Lost";
+import Schedule from "../pages/Schedule";
+import Contact from "../pages/Contact";
+import Map from "../pages/Map";
+import SubmitItem from "../pages/SubmitItem";
+import News from "../pages/News";
 
 const router1 = createBrowserRouter([
   {
-    path: '/',
+    path: "/",
     element: <MainLayOut />,
     children: [
       {
         index: true,
-        element: <Home/>,
+        element: <Home />,
       },
       {
-        path: 'booking',
+        path: "booking",
         element: <Booking />,
       },
       {
-        path: 'found',
+        path: "found",
         element: <Found />,
       },
       {
-        path: 'lost',
-        element: <Lost/>,
+        path: "lost",
+        element: <Lost />,
       },
       {
-        path: 'schedule',
+        path: "schedule",
         element: <Schedule />,
       },
       {
-        path: 'contact',
+        path: "contact",
         element: <Contact />,
       },
       {
-        path: 'map',
+        path: "map",
         element: <Map />,
       },
       {
-        path: 'submit',
+        path: "submit",
         element: <SubmitItem />,
+      },
+      {
+        path: "news",
+        element: <News />,
       },
     ],
   },

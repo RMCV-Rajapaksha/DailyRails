@@ -16,15 +16,12 @@ const Navbar = () => {
 
   return (
     <nav className="bg-white">
-      <div className="flex flex-wrap items-center justify-between max-w-screen-xl mx-auto p-7">
+      <div className="flex flex-wrap items-center justify-between max-w-screen-xl p-5 mx-auto">
         <Link
           to="/"
           className="flex items-center space-x-3 rtl:space-x-reverse"
         >
           <img src={Logo} className="h-16" alt="Flowbite Logo" />
-          <span className="self-center text-2xl font-semibold whitespace-nowrap dark:text-white">
-            Flowbite
-          </span>
         </Link>
         <div className="flex space-x-3 md:order-2 md:space-x-0 rtl:space-x-reverse">
           <Link
@@ -122,6 +119,14 @@ const Navbar = () => {
                       Report
                     </Link>
                   </li>
+                  <li>
+                    <Link
+                      to="/news"
+                      className="block py-5 text-sm px-7 text-primary hover:bg-gray-100"
+                    >
+                      News
+                    </Link>
+                  </li>
                 </ul>
               )}
             </li>
@@ -131,6 +136,14 @@ const Navbar = () => {
                 className="block px-3 py-2 md:p-0 text-primary font-body hover:text-secondary"
               >
                 Contact Us
+              </Link>
+            </li>
+            <li>
+              <Link
+                to="/news"
+                className="block px-3 py-2 md:p-0 text-primary font-body hover:text-secondary"
+              >
+                News
               </Link>
             </li>
           </ul>

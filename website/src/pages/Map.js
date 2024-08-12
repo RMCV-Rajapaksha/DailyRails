@@ -5,9 +5,9 @@ import { onValue, off } from "firebase/database";
 function Map() {
   const [train, setTrain] = useState("");
   const [location, setLocation] = useState({ lat: null, lng: null });
-  const [path, setPath] = useState([]); // Array to store the path
-  const [map, setMap] = useState(null); // To store the map instance
-  const [polyline, setPolyline] = useState(null); // To store the polyline instance
+  const [path, setPath] = useState([]);
+  const [map, setMap] = useState(null);
+  const [polyline, setPolyline] = useState(null);
 
   useEffect(() => {
     const script = document.createElement("script");
@@ -19,7 +19,7 @@ function Map() {
         document.getElementById("map"),
         {
           zoom: 15,
-          center: { lat: 0, lng: 0 },
+          center: { lat: 6.9334922999, lng: 79.85050639999 },
           styles: [
             {
               featureType: "all",
@@ -34,12 +34,12 @@ function Map() {
             {
               featureType: "landscape",
               elementType: "geometry",
-              stylers: [{ visibility: "off" }],
+              stylers: [{ visibility: "on" }],
             },
             {
               featureType: "poi",
               elementType: "geometry",
-              stylers: [{ visibility: "on" }],
+              stylers: [{ visibility: "off" }],
             },
             {
               featureType: "road",
@@ -49,7 +49,7 @@ function Map() {
             {
               featureType: "transit.line",
               elementType: "geometry",
-              stylers: [{ visibility: "on" }, { color: "#000000" }], // Change color to black
+              stylers: [{ visibility: "on" }, { color: "#000000" }],
             },
             {
               featureType: "water",
@@ -64,20 +64,20 @@ function Map() {
       const polylineInstance = new window.google.maps.Polyline({
         map: mapInstance,
         path: [],
-        strokeColor: "#FF0000",
+        strokeColor: "#111B47",
         strokeOpacity: 1.0,
         strokeWeight: 2,
       });
       setPolyline(polylineInstance);
     };
 
-    script.onload = initMap; // Initialize the map after the script is loaded
+    script.onload = initMap;
     document.body.appendChild(script);
 
     return () => {
       document.body.removeChild(script);
     };
-  }, []); // Empty dependency array since we only want this to run once
+  }, []);
 
   const getLocation = () => {
     if (!train) return;
@@ -86,7 +86,7 @@ function Map() {
 
     const handleData = (snapshot) => {
       const data = snapshot.val();
-      console.log("Firebase Data:", data); // Log Firebase data
+      console.log("Firebase Data:", data);
       if (data) {
         const newLocation = { lat: data.latitude, lng: data.longitude };
         setLocation(newLocation);
@@ -96,7 +96,6 @@ function Map() {
 
     onValue(locationRef, handleData);
 
-    // Clean up the listener on unmount
     return () => {
       off(locationRef, handleData);
     };
@@ -113,22 +112,20 @@ function Map() {
       title: "Train Location",
     });
 
-    // Update the polyline path
     polyline.setPath(path);
-  }, [location, path, map, polyline]); // Dependency array includes 'location', 'path', 'map', and 'polyline'
-
+  }, [location, path, map, polyline]);
   return (
     <>
-      <main className="relative h-screen text-gray-600 body-font">
+      <main className="relative h-screen body-font font-body">
         <div className="absolute inset-0 bg-gray-300">
           <div id="map" style={{ width: "100%", height: "100%" }}></div>
         </div>
         <div className="container flex px-5 py-24 mx-auto">
           <div className="relative z-10 flex flex-col w-full p-8 mt-10 bg-white rounded-lg shadow-md lg:w-1/3 md:w-1/2 md:ml-auto md:mt-0">
-            <h2 className="mb-1 text-lg font-medium text-gray-900 title-font">
+            <h2 className="mb-1 text-lg font-medium text-primary title-font">
               Locate Your Train in Real-Time
             </h2>
-            <p className="mb-5 leading-relaxed text-gray-600">
+            <p className="mb-5 leading-relaxed text-secondary-1">
               Stay ahead of your schedule with DailyRails your daily commute
               companion.
             </p>
@@ -144,7 +141,7 @@ function Map() {
                 type="text"
                 id="train"
                 name="train"
-                className="w-full px-3 py-1 text-base leading-8 text-gray-700 transition-colors duration-200 ease-in-out border rounded-sm outline-none bg-gray-50 border-secondary-1 focus:border-primary focus:ring-2 focus:ring-primary-200"
+                className="w-full px-3 py-1 text-base leading-8 transition-colors duration-200 ease-in-out border rounded-sm outline-none text-secondary bg-gray-50 border-secondary-1 focus:border-primary focus:ring-2 focus:ring-primary-200"
               />
             </div>
 
@@ -155,7 +152,6 @@ function Map() {
             >
               Get Updates
             </button>
-            <p className="mt-3 text-xs text-gray-500"></p>
           </div>
         </div>
       </main>
