@@ -3,7 +3,7 @@ import React from "react";
 function Schedule() {
   return (
     <>
-      <div className="flex flex-col items-center p-4 mx-4 my-8 md:flex-row md:mx-auto md:max-w-4xl">
+      <div className="flex flex-col items-center p-4 mx-4 my-8 mb-20 md:flex-row md:mx-auto md:max-w-7xl">
         <div className="flex items-center flex-1 px-4 py-2 md:py-0">
           <input
             type="text"
@@ -35,7 +35,7 @@ function Schedule() {
         </button>
       </div>
 
-      <div className="relative w-3/4 mx-auto overflow-x-auto shadow-md sm:rounded-lg">
+      <div className="relative w-2/3 mx-auto overflow-x-auto shadow-md sm:rounded-sm">
         <table className="w-full text-sm text-left text-gray-500 rtl:text-right dark:text-gray-400">
           <caption className="p-5 text-lg font-semibold text-left text-gray-900 bg-white rtl:text-right dark:text-white dark:bg-gray-800">
             Train Schedule
