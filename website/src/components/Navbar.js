@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { Link } from "react-router-dom";
-import Logo from "../assets/images/Logo-1.png";
+import Logo from "../assets/images/Logo-3.png";
 
 const Navbar = () => {
   const [menu, setMenu] = useState(false);
@@ -21,7 +21,7 @@ const Navbar = () => {
           to="/"
           className="flex items-center space-x-3 rtl:space-x-reverse"
         >
-          <img src={Logo} className="h-8" alt="Flowbite Logo" />
+          <img src={Logo} className="h-16" alt="Flowbite Logo" />
           <span className="self-center text-2xl font-semibold whitespace-nowrap dark:text-white">
             Flowbite
           </span>
