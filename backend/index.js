@@ -1,16 +1,21 @@
 const express = require("express");
-const bodyParser = require("body-parser");
-const passengerAnnouncementsRouter = require("./routes/passengerAnnouncements");
-
 const app = express();
-const port = 3000;
+const db = require("./models");
 
 // Middleware to parse JSON
-app.use(bodyParser.json());
+app.use(express.json());
 
-// Use the passenger announcements router
-app.use("/passenger-announcements", passengerAnnouncementsRouter);
+// Routers
+const passengerAnnouncementRouter = require("./routes/PassengerAnnouncements");
+app.use("/passenger-announcements", passengerAnnouncementRouter);
 
-app.listen(port, () => {
-  console.log(`Server running on port ${port}`);
-});
+db.sequelize
+  .sync()
+  .then(() => {
+    app.listen(3000, () => {
+      console.log("Server running on port 3000");
+    });
+  })
+  .catch((err) => {
+    console.error("Error syncing database:", err);
+  });
