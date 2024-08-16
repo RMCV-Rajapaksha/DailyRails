@@ -7,7 +7,9 @@ app.use(express.json());
 
 // Routers
 const passengerAnnouncementRouter = require("./routes/PassengerAnnouncements");
+const stationAnnouncementRouter = require("./routes/StationAnnouncements");
 app.use("/passenger-announcements", passengerAnnouncementRouter);
+app.use("/station-announcements", stationAnnouncementRouter);
 
 db.sequelize
   .sync()
