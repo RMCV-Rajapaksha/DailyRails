@@ -4,31 +4,31 @@ module.exports = (sequelize) => {
   const Item = sequelize.define(
     "Item",
     {
-      id: {
+      ID: {
         type: DataTypes.INTEGER,
         autoIncrement: true,
         primaryKey: true,
       },
-      name: {
+      Name: {
         type: DataTypes.STRING(20),
         allowNull: false,
       },
-      itemType: {
+      ItemType: {
         type: DataTypes.STRING(50),
         allowNull: false,
       },
-      title: {
+      Title: {
         type: DataTypes.STRING(50),
         allowNull: false,
       },
-      description: {
+      Description: {
         type: DataTypes.STRING(1000),
         allowNull: false,
       },
-      contactNo: {
+      ContactNo: {
         type: DataTypes.STRING(15), // Adjusted length for phone number
       },
-      status: {
+      Status: {
         type: DataTypes.STRING(15),
         allowNull: false,
         defaultValue: "Not Approved",
