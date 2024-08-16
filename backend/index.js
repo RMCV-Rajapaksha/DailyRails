@@ -6,10 +6,8 @@ const db = require("./models");
 app.use(express.json());
 
 // Routers
-const passengerAnnouncementRouter = require("./routes/PassengerAnnouncements");
-const stationAnnouncementRouter = require("./routes/StationAnnouncements");
-app.use("/passenger-announcements", passengerAnnouncementRouter);
-app.use("/station-announcements", stationAnnouncementRouter);
+const AnnouncementRouter = require("./routes/Announcements");
+app.use("/announcements", AnnouncementRouter);
 
 db.sequelize
   .sync()
