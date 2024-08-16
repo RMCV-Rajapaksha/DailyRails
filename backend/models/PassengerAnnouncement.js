@@ -19,14 +19,10 @@ module.exports = (sequelize) => {
       Description: {
         type: DataTypes.STRING(1000),
       },
-      time: {
-        type: DataTypes.DATE, // Changed from TIMESTAMP to DATE
-        defaultValue: Sequelize.literal("CURRENT_TIMESTAMP"),
-      },
     },
     {
       tableName: "PASSENGER_ANNOUNCEMENTS",
-      timestamps: false,
+      timestamps: true,
     }
   );
 
