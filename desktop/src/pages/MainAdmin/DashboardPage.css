@@ -1,0 +1,102 @@
+.dashboard-container {
+    display: flex;
+    height: 100vh;
+    transition: all 0.3s ease-in-out;
+}
+
+.sidebar {
+    background-color: white;
+    color: darkblue;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 20px;
+    transition: all 0.3s ease-in-out;
+    border-right: 2px solid #dcdcdc;
+    /* Optional: Add a border to separate the sidebar from the content */
+}
+
+.sidebar .toggle-btn {
+    cursor: pointer;
+    margin-bottom: 20px;
+    font-size: 1.5em;
+    color: darkblue;
+}
+
+.logo {
+    width: 150px;
+    /* Increased logo size */
+    height: auto;
+    margin-bottom: 20px;
+    transition: all 0.3s ease-in-out;
+}
+
+.nav-menu ul {
+    list-style: none;
+    padding: 0;
+    width: 100%;
+}
+
+.nav-menu ul li {
+    display: flex;
+    align-items: center;
+    padding: 15px 10px;
+    cursor: pointer;
+    transition: all 0.3s ease-in-out;
+    color: darkblue;
+    /* Set text color to dark blue */
+}
+
+.nav-menu ul li:hover {
+    background-color: #f1f1f1;
+    /* Light hover effect */
+}
+
+.nav-menu ul li .nav-label {
+    margin-left: 15px;
+    transition: all 0.3s ease-in-out;
+}
+
+.nav-menu ul li .fa-sign-out-alt {
+    color: white;
+    /* Keep icon color white for the logout button */
+}
+
+.logout {
+    background-color: darkblue;
+    color: white;
+    border-radius: 5px;
+    padding: 15px;
+    margin-top: auto;
+    /* Push logout button to the bottom */
+    width: 100%;
+    text-align: center;
+    transition: background-color 0.3s ease-in-out;
+}
+
+.logout:hover {
+    background-color: #002f6c;
+    /* Darker blue on hover */
+}
+
+.main-content {
+    flex-grow: 1;
+    padding: 20px;
+    background-color: #ecf0f1;
+}
+
+.dashboard-container.collapsed .sidebar {
+    width: 80px;
+}
+
+.dashboard-container.collapsed .nav-label {
+    display: none;
+}
+
+.dashboard-container.collapsed .logo {
+    width: 50px;
+}
+
+.dashboard-container.expanded .sidebar {
+    width: 250px;
+}
