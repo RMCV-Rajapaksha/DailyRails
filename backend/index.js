@@ -1,13 +1,15 @@
 const express = require("express");
 const app = express();
-const db = require("./models");
+const db = require("./models"); // Ensure this path is correct
 
 // Middleware to parse JSON
 app.use(express.json());
 
 // Routers
-const passengerAnnouncementRouter = require("./routes/PassengerAnnouncements");
-app.use("/passenger-announcements", passengerAnnouncementRouter);
+const AnnouncementRouter = require("./routes/Announcements"); // Ensure this path is correct
+const ItemRouter = require("./routes/Items"); // Ensure this path is correct
+app.use("/announcements", AnnouncementRouter);
+app.use("/items", ItemRouter);
 
 db.sequelize
   .sync()

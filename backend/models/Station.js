@@ -2,26 +2,28 @@ const { Sequelize, DataTypes } = require("sequelize");
 
 module.exports = (sequelize) => {
   const PassengerAnnouncement = sequelize.define(
-    "PassengerAnnouncement",
+    "Stations",
     {
-      ID: {
-        type: DataTypes.INTEGER,
-        autoIncrement: true,
+      Station_ID: {
+        type: DataTypes.STRING(20),
         primaryKey: true,
       },
-      Announcement_To: {
-        type: DataTypes.STRING(20),
+      Contact_No: {
+        type: DataTypes.STRING(15),
         allowNull: false,
       },
-      Title: {
+
+      Address: {
         type: DataTypes.STRING(50),
+        allowNull: false,
       },
-      Description: {
-        type: DataTypes.STRING(1000),
+      Name: {
+        type: DataTypes.STRING(50),
+        allowNull: false,
       },
     },
     {
-      tableName: "PASSENGER_ANNOUNCEMENTS",
+      tableName: "STATIONS",
       timestamps: true,
     }
   );
