@@ -22,19 +22,19 @@ const SignUpPage = () => {
   };
 
   return (
-    <div className="flex items-center justify-center min-h-screen p-4 bg-gray-100">
-      <div className="w-full max-w-md p-8 bg-white rounded-lg shadow-md">
+    <div className="flex items-center justify-center min-h-screen p-4 bg-gray-100 font-body">
+      <div className="w-full max-w-md p-8 bg-white rounded-sm shadow-md font-body">
         <div className="flex justify-center mb-6">
           <img src={logo} alt="DailyRails Logo" className="h-16" />
         </div>
-        <h2 className="mb-6 text-2xl font-bold text-center text-gray-800">
+        <h2 className="mb-6 text-2xl font-bold text-center text-primary font-body">
           Signup to DailyRails
         </h2>
-        <form onSubmit={handleSubmit}>
+        <form onSubmit={handleSubmit} className="font-body">
           <div className="mb-4">
             <label
               htmlFor="username"
-              className="block mb-2 text-sm font-bold text-gray-700"
+              className="block mb-2 text-sm font-bold text-primary font-body"
             >
               Username
             </label>
@@ -45,13 +45,13 @@ const SignUpPage = () => {
               placeholder="Username"
               value={formData.username}
               onChange={handleChange}
-              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="w-full px-3 py-2 border border-gray-300 rounded-sm focus:outline-none focus:ring-2 focus:ring-primary font-body"
             />
           </div>
           <div className="mb-4">
             <label
               htmlFor="password"
-              className="block mb-2 text-sm font-bold text-gray-700"
+              className="block mb-2 text-sm font-bold text-primary font-body"
             >
               Password
             </label>
@@ -62,13 +62,13 @@ const SignUpPage = () => {
               placeholder="Password"
               value={formData.password}
               onChange={handleChange}
-              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="w-full px-3 py-2 border border-gray-300 rounded-sm focus:outline-none focus:ring-2 focus:ring-primary font-body"
             />
           </div>
           <div className="mb-4">
             <label
               htmlFor="jobRole"
-              className="block mb-2 text-sm font-bold text-gray-700"
+              className="block mb-2 text-sm font-bold text-primary font-body"
             >
               Job Role
             </label>
@@ -79,13 +79,13 @@ const SignUpPage = () => {
               placeholder="Station Admin"
               value={formData.jobRole}
               onChange={handleChange}
-              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="w-full px-3 py-2 border border-gray-300 rounded-sm focus:outline-none focus:ring-2 focus:ring-primary font-body"
             />
           </div>
           <div className="mb-6">
             <label
               htmlFor="id"
-              className="block mb-2 text-sm font-bold text-gray-700"
+              className="block mb-2 text-sm font-bold text-primary font-body"
             >
               ID
             </label>
@@ -96,12 +96,12 @@ const SignUpPage = () => {
               placeholder="ID"
               value={formData.id}
               onChange={handleChange}
-              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="w-full px-3 py-2 border border-gray-300 rounded-sm focus:outline-none focus:ring-2 focus:ring-primary font-body"
             />
           </div>
           <button
             type="submit"
-            className="w-full px-4 py-2 font-bold text-white bg-blue-600 rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50"
+            className="w-full px-4 py-2 font-bold text-white bg-blue-600 rounded-sm hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-primary focus:ring-opacity-50 font-body"
           >
             Signup
           </button>
