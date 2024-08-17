@@ -2,9 +2,9 @@ import React from "react";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import LoginPage from "./pages/LoginPage/LoginPage";
 import SignUpPage from "./pages/SignUpPage/SignUpPage";
-import AccountReviewPage from "./pages/AccountReviewPage/AccountReviewPage";
-import DashboardPage from "./pages/DashboardPage/DashboardPage";
-import NotificationPage from "./pages/NotificationPage/NotificationPage";
+import AccountReviewPage from "./pages/MainAdmin/AccountReviewPage";
+import DashboardPage from "./pages/MainAdmin/DashboardPage";
+import NotificationPage from "./pages/MainAdmin/NotificationPage";
 
 function App() {
   return (
