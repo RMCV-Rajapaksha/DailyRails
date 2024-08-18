@@ -1,7 +1,7 @@
 const { Sequelize, DataTypes } = require("sequelize");
 
 module.exports = (sequelize) => {
-  const PassengerAnnouncement = sequelize.define(
+  const Report = sequelize.define(
     "Report",
     {
       ID: {
@@ -36,5 +36,5 @@ module.exports = (sequelize) => {
     }
   );
 
-  return PassengerAnnouncement;
+  return Report;
 };
