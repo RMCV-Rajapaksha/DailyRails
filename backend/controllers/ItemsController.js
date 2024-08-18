@@ -1,5 +1,5 @@
 const express = require("express");
-const router = express.Router();
+
 const { Item } = require("../models");
 
 // Utility function for fetching items with pagination and filtering
