@@ -119,14 +119,6 @@ const Navbar = () => {
                       Report
                     </Link>
                   </li>
-                  <li>
-                    <Link
-                      to="/news"
-                      className="block py-5 text-sm px-7 text-primary hover:bg-gray-100"
-                    >
-                      News
-                    </Link>
-                  </li>
                 </ul>
               )}
             </li>
