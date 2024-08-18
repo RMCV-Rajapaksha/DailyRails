@@ -28,7 +28,7 @@ export const Home = () => {
               Always stay informed and plan your journeys with confidence.
               Features like online ticket booking make train travel more
               efficient and stress-free. Join us in transforming train commuting
-              with DailyRails, making your travels smoother and more reliable
+              with DailyRails, making your travels smoother and more reliables
               nationwide.
             </p>
             <Link
