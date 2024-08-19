@@ -1,5 +1,5 @@
 const express = require("express");
-const { Announcement } = require("../models");
+const Announcement = require("../models");
 
 // GET all announcements with pagination
 const getAnnouncement = async (req, res) => {

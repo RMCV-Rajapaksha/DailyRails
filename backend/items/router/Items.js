@@ -5,7 +5,7 @@ const {
   postItem,
   deleteItem,
   patchItem,
-} = require("../controllers/ItemsController");
+} = require("../controller/ItemsController");
 
 const router = express.Router();
 

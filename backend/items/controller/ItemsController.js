@@ -1,6 +1,8 @@
 const express = require("express");
+const { Sequelize, DataTypes } = require("sequelize");
+const db = require("../../models"); // Adjust the path according to your project structure
 
-const { Item } = require("../models");
+const Item = db.Item; // Ensure this path is correct
 
 // Utility function for fetching items with pagination and filtering
 async function fetchItems(req, res, statusFilter) {
@@ -22,32 +24,23 @@ async function fetchItems(req, res, statusFilter) {
       offset,
       limit,
     });
-
-    return res.json({
-      totalItems: count,
-      totalPages: Math.ceil(count / limit),
-      currentPage: page,
-      items,
-    });
+    res.json({ count, items });
   } catch (error) {
-    return res.status(500).json({ error: "Failed to fetch items" });
+    res.status(500).json({ error: error.message });
   }
 }
 
 // GET all approved items with pagination and filtering
 const getItemApproved = async (req, res) => {
-  // router.get("/", (req, res) => {
   return fetchItems(req, res, "Approved");
 };
 
 // GET all not approved items with pagination and filtering
 const getItemNotApproved = async (req, res) => {
-  // router.get("/notapprove", (req, res) => {
   return fetchItems(req, res, "Not Approved");
 };
 
 // POST a new item
-// router.post("/", async (req, res) => {
 const postItem = async (req, res) => {
   try {
     const newItem = await Item.create(req.body);
@@ -58,7 +51,6 @@ const postItem = async (req, res) => {
 };
 
 // DELETE an item by ID
-// router.delete("/:id", async (req, res) => {
 const deleteItem = async (req, res) => {
   try {
     const rowsDeleted = await Item.destroy({
@@ -76,7 +68,6 @@ const deleteItem = async (req, res) => {
 };
 
 // PATCH to update item status
-// router.patch("/:id/:status", async (req, res) => {
 const patchItem = async (req, res) => {
   try {
     const [updated] = await Item.update(
