@@ -8,9 +8,11 @@ app.use(express.json());
 // Routers
 const AnnouncementRouter = require("./routes/announcements"); // This should be correct
 const ItemRouter = require("./routes/items"); // Update this path
+const ReportRouter = require("./routes/report");
 
 app.use("/announcements", AnnouncementRouter);
 app.use("/items", ItemRouter);
+app.use("/reports", ReportRouter);
 
 db.sequelize
   .sync()

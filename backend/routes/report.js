@@ -1,17 +1,17 @@
 const express = require("express");
 const {
-  getItems,
-  postItems,
-  deleteItems,
-  putItems,
+  getReport,
+  postReport,
+  deleteReport,
+  putReport,
 } = require("../controllers/ReportController");
 
-const router = express.Router();
+const router = express.Router(); // This is correct
 
 // Define routes
-router.get("/", getItems);
-router.post("/", postItems);
-router.put("/:id", deleteItems); // Ensure this is correctly defined
-router.delete("/:id", putItems);
+router.get("/", getReport);
+router.post("/", postReport);
+router.put("/:id", putReport);
+router.delete("/:id", deleteReport);
 
 module.exports = router;

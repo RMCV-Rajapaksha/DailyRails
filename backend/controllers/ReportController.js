@@ -1,19 +1,17 @@
 const express = require("express");
 const { Report } = require("../models");
 
-// GET all announcements with pagination
-const getItems = async (req, res) => {
+// GET all reports with pagination
+const getReport = async (req, res) => {
   const page = parseInt(req.query.page) || 1;
   const limit = parseInt(req.query.limit) || 10;
   const offset = (page - 1) * limit;
-  const announcementToFilter = req.query.Announcement_To;
+  const typeToFilter = req.query.Type;
 
-  const whereClause = announcementToFilter
-    ? { Announcement_To: announcementToFilter }
-    : {};
+  const whereClause = typeToFilter ? { Type: typeToFilter } : {};
 
   try {
-    const { count, rows: announcements } = await Announcement.findAndCountAll({
+    const { count, rows: reports } = await Report.findAndCountAll({
       where: whereClause,
       offset,
       limit,
@@ -23,62 +21,76 @@ const getItems = async (req, res) => {
       totalItems: count,
       totalPages: Math.ceil(count / limit),
       currentPage: page,
-      announcements,
+      reports,
     });
   } catch (error) {
-    res.status(500).json({ error: "Failed to fetch announcements" });
+    res.status(500).json({ error: "Failed to fetch reports" });
   }
 };
 
-// POST a new announcement
-const postItems = async (req, res) => {
-  const announcement = req.body;
+// POST a new report
+
+const postReport = async (req, res) => {
+  const reportData = req.body;
+
+  // Validate the incoming data (example validation)
+  if (
+    !reportData.Name ||
+    !reportData.NIC ||
+    !reportData.Type ||
+    !reportData.Description ||
+    !reportData.ClosestStation
+  ) {
+    return res.status(400).json({ error: "All fields are required" });
+  }
+
   try {
-    const newAnnouncement = await Announcement.create(announcement);
-    res.json(newAnnouncement);
+    const newReport = await Report.create(reportData);
+    res.status(201).json(newReport); // Use 201 status code for resource creation
   } catch (error) {
-    res.status(500).json({ error: "Failed to create announcement" });
+    console.error(error); // Log the error for debugging
+    res.status(500).json({ error: "Failed to create report" });
   }
 };
 
-// DELETE an announcement by ID
-const deleteItems = async (req, res) => {
+// DELETE a report by ID
+const deleteReport = async (req, res) => {
   const id = req.params.id;
   try {
-    const rowsDeleted = await Announcement.destroy({
+    const rowsDeleted = await Report.destroy({
       where: { ID: id },
     });
     if (rowsDeleted > 0) {
-      res.json({ message: "Announcement deleted successfully" });
+      res.json({ message: "Report deleted successfully" });
     } else {
-      res.status(404).json({ error: "Announcement not found" });
+      res.status(404).json({ error: "Report not found" });
     }
   } catch (error) {
-    res.status(500).json({ error: "Failed to delete announcement" });
+    res.status(500).json({ error: "Failed to delete report" });
   }
 };
 
-// PUT (update) an announcement by ID
-const putItems = async (req, res) => {
+// PUT (update) a report by ID
+const putReport = async (req, res) => {
   const id = req.params.id;
   const updatedData = req.body;
 
   try {
-    const announcement = await Announcement.findByPk(id);
-    if (announcement) {
-      await announcement.update(updatedData);
-      res.json({ message: "Announcement updated successfully", announcement });
+    const report = await Report.findByPk(id);
+    if (report) {
+      await report.update(updatedData);
+      res.json({ message: "Report updated successfully", report });
     } else {
-      res.status(404).json({ error: "Announcement not found" });
+      res.status(404).json({ error: "Report not found" });
     }
   } catch (error) {
-    res.status(500).json({ error: "Failed to update announcement" });
+    res.status(500).json({ error: "Failed to update report" });
   }
 };
 
 module.exports = {
-  getItems,
-  postItems,
-  deleteItems,
-  putItems,
+  getReport,
+  postReport,
+  deleteReport,
+  putReport,
 };
