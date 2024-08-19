@@ -4,7 +4,7 @@ const {
   postReport,
   deleteReport,
   putReport,
-} = require("../controllers/ReportController");
+} = require("../controller/ReportController");
 
 const router = express.Router(); // This is correct
 

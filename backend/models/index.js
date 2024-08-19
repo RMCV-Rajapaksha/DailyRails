@@ -63,6 +63,17 @@ if (db[announcementModel.name].associate) {
   db[announcementModel.name].associate(db);
 }
 
+const reportModel = require(path.join(__dirname, "../reports/models/Report"))(
+  sequelize,
+  Sequelize.DataTypes
+);
+db[reportModel.name] = reportModel;
+console.log(reportModel.name);
+
+if (db[reportModel.name].associate) {
+  db[reportModel.name].associate(db);
+}
+
 // If there are associations, make sure they're set up correctly
 Object.keys(db).forEach((modelName) => {
   if (db[modelName].associate) {
