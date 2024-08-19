@@ -52,6 +52,17 @@ if (db[itemModel.name].associate) {
   db[itemModel.name].associate(db);
 }
 
+const announcementModel = require(path.join(
+  __dirname,
+  "../announcement/models/Announcement"
+))(sequelize, Sequelize.DataTypes);
+db[announcementModel.name] = announcementModel;
+console.log(announcementModel.name);
+
+if (db[announcementModel.name].associate) {
+  db[announcementModel.name].associate(db);
+}
+
 // If there are associations, make sure they're set up correctly
 Object.keys(db).forEach((modelName) => {
   if (db[modelName].associate) {

@@ -4,7 +4,7 @@ const {
   postAnnouncement,
   deleteAnnouncement,
   putAnnouncement,
-} = require("../controllers/AnnouncementsController");
+} = require("../controller/AnnouncementsController");
 
 const router = express.Router();
 

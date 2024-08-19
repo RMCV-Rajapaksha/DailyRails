@@ -1,6 +1,8 @@
 const express = require("express");
-const Announcement = require("../models");
+const { Sequelize, DataTypes } = require("sequelize");
+const db = require("../../models"); // Adjust the path according to your project structure
 
+const Announcement = db.Announcement; // Ensure this path is correct
 // GET all announcements with pagination
 const getAnnouncement = async (req, res) => {
   const page = parseInt(req.query.page) || 1;

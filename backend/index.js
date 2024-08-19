@@ -6,7 +6,7 @@ const db = require("./models"); // Ensure this path is correct
 app.use(express.json());
 
 // Routers
-const AnnouncementRouter = require("./routes/Announcements"); // This should be correct
+const AnnouncementRouter = require("./announcement/router/Announcements"); // This should be correct
 const ItemRouter = require("./items/router/Items"); // Update this path
 const ReportRouter = require("./routes/Report");
 
