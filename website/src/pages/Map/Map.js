@@ -165,8 +165,9 @@
 // export default Map;
 
 import React, { useEffect, useState } from "react";
-import { database, ref } from "../firebase";
+import { database, ref } from "./config/firebase";
 import { onValue, off } from "firebase/database";
+import InputField from "../../components/InputField";
 
 function Map() {
   const [train, setTrain] = useState("");
@@ -296,21 +297,15 @@ function Map() {
               Stay ahead of your schedule with DailyRails your daily commute
               companion.
             </p>
-            <div className="relative mb-4">
-              <label
-                htmlFor="train"
-                className="text-sm leading-7 text-primary font-body"
-              >
-                Name of the train or No
-              </label>
-              <input
-                onChange={(e) => setTrain(e.target.value)}
-                type="text"
-                id="train"
-                name="train"
-                className="w-full px-3 py-1 text-base leading-8 transition-colors duration-200 ease-in-out border rounded-sm outline-none text-secondary bg-gray-50 border-secondary-1 focus:border-primary focus:ring-2 focus:ring-primary-200"
-              />
-            </div>
+
+            <InputField
+              label="Name of the train or No"
+              id="train"
+              value={train}
+              onChange={(e) => setTrain(e.target.value)}
+              placeholder="Name of the train or No "
+              required
+            />
 
             <button
               onClick={getLocation}

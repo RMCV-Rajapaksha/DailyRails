@@ -11,45 +11,51 @@ import { Link } from "react-router-dom";
 export const Home = () => {
   return (
     <>
-      <section className="bg-white">
-        <div className="grid max-w-screen-xl px-4 py-8 mx-auto mt-10 mb-20 lg:gap-8 xl:gap-0 lg:py-16 lg:grid-cols-12">
-          <div className="mr-auto place-self-center lg:col-span-7 font-body">
-            <h1 className="max-w-2xl mb-4 text-6xl font-extrabold leading-none tracking-tight md:text-7xl xl:text-8xl text-primary font-body">
-              Daily Rails
-            </h1>
-            <h2 className="max-w-xl mb-4 text-lg font-extrabold leading-none tracking-tight md:text-3xl xl:text-4xl text-primary font-body">
-              Navigate your day, one train at a time
-            </h2>
-            <p className="max-w-2xl mb-6 font-light lg:mb-8 md:text-lg lg:text-xl text-secondary-1 font-body">
-              Welcome to DailyRails, your ultimate solution for real-time train
-              tracking across Sri Lanka. DailyRails enhances your commute with
-              up-to-the-minute train locations, notifications for breakdowns and
-              cancellations, detailed schedules, and predicted arrival times.
-              Always stay informed and plan your journeys with confidence.
-              Features like online ticket booking make train travel more
-              efficient and stress-free. Join us in transforming train commuting
-              with DailyRails, making your travels smoother and more reliables
-              nationwide.
-            </p>
-            <Link
-              to="/map"
-              className="inline-flex items-center justify-center px-5 py-3 mx-3 text-base font-medium text-center text-white rounded-sm font-body bg-primary hover:bg-secondary"
-            >
-              Map
-            </Link>
-            <Link
-              to="/schedule"
-              className="inline-flex items-center justify-center px-5 py-3 text-base font-medium text-center bg-white border-2 rounded-sm font-body text-primary border-primary"
-            >
-              Schedule
-            </Link>
-          </div>
-          <div className="hidden lg:mt-0 lg:col-span-5 lg:flex">
-            <img
-              className="z-10 w-3/4 h-3/4 lg:w-full lg:h-full"
-              src={HeroTrain}
-              alt="mockup"
-            />
+      <section className="flex items-center justify-center min-h-screen bg-white font-body">
+        <div className="w-full overflow-hidden max-w-7xl ">
+          <div className="flex flex-col md:flex-row">
+            <div className="p-8 bg-transparent md:w-1/2">
+              <h1 className="mb-2 font-bold text-8xl text-navy-900 font-body text-primary">
+                DailyRails
+              </h1>
+              <h2 className="mb-4 text-4xl font-bold text-navy-700">
+                Navigate your day, one train at a time
+              </h2>
+              <p className="mb-4 text-xl text-secondary-1">
+                Welcome to DailyRails, your ultimate solution for real-time
+                train tracking across Sri Lanka. DailyRails enhances your
+                commute with up-to-the-minute train locations, notifications for
+                breakdowns and cancellations, detailed schedules, and predicted
+                arrival times. Stay informed and plan your journeys with
+                confidence. Features like online ticket booking make train
+                travel more efficient and stress-free. Join us in transforming
+                train commuting with DailyRails, making your travels smoother
+                and more reliable nationwide.
+              </p>
+              <div className="flex space-x-4">
+                <Link
+                  to="map"
+                  className="px-6 py-2 text-white transition-colors rounded-sm bg-primary hover:bg-secondary-1 hover:bg-navy-800"
+                >
+                  Map
+                </Link>
+                <Link
+                  to="schedule"
+                  className="px-6 py-2 transition-colors bg-white border-2 rounded-sm text-navy-900 border-primary hover:bg-secondary-1"
+                >
+                  Schedule
+                </Link>
+              </div>
+            </div>
+            <div className="relative md:w-1/2">
+              <div className="h-full ">
+                <img
+                  src={HeroTrain}
+                  alt="Train illustration"
+                  className="object-cover w-full h-full"
+                />
+              </div>
+            </div>
           </div>
         </div>
       </section>
@@ -58,13 +64,13 @@ export const Home = () => {
         <div className="items-center max-w-screen-xl gap-16 px-4 py-8 mx-auto lg:grid lg:grid-cols-2 lg:py-16 lg:px-6 font-body">
           <div className="order-2 hidden grid-cols-1 gap-4 mt-8 lg:order-1 md:grid">
             <img
-              className="w-full mt-4 rounded-lg lg:mt-10 "
+              className="w-full mt-4 rounded-lg lg:mt-10 md:hidden "
               src={GPS}
               alt="office content 2"
             />
           </div>
 
-          <div className="order-1 font-light text-gray-500 lg:order-2 sm:text-lg dark:text-gray-400">
+          <div className="order-1 font-light lg:order-2 sm:text-lg ">
             <h2 className="mb-4 text-4xl font-extrabold tracking-tight text-primary">
               Your Journey, Streamlined
             </h2>
@@ -90,11 +96,11 @@ export const Home = () => {
 
       <section class="bg-white ">
         <div class="gap-16 items-center py-8 px-4 mx-auto max-w-screen-xl lg:grid lg:grid-cols-2 lg:py-16 lg:px-6 font-body">
-          <div class="font-light text-gray-500 sm:text-lg dark:text-gray-400">
+          <div class="font-light  sm:text-lg ">
             <h2 class="mb-4 text-4xl tracking-tight font-extrabold text-primary ">
               Your Reliable Train Timetable
             </h2>
-            <p class="mb-4 text-xl text-secondary-1">
+            <p class="mb-4 text-xl text-secondary">
               DailyRails' Timetable feature provides detailed and up-to-date
               train schedules across Sri Lanka. Users can easily search routes,
               view departure and arrival times, and find the best connections
@@ -118,7 +124,7 @@ export const Home = () => {
         <div className="items-center max-w-screen-xl gap-16 px-4 py-8 mx-auto lg:grid lg:grid-cols-2 lg:py-16 lg:px-6 font-body">
           <div className="order-2 hidden grid-cols-1 gap-4 mt-8 lg:order-1 md:grid">
             <img
-              className="w-full mt-4 rounded-lg lg:mt-10"
+              className="w-full mt-4 rounded-lg lg:mt-10 md:hidden"
               src={Booking}
               alt="office content 2"
             />

@@ -7,8 +7,8 @@ import Found from "../pages/Found";
 import Lost from "../pages/Lost";
 import Schedule from "../pages/Schedule";
 import Contact from "../pages/Contact";
-import Map from "../pages/Map";
-import SubmitItem from "../pages/SubmitItem";
+import Map from "../pages/Map/Map";
+import SubmitItem from "../pages/SubmitItem/SubmitItem";
 import News from "../pages/News";
 
 const router1 = createBrowserRouter([

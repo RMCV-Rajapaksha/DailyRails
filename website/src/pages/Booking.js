@@ -1,4 +1,6 @@
 import React, { useState, useEffect } from "react";
+import Button from "../components/Button";
+import InputField from "../components/InputField";
 
 import train_01 from "../assets/images/train_01.jpg";
 import train_02 from "../assets/images/train_02.jpg";
@@ -54,88 +56,46 @@ function Booking() {
       {/* Form */}
       <div className="flex items-center justify-center">
         <form className="w-full max-w-lg p-5">
-          <div className="flex flex-wrap mb-6 -mx-3">
-            <div className="w-full px-3 mb-5">
-              <label
-                htmlFor="from"
-                className="block mb-2 text-sm text-primary font-body"
-              >
-                From
-              </label>
-              <input
-                onChange={(e) => setFrom(e.target.value)}
-                type="text"
-                id="from"
-                className="shadow-sm bg-gray-50 border border-secondary-1 text-tertiary text-sm rounded-sm focus:border-primary block w-full p-2.5"
-                placeholder="Enter departure station"
-                required
-              />
-            </div>
-            <div className="w-full px-3 mb-5">
-              <label
-                htmlFor="to"
-                className="block mb-2 text-sm text-primary font-body"
-              >
-                To
-              </label>
-              <input
-                onChange={(e) => setTo(e.target.value)}
-                type="text"
-                id="to"
-                className="shadow-sm bg-gray-50 border border-secondary-1 text-tertiary text-sm rounded-sm focus:border-primary block w-full p-2.5"
-                placeholder="Enter destination station"
-                required
-              />
-            </div>
-          </div>
-          <div className="flex flex-wrap mb-6 -mx-3">
-            <div className="w-full px-3 mb-5">
-              <label
-                htmlFor="date"
-                className="block mb-2 text-sm text-primary font-body"
-              >
-                Date
-              </label>
-              <input
-                onChange={(e) => setDate(e.target.value)}
-                type="date"
-                id="date"
-                className="shadow-sm bg-gray-50 border border-secondary-1 text-tertiary text-sm rounded-sm focus:border-primary block w-full p-2.5"
-                required
-              />
-            </div>
-          </div>
-          <div className="flex flex-wrap mb-6 -mx-3">
-            <div className="w-full px-3 mb-5">
-              <label
-                htmlFor="seats"
-                className="block mb-2 text-sm text-primary font-body"
-              >
-                Seats
-              </label>
-              <input
-                onChange={(e) => setSeats(e.target.value)}
-                type="number"
-                id="seats"
-                className="shadow-sm bg-gray-50 border border-secondary-1 text-tertiary text-sm rounded-sm focus:border-primary block w-full p-2.5"
-                placeholder="Enter number of seats"
-                required
-              />
-            </div>
-          </div>
-          <button
-            type="submit"
-            className="p-3 mr-2 text-white rounded-sm bg-primary hover:bg-secondary"
-          >
+          <InputField
+            label="From"
+            id="from"
+            value={from}
+            onChange={(e) => setFrom(e.target.value)}
+            placeholder="Enter departure station"
+            required
+          />
+          <InputField
+            label="To"
+            id="to"
+            value={to}
+            onChange={(e) => setTo(e.target.value)}
+            placeholder="Enter destination station"
+            required
+          />
+          <InputField
+            label="Date"
+            type="date"
+            id="date"
+            value={date}
+            onChange={(e) => setDate(e.target.value)}
+            required
+          />
+          <InputField
+            label="Seats"
+            type="number"
+            id="seats"
+            value={seats}
+            onChange={(e) => setSeats(e.target.value)}
+            placeholder="Enter number of seats"
+            required
+          />
+
+          <Button type="submit" className="mr-2">
             Submit
-          </button>
-          <button
-            onClick={reset}
-            type="reset"
-            className="p-3 text-white rounded-sm bg-primary hover:bg-secondary"
-          >
+          </Button>
+          <Button type="reset" onClick={reset}>
             Reset
-          </button>
+          </Button>
         </form>
       </div>
     </>

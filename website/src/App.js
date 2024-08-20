@@ -1,10 +1,9 @@
 import AppRouter from "./Routers/AppRouter";
 
-
 function App() {
   return (
     <div className="w-full h-screen">
- <AppRouter/>
+      <AppRouter />
     </div>
   );
 }
