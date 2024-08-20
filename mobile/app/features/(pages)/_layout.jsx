@@ -1,7 +1,7 @@
 import React from "react";
 import { View, Text, Button } from "react-native";
 
-const HomeScreen = ({ navigation }) => {
+const PageLayout = ({ navigation }) => {
   return (
     <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
       <Text>Home Screen</Text>
@@ -14,4 +14,4 @@ const HomeScreen = ({ navigation }) => {
   );
 };
 
-export default HomeScreen;
+export default PageLayout;
