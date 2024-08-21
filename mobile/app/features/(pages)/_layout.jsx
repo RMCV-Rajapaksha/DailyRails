@@ -1,16 +1,30 @@
-import React from "react";
-import { View, Text, Button } from "react-native";
+import { View, Text, Button ,ScrollView, StatusBar, TouchableOpacity } from 'react-native'
+import React from 'react'
+import {Stack} from 'expo-router';
+import { SafeAreaView } from 'react-native-safe-area-context';
+
+import CustomButton from './components/CustomButton';
+
+// const PageLayout = () => {
+//   return (
+//     <>
+//       <SafeAreaView className="h-full">
+//         <ScrollView>
+//           <View className="flex justify-center items-center h-screen">
+//             <Link href="./map" className='w-full flex justify-center items-center'>Go to Mao</Link>
+//           </View>
+//         </ScrollView>
+//         <StatusBar style="auto" />
+//       </SafeAreaView>
+//     </>
+//   )
+// }
 
 const PageLayout = ({ navigation }) => {
   return (
-    <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
-      <Text>Home Screen</Text>
-      <Button title="Go to Map" onPress={() => navigation.navigate("Map")} />
-      <Button
-        title="Go to upload"
-        onPress={() => navigation.navigate("Upload")}
-      />
-    </View>
+    <Stack>
+      <Stack.Screen name="index" options={{headerShown: true}} />
+    </Stack>
   );
 };
 

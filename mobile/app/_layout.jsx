@@ -1,6 +1,6 @@
 import { View, Text } from 'react-native'
 import React, {useEffect} from 'react'
-import { SplashScreen, Slot } from 'expo-router'
+import { SplashScreen, Stack } from 'expo-router'
 import { useFonts } from 'expo-font'
 
 
@@ -23,9 +23,9 @@ const RootLayout = () => {
     return null;
   }
   return (
-    <>
-      <Slot/>
-    </>
+    <Stack>
+      <Stack.Screen name="index" options={{headerShown: true}} />
+    </Stack>
   )
 }
 

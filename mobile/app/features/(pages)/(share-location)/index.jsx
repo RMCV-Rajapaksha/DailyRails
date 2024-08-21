@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import { View, Text, Button, TextInput } from "react-native";
 
 import { getLocation } from "./utils/locationService";
-import { database, ref, set } from "../../../../config/firebase";
+import { database, ref, set } from "./config/firebase";
 
 const UploadData = () => {
   const [location, setLocation] = useState(null);
