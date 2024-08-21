@@ -10,7 +10,6 @@ import {
   FaArrowLeft,
   FaArrowRight,
 } from "react-icons/fa";
-import "./DashboardPage.css";
 
 const DashboardPage = () => {
   const [isExpanded, setIsExpanded] = useState(true);

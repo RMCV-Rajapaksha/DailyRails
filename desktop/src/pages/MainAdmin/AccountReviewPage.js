@@ -1,6 +1,5 @@
 import React from "react";
 import { useNavigate } from "react-router-dom"; // Update to useNavigate
-import "./AccountReviewPage.css";
 
 const AccountReviewPage = () => {
   const navigate = useNavigate(); // Update to useNavigate
