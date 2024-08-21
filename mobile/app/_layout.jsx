@@ -1,20 +1,32 @@
-import * as React from "react";
-import { NavigationContainer } from "@react-navigation/native";
-import { createNativeStackNavigator } from "@react-navigation/native-stack";
-import HomeScreen from "./screens/HomeScreen";
-import MapScreen from "./screens/MapScreen";
-import UploadData from "./screens/UploadData";
+import { View, Text } from 'react-native'
+import React, {useEffect} from 'react'
+import { SplashScreen, Stack } from 'expo-router'
+import { useFonts } from 'expo-font'
 
-const Stack = createNativeStackNavigator();
 
-export default function App() {
+SplashScreen.preventAutoHideAsync()
+
+const RootLayout = () => {
+  const [fontsLoaded, error] = useFonts({
+    "Roboto-Black": require("../shared/assets/fonts/Roboto-Black.ttf"),
+  });
+  
+  useEffect(() => {
+    if (error) throw error;
+  
+    if (fontsLoaded) {
+      SplashScreen.hideAsync();
+    }
+  }, [fontsLoaded, error]);
+  
+  if (!fontsLoaded && !error) {
+    return null;
+  }
   return (
-    <NavigationContainer>
-      <Stack.Navigator initialRouteName="Home">
-        <Stack.Screen name="Home" component={HomeScreen} />
-        <Stack.Screen name="Map" component={MapScreen} />
-        <Stack.Screen name="Upload" component={UploadData} />
-      </Stack.Navigator>
-    </NavigationContainer>
-  );
+    <Stack>
+      <Stack.Screen name="index" options={{headerShown: true}} />
+    </Stack>
+  )
 }
+
+export default RootLayout
