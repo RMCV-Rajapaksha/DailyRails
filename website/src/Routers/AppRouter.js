@@ -1,15 +1,15 @@
 import React from "react";
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
 import MainLayOut from "../LayOut/LayOut";
-import Home from "../pages/Home";
-import Booking from "../pages/Booking";
-import Found from "../pages/Found";
-import Lost from "../pages/Lost";
-import Schedule from "../pages/Schedule";
-import Contact from "../pages/Contact";
-import Map from "../pages/Map/Map";
-import SubmitItem from "../pages/SubmitItem/SubmitItem";
-import News from "../pages/News";
+import Home from "../features/Home";
+import Booking from "../features/Booking/pages/Booking";
+import Found from "../features/Recovery/pages/Found";
+import Lost from "../features/Recovery/pages/Lost";
+import Schedule from "../features/Schedule/pages/Schedule";
+import Contact from "../features/Contact/pages/Contact";
+import Map from "../features/Map/pages/Map";
+import SubmitItem from "../features/Recovery/pages/SubmitItem";
+import News from "../features/News/pages/News";
 
 const router1 = createBrowserRouter([
   {

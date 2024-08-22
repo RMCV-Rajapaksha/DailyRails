@@ -165,9 +165,9 @@
 // export default Map;
 
 import React, { useEffect, useState } from "react";
-import { database, ref } from "./config/firebase";
+import { database, ref } from "../config/firebase";
 import { onValue, off } from "firebase/database";
-import InputField from "../../components/InputField";
+import InputField from "../../../components/InputField";
 
 function Map() {
   const [train, setTrain] = useState("");

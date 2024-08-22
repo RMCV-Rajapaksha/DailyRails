@@ -1,10 +1,10 @@
 import React, { useState, useEffect } from "react";
-import Button from "../components/Button";
-import InputField from "../components/InputField";
+import Button from "../../../components/Button";
+import InputField from "../../../components/InputField";
 
-import train_01 from "../assets/images/train_01.jpg";
-import train_02 from "../assets/images/train_02.jpg";
-import train_03 from "../assets/images/train_03.jpg";
+import train_01 from "../../../assets/images/train_01.jpg";
+import train_02 from "../../../assets/images/train_02.jpg";
+import train_03 from "../../../assets/images/train_03.jpg";
 
 const images = [train_01, train_02, train_03];
 

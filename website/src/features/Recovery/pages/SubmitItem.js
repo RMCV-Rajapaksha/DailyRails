@@ -1,6 +1,6 @@
 import React, { useState } from "react";
-import Button from "../../components/Button";
-import InputField from "../../components/InputField";
+import Button from "../../../components/Button";
+import InputField from "../../../components/InputField";
 
 function SubmitItem() {
   const [name, setName] = useState("");
