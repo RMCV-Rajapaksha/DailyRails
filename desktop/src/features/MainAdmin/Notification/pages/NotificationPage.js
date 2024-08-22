@@ -6,7 +6,7 @@ import {
   FaChevronLeft,
   FaChevronRight,
 } from "react-icons/fa";
-import Sidebar from "./components/SideBar";
+import Sidebar from "../../components/SideBar";
 
 const NotificationsPage = () => {
   const [formData, setFormData] = useState({
