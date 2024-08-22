@@ -7,12 +7,10 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 export default function App(){
   return (
     <>
-      <SafeAreaView className="bg-blue-500">
-        <ScrollView>
-          <View className="flex justify-center items-center h-screen">
-            <Link href="./features/(pages)" className='w-full flex justify-center items-center'>Go to Home Page</Link>
+      <SafeAreaView className="h-full">
+          <View className="items-center ">
+            <Link href="./features/(pages)" className='flex justify-center items-center text-blue-500'>Go to Home Page</Link>
           </View>
-        </ScrollView>
         <StatusBar style="auto" />
       </SafeAreaView>
     </>

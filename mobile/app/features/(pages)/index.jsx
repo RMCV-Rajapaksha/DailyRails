@@ -9,10 +9,10 @@ export default function App(){
     <>
       <SafeAreaView className="h-full">
         <ScrollView>
-          <View className="flex justify-center items-center h-screen">
-            <Text className="text-xl text-justify">Home Page</Text>
-            <Link href="./(map)" className='w-full flex justify-center items-center '>Go to Map</Link>
-            <Link href="./(share-location)" className='w-full flex justify-center items-center'>Go to Share Location</Link>
+          <View className="flex justify-center items-center">
+            <Text className="text-xl text-justify p-2">Home Page</Text>
+            <Link href="./(map)" className=' flex justify-center items-center p-2 text-blue-500'>Go to Map</Link>
+            <Link href="./(share-location)" className='flex justify-center items-center p-2 text-blue-500'>Go to Share Location</Link>
           </View>
         </ScrollView>
         <StatusBar style="auto" />
