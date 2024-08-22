@@ -1,15 +1,16 @@
 import React from "react";
-import LostItems from "../components/LostItems";
-import { LostItemsData } from "../data";
+
+import { FoundItemsData } from "../../../data";
+import FoundItems from "../components/FoundItems";
 import { FaChevronLeft, FaChevronRight } from "react-icons/fa";
 
-function News() {
+function Found() {
   return (
     <>
       <div className="px-8 md:px-[200px] min-h-[80vh] mt-20">
-        {LostItemsData &&
-          LostItemsData.map((item) => (
-            <LostItems key={item.id} LostItems={item} />
+        {FoundItemsData &&
+          FoundItemsData.map((item) => (
+            <FoundItems key={item.id} FoundItems={item} />
           ))}
       </div>
       <div className="flex justify-center mt-4">
@@ -29,4 +30,4 @@ function News() {
   );
 }
 
-export default News;
+export default Found;

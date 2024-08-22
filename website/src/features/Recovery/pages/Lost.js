@@ -1,7 +1,7 @@
 import React from "react";
 
 import LostItems from "../components/LostItems";
-import { LostItemsData } from "../data";
+import { LostItemsData } from "../../../data";
 import { FaChevronLeft, FaChevronRight } from "react-icons/fa";
 
 function Lost() {
