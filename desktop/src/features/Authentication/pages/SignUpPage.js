@@ -1,6 +1,5 @@
 import React from "react";
-import "./SignUpPage.css";
-import logo from "../../assets/images/Logo-3.png";
+import logo from "../../../assets/images/Logo-1.png";
 import { useState } from "react";
 
 const SignUpPage = () => {

@@ -1,10 +1,10 @@
 import React from "react";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
-import LoginPage from "./pages/LoginPage/LoginPage";
-import SignUpPage from "./pages/SignUpPage/SignUpPage";
-import AccountReviewPage from "./pages/MainAdmin/AccountReviewPage";
-import DashboardPage from "./pages/MainAdmin/DashboardPage";
-import NotificationPage from "./pages/MainAdmin/NotificationPage";
+import LoginPage from "./features/Authentication/pages/LoginPage";
+import SignUpPage from "./features/Authentication/pages/SignUpPage";
+import AccountReviewPage from "./features/Authentication/pages/AccountReviewPage";
+import DashboardPage from "./features/DashboardPage";
+import NotificationPage from "./features/MainAdmin/Notification/pages/NotificationPage";
 
 function App() {
   return (
