@@ -13,16 +13,11 @@ const validateNewAnnouncement = [
     .isLength({ min: 1 })
     .withMessage("Announcement_To is required"),
 
-  body("Content")
+  body("Description")
     .isString()
     .withMessage("Content must be a string")
     .isLength({ min: 1, max: 1000 })
     .withMessage("Content should be between 1 and 1000 characters"),
-
-  body("Date")
-    .optional()
-    .isISO8601()
-    .withMessage("Date must be in ISO8601 format (YYYY-MM-DD)"),
 ];
 
 const validateAnnouncementId = [

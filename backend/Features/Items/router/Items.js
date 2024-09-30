@@ -29,12 +29,6 @@ router.get("/", getItemApproved);
 router.get("/notapprove", getItemNotApproved);
 router.post("/", validateNewItem, validate, postItem);
 router.delete("/:id", validateItemId, validate, deleteItem);
-router.patch(
-  "/:id/:status",
-  validateItemId,
-  validateStatusUpdate,
-  validate,
-  patchItem
-);
+router.patch("/:id", validateItemId, validate, patchItem);
 
 module.exports = router;

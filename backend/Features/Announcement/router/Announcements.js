@@ -21,10 +21,10 @@ const validate = (req, res, next) => {
   }
   next();
 };
-
+// validateNewAnnouncement, validate,
 // Define routes
 router.get("/", getAnnouncement);
-router.post("/", validateNewAnnouncement, validate, postAnnouncement);
+router.post("/", postAnnouncement);
 router.put(
   "/:id",
   validateAnnouncementId,

@@ -21,9 +21,9 @@ const ItemRouter = require("./Features/Items/router/Items");
 const ReportRouter = require("./Features/Reports/router/Report");
 
 // Use the routers
-app.use("/announcements", AnnouncementRouter);
-app.use("/items", ItemRouter);
-app.use("/reports", ReportRouter);
+app.use("/api/announcements", AnnouncementRouter);
+app.use("/api/items", ItemRouter);
+app.use("/api/reports", ReportRouter);
 
 // Sync database and start server
 db.sequelize

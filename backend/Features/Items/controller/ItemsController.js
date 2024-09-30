@@ -70,7 +70,7 @@ const deleteItem = async (req, res) => {
 const patchItem = async (req, res) => {
   try {
     const [updated] = await Item.update(
-      { Status: req.params.status },
+      { Status: "Approved" },
       { where: { id: req.params.id } }
     );
 
