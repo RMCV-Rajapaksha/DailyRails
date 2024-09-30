@@ -6,14 +6,35 @@ const {
   deleteItem,
   patchItem,
 } = require("../controller/ItemsController");
+const {
+  validateNewItem,
+  validateItemId,
+  validateStatusUpdate,
+} = require("../validators/itemsValidators");
+const { validationResult } = require("express-validator");
 
 const router = express.Router();
+
+// Middleware to check validation errors
+const validate = (req, res, next) => {
+  const errors = validationResult(req);
+  if (!errors.isEmpty()) {
+    return res.status(400).json({ errors: errors.array() });
+  }
+  next();
+};
 
 // Define routes
 router.get("/", getItemApproved);
 router.get("/notapprove", getItemNotApproved);
-router.post("/", postItem); // Ensure this is correctly defined
-router.delete("/:id", deleteItem);
-router.patch("/:id/:status", patchItem);
+router.post("/", validateNewItem, validate, postItem);
+router.delete("/:id", validateItemId, validate, deleteItem);
+router.patch(
+  "/:id/:status",
+  validateItemId,
+  validateStatusUpdate,
+  validate,
+  patchItem
+);
 
 module.exports = router;
