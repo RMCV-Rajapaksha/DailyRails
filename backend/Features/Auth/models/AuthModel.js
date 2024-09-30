@@ -1,30 +1,37 @@
 const { Sequelize, DataTypes } = require("sequelize");
 
 module.exports = (sequelize) => {
-  const Announcement = sequelize.define(
-    "Announcement",
+  const User = sequelize.define(
+    "User",
     {
       ID: {
         type: DataTypes.INTEGER,
         autoIncrement: true,
         primaryKey: true,
       },
-      Announcement_To: {
+      EmployeeID: {
+        // Fixed the spelling of "EmployeeID"
         type: DataTypes.STRING(20),
         allowNull: false,
       },
-      Title: {
+      Name: {
         type: DataTypes.STRING(50),
+        allowNull: false,
       },
-      Description: {
-        type: DataTypes.STRING(1000),
+      Email: {
+        type: DataTypes.STRING(100),
+        allowNull: false,
+      },
+      JobTitle: {
+        type: DataTypes.STRING(100),
+        allowNull: false,
       },
     },
     {
-      tableName: "ANNOUNCEMENTS",
+      tableName: "USER",
       timestamps: true,
     }
   );
 
-  return Announcement;
+  return User;
 };
