@@ -1,6 +1,6 @@
 const express = require("express");
 const { Sequelize, DataTypes } = require("sequelize");
-const db = require("../../models"); // Adjust the path according to your project structure
+const db = require("../../../models"); // Adjust the path according to your project structure
 
 const Announcement = db.Announcement; // Ensure this path is correct
 // GET all announcements with pagination

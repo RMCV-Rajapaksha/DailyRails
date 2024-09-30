@@ -10,7 +10,7 @@ const {
   validateNewItem,
   validateItemId,
   validateStatusUpdate,
-} = require("../validators/itemsValidators");
+} = require("../validators/ItemsValidators");
 const { validationResult } = require("express-validator");
 
 const router = express.Router();

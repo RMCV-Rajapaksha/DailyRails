@@ -41,10 +41,10 @@ fs.readdirSync(__dirname)
   });
 
 // Explicitly import models from different directories
-const itemModel = require(path.join(__dirname, "../items/models/Item"))(
-  sequelize,
-  Sequelize.DataTypes
-);
+const itemModel = require(path.join(
+  __dirname,
+  "../Features/Items/models/Items"
+))(sequelize, Sequelize.DataTypes);
 db[itemModel.name] = itemModel;
 console.log(itemModel.name);
 
@@ -54,7 +54,7 @@ if (db[itemModel.name].associate) {
 
 const announcementModel = require(path.join(
   __dirname,
-  "../announcement/models/Announcement"
+  "../Features/Announcement/models/Announcement"
 ))(sequelize, Sequelize.DataTypes);
 db[announcementModel.name] = announcementModel;
 console.log(announcementModel.name);
