@@ -63,10 +63,10 @@ if (db[announcementModel.name].associate) {
   db[announcementModel.name].associate(db);
 }
 
-const reportModel = require(path.join(__dirname, "../reports/models/Report"))(
-  sequelize,
-  Sequelize.DataTypes
-);
+const reportModel = require(path.join(
+  __dirname,
+  "../Features/Reports/models/Report"
+))(sequelize, Sequelize.DataTypes);
 db[reportModel.name] = reportModel;
 console.log(reportModel.name);
 

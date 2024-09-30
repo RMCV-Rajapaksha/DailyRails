@@ -8,7 +8,7 @@ app.use(express.json());
 // Routers
 const AnnouncementRouter = require("./Features/Announcement/router/Announcements"); // This should be correct
 const ItemRouter = require("./Features/Items/router/Items"); // Update this path
-const ReportRouter = require("./reports/router/report");
+const ReportRouter = require("./Features/Reports/router/Report");
 
 app.use("/announcements", AnnouncementRouter);
 app.use("/items", ItemRouter);
