@@ -1,7 +1,6 @@
 const express = require("express");
 const { Sequelize, DataTypes } = require("sequelize");
-const db = require("../../models"); // Adjust the path according to your project structure
-
+const db = require("../../../models"); // Adjust the path according to your project structure
 const Item = db.Item; // Ensure this path is correct
 
 // Utility function for fetching items with pagination and filtering
@@ -71,7 +70,7 @@ const deleteItem = async (req, res) => {
 const patchItem = async (req, res) => {
   try {
     const [updated] = await Item.update(
-      { Status: req.params.status },
+      { Status: "Approved" },
       { where: { id: req.params.id } }
     );
 

@@ -1,6 +1,6 @@
 const express = require("express");
 const { Sequelize, DataTypes } = require("sequelize");
-const db = require("../../models"); // Adjust the path according to your project structure
+const db = require("../../../models"); // Adjust the path according to your project structure
 
 const Announcement = db.Announcement; // Ensure this path is correct
 // GET all announcements with pagination
@@ -34,11 +34,14 @@ const getAnnouncement = async (req, res) => {
 
 // POST a new announcement
 const postAnnouncement = async (req, res) => {
+  console.log(req.body); // Log the incoming request body
   const announcement = req.body;
+
   try {
     const newAnnouncement = await Announcement.create(announcement);
     res.json(newAnnouncement);
   } catch (error) {
+    console.error(error); // Log the error for debugging
     res.status(500).json({ error: "Failed to create announcement" });
   }
 };
