@@ -3,25 +3,27 @@ const bcrypt = require("bcrypt");
 const db = require("../../../models");
 const User = db.Admin;
 
-// POST a new user
+// POST a new admin
 const postAdmin = async (req, res) => {
-  const user = req.body;
+  const adminData = req.body;
   try {
-    const existingUser = await User.findOne({ where: { Email: user.Email } });
-    if (existingUser) {
+    const existingAdmin = await User.findOne({
+      where: { Email: adminData.Email },
+    });
+    if (existingAdmin) {
       return res
         .status(400)
         .json({ error: "Admin with this email already exists" });
     }
 
-    const hashedPassword = await bcrypt.hash(user.Password, 10);
-    user.Password = hashedPassword;
+    const hashedPassword = await bcrypt.hash(adminData.Password, 10);
+    adminData.Password = hashedPassword;
 
-    const newUser = await User.create(user);
+    const newAdmin = await User.create(adminData);
     res.json("New Admin Role is Successfully Created");
   } catch (error) {
     console.error("Error details:", error);
-    res.status(500).json({ error: "Failed to create user" });
+    res.status(500).json({ error: "Failed to create admin" });
   }
 };
 
