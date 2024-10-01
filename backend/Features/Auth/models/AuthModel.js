@@ -10,7 +10,6 @@ module.exports = (sequelize) => {
         primaryKey: true,
       },
       EmployeeID: {
-        // Fixed the spelling of "EmployeeID"
         type: DataTypes.STRING(20),
         allowNull: false,
       },
@@ -19,6 +18,10 @@ module.exports = (sequelize) => {
         allowNull: false,
       },
       Email: {
+        type: DataTypes.STRING(100),
+        allowNull: false,
+      },
+      Password: {
         type: DataTypes.STRING(100),
         allowNull: false,
       },
