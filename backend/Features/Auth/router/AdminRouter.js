@@ -5,9 +5,9 @@ const {
   adminLogout,
 } = require("../controller/AdminController");
 const {
-  validateNewUser,
+  validateNewAdmin,
+  validateAdminId,
   validateLogin,
-  validateUserId,
 } = require("../validators/AdminValidators");
 const { validationResult } = require("express-validator");
 
@@ -23,7 +23,7 @@ const validate = (req, res, next) => {
 };
 
 // Route for creating a new user
-router.post("/register", validateNewUser, validate, postAdmin);
+router.post("/register", validateNewAdmin, validate, postAdmin);
 router.post("/login", validateLogin, validate, adminLogin);
 router.post("/logout", adminLogout);
 module.exports = router;
