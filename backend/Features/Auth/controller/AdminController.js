@@ -1,13 +1,14 @@
 const { Sequelize, DataTypes } = require("sequelize");
 const bcrypt = require("bcrypt");
+const jwt = require("jsonwebtoken");
 const db = require("../../../models");
-const User = db.Admin;
+const Admin = db.Admin;
 
 // POST a new admin
 const postAdmin = async (req, res) => {
   const adminData = req.body;
   try {
-    const existingAdmin = await User.findOne({
+    const existingAdmin = await Admin.findOne({
       where: { Email: adminData.Email },
     });
     if (existingAdmin) {
@@ -19,7 +20,7 @@ const postAdmin = async (req, res) => {
     const hashedPassword = await bcrypt.hash(adminData.Password, 10);
     adminData.Password = hashedPassword;
 
-    const newAdmin = await User.create(adminData);
+    const newAdmin = await Admin.create(adminData);
     res.json("New Admin Role is Successfully Created");
   } catch (error) {
     console.error("Error details:", error);
@@ -29,7 +30,7 @@ const postAdmin = async (req, res) => {
 
 const adminLogin = async (req, res) => {
   try {
-    const admin = await User.findOne({ where: { Email: req.body.Email } });
+    const admin = await Admin.findOne({ where: { Email: req.body.Email } });
     if (!admin) {
       return res.status(404).json({ error: "Admin not found" });
     }
@@ -54,15 +55,17 @@ const adminLogin = async (req, res) => {
         expiresIn: "3d",
       }
     );
+
+    res.json({ message: "Login successful", token: jwtToken });
   } catch (error) {
     console.error("Error details:", error);
     res.status(500).json({ error: "Failed to login" });
   }
 };
 
-const adminLogout = async (res, req) => {
+const adminLogout = async (req, res) => {
   try {
-    res.clearCookie("token", { sameSite: "None", secure: true }); // Closing parenthesis moved to correct position
+    res.clearCookie("token", { sameSite: "None", secure: true });
     res.status(200).json("User Logged out");
   } catch (err) {
     res.status(500).json(err);
