@@ -19,8 +19,10 @@ app.use(
 const AnnouncementRouter = require("./Features/Announcement/router/Announcements");
 const ItemRouter = require("./Features/Items/router/Items");
 const ReportRouter = require("./Features/Reports/router/Report");
+const UserRouter = require("./Features/Auth/router/AuthRouter");
 
 // Use the routers
+app.use("/api/users", UserRouter);
 app.use("/api/announcements", AnnouncementRouter);
 app.use("/api/items", ItemRouter);
 app.use("/api/reports", ReportRouter);
