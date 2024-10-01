@@ -84,6 +84,17 @@ console.log(adminModel.name); // Corrected log statement
 if (db[adminModel.name].associate) {
   db[adminModel.name].associate(db);
 }
+
+const userModel = require(path.join(
+  __dirname,
+  "../Features/Auth/models/UserModel"
+))(sequelize, Sequelize.DataTypes);
+db[userModel.name] = adminModel; // Corrected assignment here
+console.log(userModel.name); // Corrected log statement
+
+if (db[userModel.name].associate) {
+  db[userModel.name].associate(db);
+}
 // If there are associations, make sure they're set up correctly
 Object.keys(db).forEach((modelName) => {
   if (db[modelName].associate) {

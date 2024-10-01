@@ -32,6 +32,19 @@ const validateNewUser = [
     .withMessage("JobTitle should be between 1 and 100 characters"),
 ];
 
+const validateLogin = [
+  body("Email")
+    .isEmail()
+    .withMessage("Email must be a valid email address")
+    .isLength({ max: 100 })
+    .withMessage("Email should not exceed 100 characters"),
+
+  body("Password")
+    .isStrongPassword()
+    .withMessage(
+      "Password must be strong (min 8 chars, include uppercase, lowercase, number, and symbol)"
+    ),
+];
 const validateUserId = [
   param("ID").isInt().withMessage("User ID must be an integer"),
 ];
@@ -39,4 +52,5 @@ const validateUserId = [
 module.exports = {
   validateNewUser,
   validateUserId,
+  validateLogin,
 };
