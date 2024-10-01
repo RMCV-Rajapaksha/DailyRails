@@ -9,7 +9,7 @@ app.use(express.json());
 // CORS setup
 app.use(
   cors({
-    origin: "http://localhost:3000",
+    origin: "http://localhost:4000",
     methods: "GET,POST,PUT,DELETE",
     credentials: true,
   })
@@ -19,8 +19,12 @@ app.use(
 const AnnouncementRouter = require("./Features/Announcement/router/Announcements");
 const ItemRouter = require("./Features/Items/router/Items");
 const ReportRouter = require("./Features/Reports/router/Report");
+const AdminRouter = require("./Features/Auth/router/AdminRouter");
+const UserRouter = require("./Features/Auth/router/UserRouter");
 
 // Use the routers
+app.use("/api/admin", AdminRouter);
+app.use("/api/user", UserRouter);
 app.use("/api/announcements", AnnouncementRouter);
 app.use("/api/items", ItemRouter);
 app.use("/api/reports", ReportRouter);
