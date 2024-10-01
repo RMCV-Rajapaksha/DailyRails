@@ -1,5 +1,5 @@
 const express = require("express");
-const { postUser } = require("../controller/AdminController");
+const { postAdmin, adminLogin } = require("../controller/AdminController");
 const {
   validateNewUser,
   validateUserId,
@@ -18,6 +18,7 @@ const validate = (req, res, next) => {
 };
 
 // Route for creating a new user
-router.post("/", validateNewUser, validate, postUser);
+router.post("/register", validateNewUser, validate, postAdmin);
+router.post("/login", adminLogin);
 
 module.exports = router;

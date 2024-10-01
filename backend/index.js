@@ -22,7 +22,7 @@ const ReportRouter = require("./Features/Reports/router/Report");
 const UserRouter = require("./Features/Auth/router/AdminRouter");
 
 // Use the routers
-app.use("/api/users", UserRouter);
+app.use("/api/admin", UserRouter);
 app.use("/api/announcements", AnnouncementRouter);
 app.use("/api/items", ItemRouter);
 app.use("/api/reports", ReportRouter);
