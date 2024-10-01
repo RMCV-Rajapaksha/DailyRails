@@ -1,15 +1,19 @@
-const express = require("express");
 const { Sequelize, DataTypes } = require("sequelize");
 const db = require("../../../models");
-const User = db.User;
+const User = db.Admin;
 
 // POST a new user
 const postUser = async (req, res) => {
-  console.log(req.body); // Log the incoming request body
   const user = req.body;
-
   try {
-    const newUser = await User.create(user); // Use the User model instead of Announcement
+    const existingUser = await User.findOne({ where: { Email: user.Email } });
+    if (existingUser) {
+      return res
+        .status(400)
+        .json({ error: "Admin with this email already exists" });
+    }
+
+    const newUser = await User.create(user);
     res.json(newUser);
   } catch (error) {
     console.error("Error details:", error); // Log the error for debugging

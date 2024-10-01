@@ -19,7 +19,7 @@ app.use(
 const AnnouncementRouter = require("./Features/Announcement/router/Announcements");
 const ItemRouter = require("./Features/Items/router/Items");
 const ReportRouter = require("./Features/Reports/router/Report");
-const UserRouter = require("./Features/Auth/router/AuthRouter");
+const UserRouter = require("./Features/Auth/router/AdminRouter");
 
 // Use the routers
 app.use("/api/users", UserRouter);
