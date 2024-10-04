@@ -1,22 +1,23 @@
 const stripe = require("stripe")(process.env.STRIPE_SECRET_KEY);
 
 const createPaymentIntent = async (req, res) => {
-  const { amount, trainDetails } = req.body;
+  const { amount, trainDetails, seats } = req.body;
+
   try {
-    const session = await stripe.checkout.sessions.create({
-      line_items: [
-        {
-          price_data: {
-            currency: "usd",
-            product_data: {
-              name: `Train Booking - ${trainDetails.trainName}`, // Example: Train name and other details
-              description: `Seat: ${trainDetails.seat}, Class: ${trainDetails.class}, Date: ${trainDetails.date}`, // Additional booking info
-            },
-            unit_amount: amount,
-          },
-          quantity: 1,
+    const lineItems = seats.map((seat) => ({
+      price_data: {
+        currency: "usd",
+        product_data: {
+          name: `Train Booking - ${trainDetails.trainName}`,
+          description: `Seat: ${seat}, Class: ${trainDetails.class}, Date: ${trainDetails.date}`, // Seat-specific info
         },
-      ],
+        unit_amount: amount,
+      },
+      quantity: 1,
+    }));
+
+    const session = await stripe.checkout.sessions.create({
+      line_items: lineItems,
       mode: "payment",
       success_url: `${process.env.CLIENT_URL}/success`,
       cancel_url: `${process.env.CLIENT_URL}/cancel`,
@@ -32,14 +33,16 @@ const createPaymentIntent = async (req, res) => {
   }
 };
 
-module.exports = { createPaymentIntent };
+module.export = {
+  createPaymentIntent,
+};
 
 // {
 //     "amount": 2000,
 //     "trainDetails": {
 //       "trainName": "Express Train 101",
-//       "seat": "A1",
 //       "class": "First Class",
 //       "date": "2024-10-10"
-//     }
+//     },
+//     "seats": ["A1", "A2", "A3"]
 //   }
