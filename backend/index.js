@@ -1,8 +1,11 @@
 const express = require("express");
 const cors = require("cors"); // Make sure to import cors
+const http = require("http"); // Import the http module
 const app = express();
 const db = require("./models"); // Ensure this path is correct
-
+const {
+  setupWebSocket,
+} = require("./Features/Reports/controller/WebsocketServer");
 // Middleware to parse JSON
 app.use(express.json());
 
@@ -29,11 +32,17 @@ app.use("/api/announcements", AnnouncementRouter);
 app.use("/api/items", ItemRouter);
 app.use("/api/reports", ReportRouter);
 
+// Create HTTP server
+const server = http.createServer(app);
+
+// Setup WebSocket using the same server
+setupWebSocket(server);
+
 // Sync database and start server
 db.sequelize
   .sync()
   .then(() => {
-    app.listen(3000, () => {
+    server.listen(3000, () => {
       console.log("Server running on port 3000");
     });
   })
