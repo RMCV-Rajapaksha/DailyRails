@@ -96,6 +96,18 @@ if (db[userModel.name].associate) {
   db[userModel.name].associate(db);
 }
 
+const paymentModel = require(path.join(
+  __dirname,
+  "../Features/Booking/models/PaymentModel"
+))(sequelize, Sequelize.DataTypes);
+
+db[paymentModel.name] = paymentModel; // Corrected assignment here
+console.log(paymentModel.name);
+
+if (db[paymentModel.name].associate) {
+  db[paymentModel.name].associate(db);
+}
+
 // If there are associations, make sure they're set up correctly
 Object.keys(db).forEach((modelName) => {
   if (db[modelName].associate) {

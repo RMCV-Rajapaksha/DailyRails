@@ -26,7 +26,7 @@ module.exports = (sequelize) => {
         allowNull: false,
       },
       ContactNo: {
-        type: DataTypes.STRING(15), // Adjusted length for phone number
+        type: DataTypes.STRING(15),
       },
       Status: {
         type: DataTypes.STRING(15),
