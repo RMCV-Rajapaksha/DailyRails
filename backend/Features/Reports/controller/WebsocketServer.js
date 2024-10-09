@@ -23,3 +23,5 @@ const setupWebSocket = (server) => {
 };
 
 module.exports = { setupWebSocket };
+
+// ws://localhost:3000
