@@ -12,7 +12,12 @@ const {
   validateStatusUpdate,
 } = require("../validators/ItemsValidators");
 const { validationResult } = require("express-validator");
-
+const {
+  isAuthenticated,
+  isMainAdmin,
+  isCounter,
+  isTrainDriver,
+} = require("../../../Middlewares/adminAuthMiddleware");
 const router = express.Router();
 
 // Middleware to check validation errors

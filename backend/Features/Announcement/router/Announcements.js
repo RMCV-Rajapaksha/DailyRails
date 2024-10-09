@@ -10,6 +10,12 @@ const {
   validateAnnouncementId,
 } = require("../validators/AnnouncementsValidators");
 const { validationResult } = require("express-validator");
+const {
+  isAuthenticated,
+  isMainAdmin,
+  isCounter,
+  isTrainDriver,
+} = require("../../../Middlewares/adminAuthMiddleware");
 
 const router = express.Router();
 
