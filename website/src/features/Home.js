@@ -1,14 +1,28 @@
-import React from "react";
-
+import React, { useState, useEffect } from "react";
 import HeroTrain from "../assets/images/HeroTrain.png";
 import GPS from "../assets/images/GPS.png";
 import Schedule from "../assets/images/Schedule.png";
 import Booking from "../assets/images/Booking.png";
-
 import LostAndFound from "../assets/images/LostAndFound.png";
-
 import { Link } from "react-router-dom";
+import Loader from "../components/Loader"; // Ensure this path is correct
+
 export const Home = () => {
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+ 
+    const timer = setTimeout(() => {
+      setLoading(false);
+    }, 4000); 
+
+    return () => clearTimeout(timer);
+  }, []);
+
+  if (loading) {
+    return <Loader />;
+  }
+
   return (
     <>
       <section className="flex items-center justify-center min-h-screen bg-white font-body">
