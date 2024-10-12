@@ -5,6 +5,8 @@
   "dependencies": {
     "@googlemaps/js-api-loader": "^1.16.8",
     "@react-google-maps/api": "^2.19.3",
+    "@react-three/drei": "^9.114.3",
+    "@react-three/fiber": "^8.17.10",
     "@testing-library/jest-dom": "^5.17.0",
     "@testing-library/react": "^13.4.0",
     "@testing-library/user-event": "^13.5.0",

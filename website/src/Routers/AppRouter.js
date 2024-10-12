@@ -10,6 +10,8 @@ import Contact from "../features/Contact/pages/Contact";
 import Map from "../features/Map/pages/Map";
 import SubmitItem from "../features/Recovery/pages/SubmitItem";
 import News from "../features/News/pages/News";
+import NoUrl from "../features/NoUrl"; // Ensure this import is correct
+import SeatBooking from "../features/Booking/pages/SelectSeat";
 
 const router1 = createBrowserRouter([
   {
@@ -20,9 +22,14 @@ const router1 = createBrowserRouter([
         index: true,
         element: <Home />,
       },
+
       {
         path: "booking",
         element: <Booking />,
+      },
+      {
+        path: "seatBooking",
+        element: <SeatBooking />,
       },
       {
         path: "found",
@@ -51,6 +58,10 @@ const router1 = createBrowserRouter([
       {
         path: "news",
         element: <News />,
+      },
+      {
+        path: "*",
+        element: <NoUrl />,
       },
     ],
   },
