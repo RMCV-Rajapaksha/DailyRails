@@ -7,7 +7,6 @@ import {
   OrbitControls,
 } from "@react-three/drei";
 import Train from "../components/Train";
-import "./styles.css"; // Import CSS file for full-screen styling
 
 export default function SeatBooking() {
   const [currentCabin, setCurrentCabin] = useState(0);
@@ -23,14 +22,14 @@ export default function SeatBooking() {
   return (
     <>
       <Canvas
-        className="full-screen-canvas" // Apply full-screen class to Canvas
+        className="w-screen h-screen" // Full-screen canvas with Tailwind
         dpr={[1, 1.5]}
         shadows
         camera={{ position: [-15, 15, 18], fov: 35 }}
         gl={{ alpha: false }}
       >
         <fog attach="fog" args={["#17171b", 30, 40]} />
-        <color attach="background" args={["#000000"]} />{" "}
+        <color attach="background" args={["#000000"]} />
         <ambientLight intensity={0.25} />
         <directionalLight
           castShadow
@@ -69,9 +68,19 @@ export default function SeatBooking() {
         <OrbitControls />
       </Canvas>
 
-      <div className="controls">
-        <button onClick={handlePreviousCabin}> Previous Cabin </button>
-        <button onClick={handleNextCabin}>Next Cabin</button>
+      <div className="absolute flex gap-2 transform -translate-x-1/2 bottom-5 left-1/2">
+        <button
+          className="px-4 py-2 text-white transition-all duration-300 bg-gray-800 border-2 border-gray-900 rounded hover:bg-gray-600 active:bg-gray-900 focus:outline-none"
+          onClick={handlePreviousCabin}
+        >
+          Previous Cabin
+        </button>
+        <button
+          className="px-4 py-2 text-white transition-all duration-300 bg-gray-800 border-2 border-gray-900 rounded hover:bg-gray-600 active:bg-gray-900 focus:outline-none"
+          onClick={handleNextCabin}
+        >
+          Next Cabin
+        </button>
       </div>
     </>
   );
