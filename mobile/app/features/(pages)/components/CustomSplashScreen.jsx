@@ -1,42 +1,36 @@
 import React from 'react';
-import { View, Text, Image, ActivityIndicator, Animated } from 'react-native';
-import { styled } from 'nativewind';
-import { useEffect } from 'react';
+import { View, Text, Image, Dimensions } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
+import { images } from '../../../../shared/constants';
 
-const StyledView = styled(View)
-const StyledText = styled(Text)
-const StyledImage = styled(Image)
-const AnimatedStyledView = Animated.createAnimatedComponent(StyledView);
-const StyledActivityIndicator = styled(ActivityIndicator)
 
-const CustomSplash = () => {
-    const fadeAnim = new Animated.Value(0);
+const { width, height } = Dimensions.get('window');
 
-    useEffect(() => {
-      Animated.timing(fadeAnim, {
-        toValue: 1,
-        duration: 2000,
-        useNativeDriver: true,
-      }).start();
-    }, []);
+
+export default function SplashScreen() {
   return (
-    <StyledView className="items-center justify-center flex-1 bg-white">
-      <AnimatedStyledView style={{opacity: fadeAnim}}>
-        <StyledImage 
-          source={require('./assets/logo.png')} 
-          className="w-24 h-24 "
-        />
-        <StyledText className="text-base text-[#1a3c4d] mb-8">
-          Navigate your day, one train at a time
-        </StyledText>
-        <StyledImage 
-          source={require('./assets/train.png')} 
-          className="w-4/5 h-48"
-        />
-      </AnimatedStyledView>
-      <StyledActivityIndicator size="large" color="#1a3c4d" className="mt-5" />
-    </StyledView>
+    <SafeAreaView className="flex-1 bg-white">
+      <View className="items-center justify-between flex-1 p-6">
+        <View className="items-center mt-12">
+          <View className="flex-row items-center">
+            <Image 
+              source={images.logo} 
+              style={{ height: height*0.02,aspectRatio: 1}}
+            />
+          </View>
+          <Text className="mt-2 text-sm text-gray-600">Navigate your day, one train at a time</Text>
+        </View>
+        
+        <View className="relative w-full aspect-[2/1]">
+          <View className="absolute top-0 left-0 right-0 bg-teal-100 h-1/2 rounded-t-3xl" />
+          <View className="absolute bottom-0 left-0 right-0 bg-white h-1/2" />
+          <Image 
+            source={images.train} 
+            style={{ height: height*0.02,aspectRatio: 1}}
+            resizeMode="contain"
+          />
+        </View>
+      </View>
+    </SafeAreaView>
   );
-};
-
-export default CustomSplash;
+}

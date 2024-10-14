@@ -1,10 +1,12 @@
-import { View, Text, ScrollView, StatusBar, TouchableOpacity, Image } from 'react-native'
+import { View, Text, ScrollView, StatusBar, TouchableOpacity, Image, Dimensions } from 'react-native'
 import React from 'react'
 import { Link } from 'expo-router';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Ionicons } from '@expo/vector-icons';
-import { icons } from '../../../shared/constants';
+import { icons, images } from '../../../shared/constants';
+import { Images } from '../../../shared/constants';
 
+const { width, height } = Dimensions.get('window');
 const menuItems = [
   { icon: icons.map, title: 'Map', subtitle: 'Track your live location' },
   { icon: icons.schedule, title: 'Train Schedule', subtitle: 'Track your live location' },
@@ -25,8 +27,12 @@ export default function App(){
               <View className="w-5 h-5 bg-[#40A2B2] rounded-full" />
             </TouchableOpacity>
             <View className="items-center">
-              <Ionicons name="train-outline" size={24} color="black" />
-              <Text className="font-bold text-[#111B47]">DAILYRAILS</Text>
+            <Image 
+                  source={images.logo}
+                  style={{ height: height*0.1,aspectRatio: 1}}
+                  resizeMode='contain'
+
+                />
             </View>
             <TouchableOpacity className="w-10 h-10 rounded-full bg-[#40A2B2] items-center justify-center">
               <Ionicons name="notifications-outline" size={24} color="black" />
@@ -36,7 +42,7 @@ export default function App(){
           {menuItems.map((item, index) => (
             <TouchableOpacity
               key={index}
-              className="bg-[#40A2B2] rounded-lg p-4 mb-4 flex-row items-center"
+              className="bg-[#40A2B2] rounded-[4px] p-4 mb-4 flex-row items-center"
             >
               <View className="bg-[#40A2B2] w-10 h-10 rounded-full items-center justify-center mr-4">
                 <Image 
