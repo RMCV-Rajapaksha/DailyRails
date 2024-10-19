@@ -1,6 +1,6 @@
 import React from 'react'
 
-function TabLayout() {
+function TabLayouts() {
   return (
     <div>TabLayout</div>
   )
