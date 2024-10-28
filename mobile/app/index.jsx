@@ -1,9 +1,10 @@
 import { View, Text, ScrollView, StatusBar } from 'react-native'
 import React from 'react'
-import { Link } from 'expo-router';
+import { Link, router } from 'expo-router';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useState, useEffect } from 'react';
-import CustomSplash from './features/(pages)/components/CustomSplashScreen';
+import CustomSplash from '../components/CustomSplashScreen';
+import CustomButton from '../components/CustomButton';
 
 
 export default function App(){
@@ -23,7 +24,12 @@ export default function App(){
       <SafeAreaView className="h-full">
           <View className="items-center ">
             <Text className='text-xl mt-8 font-bold'>Sign In and SignUp Page</Text>
-            <Link href="./features/(pages)" className='flex mt-20 items-center justify-center text-blue-500'>Go to Home Page</Link>
+            <Link href="/home" className='flex mt-20 items-center justify-center text-blue-500'>Go to Home Page</Link>
+            {/* <CustomButton 
+              title="Sign In" 
+              handlePress={() => {router.push('/(pages)')}} 
+              containerStyles="mt-20" 
+              /> */}
           </View>
         <StatusBar style="auto" />
       </SafeAreaView>
