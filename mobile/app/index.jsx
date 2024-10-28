@@ -22,7 +22,8 @@ export default function App(){
     <>
       <SafeAreaView className="h-full">
           <View className="items-center ">
-            <Link href="./features/(pages)" className='flex items-center justify-center text-blue-500'>Go to Home Page</Link>
+            <Text className='text-xl mt-8 font-bold'>Sign In and SignUp Page</Text>
+            <Link href="./features/(pages)" className='flex mt-20 items-center justify-center text-blue-500'>Go to Home Page</Link>
           </View>
         <StatusBar style="auto" />
       </SafeAreaView>

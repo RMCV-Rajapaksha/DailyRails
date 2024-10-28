@@ -1,42 +1,38 @@
 import React from 'react';
-import { View, Text, Image, ActivityIndicator, Animated } from 'react-native';
-import { styled } from 'nativewind';
-import { useEffect } from 'react';
+import { View, Text, Image, Dimensions } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
+import { images } from '../../../../shared/constants';
 
-const StyledView = styled(View)
-const StyledText = styled(Text)
-const StyledImage = styled(Image)
-const AnimatedStyledView = Animated.createAnimatedComponent(StyledView);
-const StyledActivityIndicator = styled(ActivityIndicator)
+const { width, height } = Dimensions.get('window');
 
-const CustomSplash = () => {
-    const fadeAnim = new Animated.Value(0);
-
-    useEffect(() => {
-      Animated.timing(fadeAnim, {
-        toValue: 1,
-        duration: 2000,
-        useNativeDriver: true,
-      }).start();
-    }, []);
+export default function SplashScreen() {
   return (
-    <StyledView className="items-center justify-center flex-1 bg-white">
-      <AnimatedStyledView style={{opacity: fadeAnim}}>
-        <StyledImage 
-          source={require('./assets/logo.png')} 
-          className="w-24 h-24 "
-        />
-        <StyledText className="text-base text-[#1a3c4d] mb-8">
-          Navigate your day, one train at a time
-        </StyledText>
-        <StyledImage 
-          source={require('./assets/train.png')} 
-          className="w-4/5 h-48"
-        />
-      </AnimatedStyledView>
-      <StyledActivityIndicator size="large" color="#1a3c4d" className="mt-5" />
-    </StyledView>
-  );
-};
+    <SafeAreaView className="flex-1 bg-white">
+      <View className="items-center justify-between flex-1 p-6">
+        
+        {/* Logo and tagline */}
+        <View className="items-center mt-8">
+          <Image
+            source={images.logo}
+            style={{ height: height * 0.2, aspectRatio: 1 }} 
+            resizeMode="contain"
+          />
+          <Text className="mb-6 text-xl font-bold text-primary">
+            Navigate your day, one train at a time
+          </Text>
+        </View>
 
-export default CustomSplash;
+        <View className="flex-1">
+      <Image
+        source={images.train} 
+        style={{ 
+          width: width, 
+          height: height * 0.5, }}
+        resizeMode="cover" 
+      />
+    </View>
+
+      </View>
+    </SafeAreaView>
+  );
+}

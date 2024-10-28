@@ -10,8 +10,8 @@ import CustomButton from './components/CustomButton';
 //     <>
 //       <SafeAreaView className="h-full">
 //         <ScrollView>
-//           <View className="flex justify-center items-center h-screen">
-//             <Link href="./map" className='w-full flex justify-center items-center'>Go to Mao</Link>
+//           <View className="flex items-center justify-center h-screen">
+//             <Link href="./map" className='flex items-center justify-center w-full'>Go to Mao</Link>
 //           </View>
 //         </ScrollView>
 //         <StatusBar style="auto" />
