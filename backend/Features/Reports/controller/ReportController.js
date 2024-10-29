@@ -8,13 +8,9 @@ const getReport = async (req, res) => {
   const page = parseInt(req.query.page) || 1;
   const limit = parseInt(req.query.limit) || 10;
   const offset = (page - 1) * limit;
-  const typeToFilter = req.query.Type;
-
-  const whereClause = typeToFilter ? { Type: typeToFilter } : {};
 
   try {
     const { count, rows: reports } = await Report.findAndCountAll({
-      where: whereClause,
       offset,
       limit,
     });
