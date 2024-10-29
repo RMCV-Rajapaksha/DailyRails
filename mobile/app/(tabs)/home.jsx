@@ -33,12 +33,12 @@ const menuItems = [
     subtitle: 'Track your live location',
     route: '/(pages)/lost-and-found'
   },
-  { 
-    icon: icons.bookmark, 
-    title: 'Bookmarks', 
-    subtitle: 'Track your live location',
-    route: '/(tabs)/bookmarks' // This goes to the bookmarks tab
-  },
+  // { 
+  //   icon: icons.bookmark, 
+  //   title: 'Bookmarks', 
+  //   subtitle: 'Track your live location',
+  //   route: '/(tabs)/bookmarks' // This goes to the bookmarks tab
+  // },
   { 
     icon: icons.contact, 
     title: 'Contact Us', 
@@ -54,10 +54,10 @@ const Home = () => {
     <SafeAreaView className="flex-1 bg-[#ffffff]">
       <ScrollView className="flex-1">
         <View className="p-4">
-          <View className="flex-row items-center justify-between mb-6">
-            <TouchableOpacity className="w-10 h-10 rounded-full bg-[#40A2B2] items-center justify-center">
+          <View className="flex-row items-center justify-center mb-6">
+            {/* <TouchableOpacity className="w-10 h-10 rounded-full bg-[#40A2B2] items-center justify-center">
               <View className="w-5 h-5 bg-[#40A2B2] rounded-full" />
-            </TouchableOpacity>
+            </TouchableOpacity> */}
             <View className="items-center">
               <Image 
                 source={images.logo}
@@ -65,12 +65,12 @@ const Home = () => {
                 resizeMode='contain'
               />
             </View>
-            <TouchableOpacity 
+            {/* <TouchableOpacity 
               className="w-10 h-10 rounded-full bg-[#40A2B2] items-center justify-center"
               onPress={() => router.push('/(tabs)/notifications')}
             >
               <Ionicons name="notifications-outline" size={24} color="black" />
-            </TouchableOpacity>
+            </TouchableOpacity> */}
           </View>
           
           {menuItems.map((item, index) => (
