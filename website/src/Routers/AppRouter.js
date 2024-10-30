@@ -1,7 +1,7 @@
 import React from "react";
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
 import MainLayOut from "../LayOut/LayOut";
-import Home from "../features/Home";
+import Home from "../features/Home/Home";
 import Booking from "../features/Booking/pages/Booking";
 import Found from "../features/Recovery/pages/Found";
 import Lost from "../features/Recovery/pages/Lost";
