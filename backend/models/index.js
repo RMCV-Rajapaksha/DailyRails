@@ -108,6 +108,15 @@ if (db[paymentModel.name].associate) {
   db[paymentModel.name].associate(db);
 }
 
+
+
+// Import train routes
+const trainsRoutes = require("./features/trains/routes/trainsRoutes");
+app.use("/api/trains", trainsRoutes);
+
+module.exports = app;
+
+
 // If there are associations, make sure they're set up correctly
 Object.keys(db).forEach((modelName) => {
   if (db[modelName].associate) {
