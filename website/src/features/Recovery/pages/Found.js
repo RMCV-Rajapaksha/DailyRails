@@ -1,33 +1,49 @@
 import React from "react";
+import ItemCard from "../components/ItemCard";
 
-import { FoundItemsData } from "../../../data";
-import FoundItems from "../components/FoundItems";
-import { FaChevronLeft, FaChevronRight } from "react-icons/fa";
+const FoundItemsPage = () => {
+  const items = [
+    {
+      id: 1,
+      title: "Lost Item: Black Laptop Bag on Ruhuna Train",
+      description:
+        "I lost my laptop bag today around 5 PM on the Ruhuna train. The bag is black and contains my laptop, charger, and two books. If anyone has found it or has any information about its whereabouts, please let me know. Thank you!",
+      date: "Saturday, July 20, 2024",
+    },
+    {
+      id: 2,
+      title: "Lost Item: Black Laptop Bag on Ruhuna Train",
+      description:
+        "I lost my laptop bag today around 5 PM on the Ruhuna train. The bag is black and contains my laptop, charger, and two books. If anyone has found it or has any information about its whereabouts, please let me know. Thank you!",
+      date: "Saturday, July 20, 2024",
+    },
+    {
+      id: 3,
+      title: "Lost Item: Black Laptop Bag on Ruhuna Train",
+      description:
+        "I lost my laptop bag today around 5 PM on the Ruhuna train. The bag is black and contains my laptop, charger, and two books. If anyone has found it or has any information about its whereabouts, please let me know. Thank you!",
+      date: "Saturday, July 20, 2024",
+    },
+  ];
 
-function Found() {
   return (
-    <>
-      <div className="px-8 md:px-[200px] min-h-[80vh] mt-20">
-        {FoundItemsData &&
-          FoundItemsData.map((item) => (
-            <FoundItems key={item.id} FoundItems={item} />
+    <div className="min-h-screen px-4 py-8 bg-gray-50 sm:px-6 lg:px-8">
+      <div className="max-w-3xl mx-auto">
+        <h1 className="mb-8 text-4xl font-bold text-primary">Found Items</h1>
+
+        <div className="space-y-4">
+          {items.map((item) => (
+            <ItemCard
+              key={item.id}
+              title={item.title}
+              description={item.description}
+              date={item.date}
+            />
           ))}
-      </div>
-      <div className="flex justify-center mt-4">
-        <div className="inline-flex m-10 shadow rounded-sm-md">
-          <button className="px-4 py-2 text-sm font-medium bg-white border rounded-sm border-primary text-primary rounded-sm-l-md hover:bg-secondary">
-            <FaChevronLeft />
-          </button>
-          <button className="px-4 py-2 text-sm font-medium bg-white text-primary">
-            1
-          </button>
-          <button className="px-4 py-2 text-sm font-medium bg-white border rounded-sm border-primary text-primary rounded-sm-r-md hover:bg-secondary">
-            <FaChevronRight />
-          </button>
         </div>
       </div>
-    </>
+    </div>
   );
-}
+};
 
-export default Found;
+export default FoundItemsPage;
