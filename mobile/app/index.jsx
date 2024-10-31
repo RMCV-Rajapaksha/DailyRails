@@ -43,7 +43,7 @@ export default function App() {
       {/* Main container */}
       <View className="flex-1">
         {/* Image container */}
-        <View className="h-3/4 relative">
+        <View className="h-4/6 relative">
           <Image
             source={images.auth_background}
             className="absolute w-full h-full"
@@ -56,10 +56,10 @@ export default function App() {
         </View>
 
         {/* Bottom container for text and white box */}
-        <View className="absolute bottom-0 w-full h-[50%]">
+        <View className="absolute bottom-0 w-full h-[52%]">
           {/* Welcome text positioned just above white box */}
           <View className="px-7 mb-4">
-            <Text className="text-4xl font-bold text-white shadow-lg">
+            <Text className="text-4xl font-bold text-white shadow-lg mb-2">
               Welcome to
             </Text>
             <Text className="text-4xl font-bold text-white shadow-lg">
@@ -68,10 +68,10 @@ export default function App() {
           </View>
 
           {/* White box container */}
-          <View className="flex-1 bg-white rounded-t-3xl px-6 pt-6">
-            <View className="flex-1 justify-evenly">
+          <View className="flex-1 bg-white rounded-t-3xl px-6 ">
+            <View className="flex-1 justify-evenly py-6">
               {/* Buttons container */}
-              <View className="space-y-4">
+              <View className="space-y-6">
                 {/* Sign In Button */}
                 <TouchableOpacity
                   className="w-full bg-[#41A3B3] py-4 rounded-lg"
