@@ -1,5 +1,5 @@
-import React, { useState } from 'react';
-import { View, Text, Image, TextInput, TouchableOpacity, StatusBar, KeyboardAvoidingView, Platform } from 'react-native';
+import React, { useState, useEffect } from 'react';
+import { View, Text, Image, TextInput, TouchableOpacity, StatusBar, KeyboardAvoidingView, Platform, Animated } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import { images } from '../../constants';
 import { router } from 'expo-router';
@@ -7,6 +7,24 @@ import { router } from 'expo-router';
 const SignIn = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const slideAnim = new Animated.Value(0);
+  const textSlideAnim = new Animated.Value(0);
+
+  useEffect(() => {
+    // Animate white box sliding up
+    Animated.timing(slideAnim, {
+      toValue: 1,
+      duration: 300,
+      useNativeDriver: true,
+    }).start();
+
+    // Animate text moving up and changing
+    Animated.timing(textSlideAnim, {
+      toValue: 1,
+      duration: 30000,
+      useNativeDriver: true,
+    }).start();
+  }, []);
 
   const handleSignIn = () => {
     if (email && password) {
@@ -47,15 +65,38 @@ const SignIn = () => {
             />
           </View>
 
-          {/* Bottom container for text and white box */}
-          <View className="absolute bottom-0 w-full h-[55%]">
-            {/* Welcome text positioned just above white box */}
-            <View className="px-7 mb-4">
+          {/* Animated text container */}
+          <Animated.View 
+            className="absolute w-full"
+            style={{
+              transform: [{
+                translateY: textSlideAnim.interpolate({
+                  inputRange: [0, 1],
+                  outputRange: [0, -40] // Adjust this value to control how much the text moves up
+                })
+              }],
+              top: '38%' // Adjust this value to set initial text position
+            }}
+          >
+            <View className="px-7">
               <Text className="text-4xl font-bold text-white shadow-lg">
                 Sign In
               </Text>
             </View>
+          </Animated.View>
 
+          {/* Animated bottom container */}
+          <Animated.View 
+            className="absolute bottom-0 w-full h-[55%]"
+            style={{
+              transform: [{
+                translateY: slideAnim.interpolate({
+                  inputRange: [0, 1],
+                  outputRange: [400, 0] // Adjust 400 to control initial position
+                })
+              }]
+            }}
+          >
             {/* White box container */}
             <View className="flex-1 bg-white rounded-t-3xl px-6 pt-8">
               <View className="flex-1">
@@ -115,13 +156,11 @@ const SignIn = () => {
                 </View>
               </View>
             </View>
-          </View>
+          </Animated.View>
         </View>
       </View>
     </KeyboardAvoidingView>
   );
-}
+};
 
 export default SignIn;
-
-

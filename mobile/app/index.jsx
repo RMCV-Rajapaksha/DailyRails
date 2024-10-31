@@ -79,7 +79,7 @@ export default function App() {
                   onPress={handleSignIn}
                 >
                   <Text className="text-white text-center text-lg font-semibold">
-                    Sign in
+                    Sign In
                   </Text>
                 </TouchableOpacity>
 
