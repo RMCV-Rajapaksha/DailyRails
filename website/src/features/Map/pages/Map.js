@@ -177,7 +177,7 @@ function Map() {
 
   useEffect(() => {
     const script = document.createElement("script");
-    script.src = `https://maps.googleapis.com/maps/api/js?key=AIzaSyAr8aKdJM4aYjfOwVqP2wz9WC4vC0Qu05s`;
+    script.src = `https://maps.googleapis.com/maps/api/js?key=AIzaSyAOVYRIgupAurZup5y1PRh8Ismb1A3lLao`;
     script.async = true;
 
     const initMap = () => {
@@ -314,8 +314,6 @@ function Map() {
             >
               Get Updates
             </button>
-
-          
           </div>
         </div>
       </main>
