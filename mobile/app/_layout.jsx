@@ -9,7 +9,7 @@ import { useFonts } from 'expo-font'
 
 const RootLayout = () => {
   const [fontsLoaded, error] = useFonts({
-    "Roboto-Black": require("../shared/assets/fonts/Roboto-Black.ttf"),
+    "Roboto-Black": require("../assets/fonts/Roboto-Black.ttf"),
   });
 
   useEffect(() => {
@@ -26,6 +26,8 @@ const RootLayout = () => {
   return (
     <Stack>
       <Stack.Screen name="index" options={{headerShown: false}} />
+      <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
+      <Stack.Screen name="(auth)" options={{headerShown: false}} />
     </Stack>
   )
 }
