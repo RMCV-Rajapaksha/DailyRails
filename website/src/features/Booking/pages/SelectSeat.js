@@ -10,6 +10,8 @@ import Train from "../components/Train";
 
 export default function SeatBooking() {
   const [currentCabin, setCurrentCabin] = useState(0);
+  const [bookedSeats, setBookedSeats] = useState([]);
+  const reservedSeats = [1, 2, 3, 4, 5, 6, 7, 8, 38]; // Example reserved seats
 
   const handleNextCabin = () => {
     setCurrentCabin((prev) => (prev < 4 ? prev + 1 : 4)); // Move forward
@@ -17,6 +19,10 @@ export default function SeatBooking() {
 
   const handlePreviousCabin = () => {
     setCurrentCabin((prev) => (prev > 0 ? prev - 1 : 0)); // Move backward
+  };
+
+  const handleBook = (seatNumber) => {
+    setBookedSeats((prev) => [...prev, seatNumber]);
   };
 
   return (
@@ -47,7 +53,11 @@ export default function SeatBooking() {
         </directionalLight>
         <Suspense fallback={null}>
           <ScrollControls pages={5}>
-            <Train currentCabin={currentCabin} />
+            <Train
+              currentCabin={currentCabin}
+              reservedSeats={reservedSeats}
+              onBook={handleBook}
+            />
           </ScrollControls>
           <mesh position={[0, -1.5, 0]} rotation={[-Math.PI / 2, 0, 0]}>
             <planeGeometry args={[50, 50]} />
@@ -81,6 +91,17 @@ export default function SeatBooking() {
         >
           Next Cabin
         </button>
+      </div>
+
+      <div className="absolute p-4 bg-white rounded shadow-lg top-5 right-5">
+        <h2 className="mb-2 text-xl font-bold">Booked Seats</h2>
+        <ul>
+          {bookedSeats.map((seat) => (
+            <li key={seat} className="text-gray-700">
+              Seat {seat}
+            </li>
+          ))}
+        </ul>
       </div>
     </>
   );

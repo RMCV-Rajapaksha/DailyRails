@@ -1,11 +1,10 @@
 import { useMemo, useRef } from "react";
 import { useFrame } from "@react-three/fiber";
-import { useGLTF, useScroll, Merged } from "@react-three/drei";
+import { useGLTF, Merged } from "@react-three/drei";
 import Cabin from "./Cabin";
 
-function Train({ currentCabin }) {
+function Train({ currentCabin, reservedSeats, onBook }) {
   const ref = useRef();
-  const scroll = useScroll();
   const [cabin, seat] = useGLTF([
     "/cabin-transformed.glb",
     "/seat-transformed.glb",
@@ -20,7 +19,7 @@ function Train({ currentCabin }) {
     ref.current.position.z = currentCabin * -26;
   });
 
-  let seatNumber = 1; // Initialize seat number globally
+  let seatNumber = 1;
 
   return (
     <Merged castShadow receiveShadow meshes={meshes}>
@@ -32,6 +31,8 @@ function Train({ currentCabin }) {
             seatColor="sandybrown"
             name="1A"
             seatNumber={seatNumber}
+            reservedSeats={reservedSeats}
+            onBook={onBook}
             position={[0, 0, 0]}
           />
           <Cabin
@@ -40,6 +41,8 @@ function Train({ currentCabin }) {
             seatColor="gray"
             name="2B"
             seatNumber={(seatNumber += 64)}
+            reservedSeats={reservedSeats}
+            onBook={onBook}
             position={[0, 0, 26]}
           />
           <Cabin
@@ -48,6 +51,8 @@ function Train({ currentCabin }) {
             seatColor="lightskyblue"
             name="3A"
             seatNumber={(seatNumber += 64)}
+            reservedSeats={reservedSeats}
+            onBook={onBook}
             position={[0, 0, 52]}
           />
           <Cabin
@@ -56,6 +61,8 @@ function Train({ currentCabin }) {
             seatColor="gray"
             name="4B"
             seatNumber={(seatNumber += 64)}
+            reservedSeats={reservedSeats}
+            onBook={onBook}
             position={[0, 0, 78]}
           />
           <Cabin
@@ -64,6 +71,8 @@ function Train({ currentCabin }) {
             seatColor="sandybrown"
             name="5B"
             seatNumber={(seatNumber += 64)}
+            reservedSeats={reservedSeats}
+            onBook={onBook}
             position={[0, 0, 104]}
           />
         </group>

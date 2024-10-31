@@ -6,7 +6,9 @@ const Cabin = ({
   color = "white",
   seatColor = "white",
   name,
-  seatNumber, // Pass seatNumber as prop
+  seatNumber,
+  reservedSeats,
+  onBook,
   rotation,
   ...props
 }) => {
@@ -26,48 +28,64 @@ const Cabin = ({
         color={seatColor}
         startNumber={seatNumber}
         position={[0, 0, 0]}
+        reservedSeats={reservedSeats}
+        onBook={onBook}
       />
       <Row
         models={models}
         color={seatColor}
-        startNumber={(seatNumber += 8)}
+        startNumber={seatNumber + 8}
         position={[0, 0, -1.9]}
+        reservedSeats={reservedSeats}
+        onBook={onBook}
       />
       <Row
         models={models}
         color={seatColor}
-        startNumber={(seatNumber += 8)}
+        startNumber={seatNumber + 16}
         position={[0, 0, -6.6]}
+        reservedSeats={reservedSeats}
+        onBook={onBook}
       />
       <Row
         models={models}
         color={seatColor}
-        startNumber={(seatNumber += 8)}
+        startNumber={seatNumber + 24}
         position={[0, 0, -8.5]}
+        reservedSeats={reservedSeats}
+        onBook={onBook}
       />
       <Row
         models={models}
         color={seatColor}
-        startNumber={(seatNumber += 8)}
+        startNumber={seatNumber + 32}
         position={[0, 0, -11]}
+        reservedSeats={reservedSeats}
+        onBook={onBook}
       />
       <Row
         models={models}
         color={seatColor}
-        startNumber={(seatNumber += 8)}
+        startNumber={seatNumber + 40}
         position={[0, 0, -12.9]}
+        reservedSeats={reservedSeats}
+        onBook={onBook}
       />
       <Row
         models={models}
         color={seatColor}
-        startNumber={(seatNumber += 8)}
+        startNumber={seatNumber + 48}
         position={[0, 0, -17.6]}
+        reservedSeats={reservedSeats}
+        onBook={onBook}
       />
       <Row
         models={models}
         color={seatColor}
-        startNumber={(seatNumber += 8)}
+        startNumber={seatNumber + 56}
         position={[0, 0, -19.5]}
+        reservedSeats={reservedSeats}
+        onBook={onBook}
       />
     </group>
   );
