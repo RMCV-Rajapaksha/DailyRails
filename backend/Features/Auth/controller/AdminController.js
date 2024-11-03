@@ -23,10 +23,7 @@ const postAdmin = async (req, res) => {
 
     const newAdmin = await Admin.create(adminData);
 
-    // Send email notification
-    const emailSubject = "New Admin Account Created";
-    const emailText = `Hello ${adminData.Name},\n\nYour admin account has been successfully created.\n\nBest regards,\nYour Company your company mail is ${adminData.Email} and password is ${adminData.Password}`;
-    await sendEmail(adminData.Email, emailSubject, emailText);
+    await sendEmail(adminData);
 
     res.json("New Admin Role is Successfully Created");
   } catch (error) {
