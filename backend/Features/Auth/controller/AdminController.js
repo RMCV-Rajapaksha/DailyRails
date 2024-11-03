@@ -3,6 +3,7 @@ const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 const db = require("../../../models");
 const Admin = db.Admin;
+const { sendEmail } = require("../../../Services/EmailService"); // Import the email service
 
 // POST a new admin
 const postAdmin = async (req, res) => {
@@ -21,6 +22,12 @@ const postAdmin = async (req, res) => {
     adminData.Password = hashedPassword;
 
     const newAdmin = await Admin.create(adminData);
+
+    // Send email notification
+    const emailSubject = "New Admin Account Created";
+    const emailText = `Hello ${adminData.Name},\n\nYour admin account has been successfully created.\n\nBest regards,\nYour Company`;
+    await sendEmail(adminData.Email, emailSubject, emailText);
+
     res.json("New Admin Role is Successfully Created");
   } catch (error) {
     console.error("Error details:", error);
