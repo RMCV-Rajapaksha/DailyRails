@@ -1,8 +1,10 @@
 import React, { useState } from 'react';
-import { View, Text, Image, TextInput, TouchableOpacity, StatusBar, KeyboardAvoidingView, Platform } from 'react-native';
+import { View, Text, Image, StatusBar, KeyboardAvoidingView, Platform } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import { images } from '../../constants';
 import { router } from 'expo-router';
+import CustomButton from '../../components/CustomButton';
+import CustomInput from '../../components/CustomInput';
 
 const SignIn = () => {
   const [email, setEmail] = useState('');
@@ -32,7 +34,6 @@ const SignIn = () => {
           barStyle="light-content"
         />
         
-        {/* Main container */}
         <View className="flex-1">
           {/* Image container */}
           <View className="h-4/6 relative">
@@ -49,7 +50,6 @@ const SignIn = () => {
 
           {/* Bottom container for text and white box */}
           <View className="absolute bottom-0 w-full h-[55%]">
-            {/* Welcome text positioned just above white box */}
             <View className="px-7 mb-4">
               <Text className="text-4xl font-bold text-white shadow-lg">
                 Sign In
@@ -59,58 +59,46 @@ const SignIn = () => {
             {/* White box container */}
             <View className="flex-1 bg-white rounded-t-3xl px-6 pt-8">
               <View className="flex-1">
-                {/* Form container */}
-                <View className="space-y-5">
-                  {/* Username/Email Input */}
-                  <View className="space-y-2">
-                    <Text className="text-gray-600 text-base uppercase tracking-wide">
-                      USERNAME
-                    </Text>
-                    <TextInput
-                      className="w-full border-b border-gray-300 pb-2 text-base"
+                {/* Form container - Adjusted space-y-8 for more spacing */}
+                <View className="space-y-8">
+                  {/* Input Fields Group - Added separate spacing for inputs */}
+                  <View className="mb-6">
+                    <CustomInput
+                      label="USERNAME"
                       placeholder="johndoe@example.com"
                       value={email}
                       onChangeText={setEmail}
-                      autoCapitalize="none"
                       keyboardType="email-address"
+                      containerClassName="mb-6"  // Add margin bottom to the username input container
                     />
-                  </View>
-
-                  {/* Password Input */}
-                  <View className="space-y-2">
-                    <Text className="text-gray-600 text-base uppercase tracking-wide">
-                      PASSWORD
-                    </Text>
-                    <TextInput
-                      className="w-full border-b border-gray-300 pb-2 text-base"
+                    <CustomInput
+                      label="PASSWORD"
                       placeholder="********"
                       value={password}
                       onChangeText={setPassword}
                       secureTextEntry
+                      containerClassName="mb-6"  // Add margin bottom to the username input container
                     />
                   </View>
 
-                  {/* Sign In Button */}
-                  <TouchableOpacity
-                    className="w-full bg-[#41A3B3] py-4 rounded-lg mt-6"
-                    activeOpacity={0.8}
+                  {/* Button with adjusted top margin */}
+                  <CustomButton
+                    title="Sign in"
                     onPress={handleSignIn}
-                  >
-                    <Text className="text-white text-center text-lg font-semibold">
-                      Sign in
-                    </Text>
-                  </TouchableOpacity>
+                    variant="primary"
+                    className="mt-4"
+                  />
 
-                  {/* Sign Up Link */}
-                  <View className="flex-row justify-center items-center pt-4">
+                  <View className="flex-row justify-center items-center">
                     <Text className="text-gray-600 text-base">
                       Don't have an account? 
                     </Text>
-                    <TouchableOpacity onPress={handleSignUp}>
-                      <Text className="text-[#41A3B3] text-base font-semibold ml-1">
-                        Sign up
-                      </Text>
-                    </TouchableOpacity>
+                    <CustomButton
+                      title="Sign up"
+                      onPress={handleSignUp}
+                      variant="link"
+                      className="ml-1"
+                    />
                   </View>
                 </View>
               </View>
@@ -123,5 +111,3 @@ const SignIn = () => {
 }
 
 export default SignIn;
-
-

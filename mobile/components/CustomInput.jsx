@@ -1,38 +1,34 @@
+import React from 'react';
 import { View, Text, TextInput } from 'react-native';
-import { Eye, EyeOff } from 'lucide-react-native';
 
-export const CustomInput = ({
+const CustomInput = ({
   label,
   value,
   onChangeText,
-  secureTextEntry,
-  toggleSecureEntry,
-  ...props
-}) => (
-  <View className="space-y-1">
-    <Text className="text-sm font-medium text-gray-700">
-      {label}
-    </Text>
-    <View className="relative">
+  placeholder,
+  secureTextEntry = false,
+  autoCapitalize = 'none',
+  keyboardType = 'default',
+  className = '',
+  containerClassName = '',
+  spacing = 'space-y-2' // New prop for controlling label-input spacing
+}) => {
+  return (
+    <View className={`${spacing} ${containerClassName}`}>
+      <Text className="text-gray-600 text-base uppercase tracking-wide">
+        {label}
+      </Text>
       <TextInput
+        className={`w-full border-b border-gray-300 pb-2 text-base ${className}`}
+        placeholder={placeholder}
         value={value}
         onChangeText={onChangeText}
         secureTextEntry={secureTextEntry}
-        className="w-full p-2 border border-gray-300 rounded-md"
-        {...props}
+        autoCapitalize={autoCapitalize}
+        keyboardType={keyboardType}
       />
-      {toggleSecureEntry && (
-        <TouchableOpacity 
-          onPress={toggleSecureEntry}
-          className="absolute right-2 top-1/2 -translate-y-1/2"
-        >
-          {secureTextEntry ? (
-            <Eye size={20} color="#666" />
-          ) : (
-            <EyeOff size={20} color="#666" />
-          )}
-        </TouchableOpacity>
-      )}
     </View>
-  </View>
-);
+  );
+};
+
+export default CustomInput;
