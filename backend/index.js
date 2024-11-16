@@ -1,4 +1,5 @@
 const express = require("express");
+require("dotenv").config();
 const cors = require("cors"); // Make sure to import cors
 const http = require("http"); // Import the http module
 const app = express();

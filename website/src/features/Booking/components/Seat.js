@@ -1,13 +1,27 @@
+import { useState } from "react";
 import { Text } from "@react-three/drei";
 
-const Seat = ({ models, color, number, rotation, ...props }) => {
+const Seat = ({
+  models,
+  color,
+  number,
+  rotation,
+  reservedSeats,
+  onBook,
+  ...props
+}) => {
+  const [isBooked, setIsBooked] = useState(false);
+
   const handleClick = () => {
-    console.log(`Seat number: ${number}`);
+    if (!reservedSeats.includes(number) && !isBooked) {
+      setIsBooked(true);
+      onBook(number);
+    }
   };
 
   return (
     <group {...props} rotation={rotation}>
-      <models.Seat color={color} />
+      <models.Seat color={isBooked ? "red" : color} />
       <Text
         fontSize={0.2}
         color="#000"

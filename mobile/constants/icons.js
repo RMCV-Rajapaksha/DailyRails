@@ -7,7 +7,7 @@ import schedule from '../assets/icons/schedule.png';
 import lost from '../assets/icons/lost.png';
 import found from '../assets/icons/found.png';
 import home from '../assets/icons/home.png';
-import plus from '../assets/icons/plus.png';
+import notification from '../assets/icons/notification.png';
 import profile from '../assets/icons/profile.png';
 import bookmarks from '../assets/icons/bookmark.png';
 
@@ -21,7 +21,7 @@ export default {
     lost,
     found,
     home,
-    plus,
+    notification,
     profile,
     bookmarks   
 }
