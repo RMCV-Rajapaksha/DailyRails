@@ -1,47 +1,26 @@
-import { useState, useEffect } from "react";
-import axios from "axios";
+import { useEffect, useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import { fetchItems } from "../../../store/actions/itemActions";
 import Loader from "../../../components/Loader";
 import ItemCard from "../components/ItemCard";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 
 const LostItemsPage = () => {
-  const [posts, setPosts] = useState([]);
-  const [isLoading, setIsLoading] = useState(false);
-  const [error, setError] = useState(null);
-  const [noResults, setNoResults] = useState(false);
+  const dispatch = useDispatch();
+  const { items, isLoading, error, total } = useSelector((state) => state.items);
   const [currentPage, setCurrentPage] = useState(1);
-  const [totalPages, setTotalPages] = useState(1);
   const itemsPerPage = 5;
 
   useEffect(() => {
-    const fetchPosts = async () => {
-      setIsLoading(true);
-      setError(null);
-
-      try {
-        const res = await axios.get(
-          `http://localhost:4000/api/items/lost?page=${currentPage}&limit=${itemsPerPage}`
-        );
-        setPosts(res.data.items);
-        setTotalPages(Math.ceil(res.data.total / itemsPerPage));
-        setNoResults(res.data.items.length === 0);
-      } catch (error) {
-        console.error("Failed to fetch posts:", error);
-        setError("Failed to load items. Please try again later.");
-      } finally {
-        setIsLoading(false);
-      }
-    };
-
-    fetchPosts();
-  }, [currentPage]);
+    dispatch(fetchItems("lost", currentPage, itemsPerPage));
+  }, [dispatch, currentPage]);
 
   const handlePreviousPage = () => {
     setCurrentPage((prev) => Math.max(prev - 1, 1));
   };
 
   const handleNextPage = () => {
-    setCurrentPage((prev) => Math.min(prev + 1, totalPages));
+    setCurrentPage((prev) => Math.min(prev + 1, Math.ceil(total / itemsPerPage)));
   };
 
   return (
@@ -55,19 +34,19 @@ const LostItemsPage = () => {
           </div>
         ) : error ? (
           <div className="p-4 text-red-500 rounded-md bg-red-50">{error}</div>
-        ) : noResults ? (
+        ) : items.length === 0 ? (
           <div className="p-4 text-gray-500 rounded-md bg-gray-50">
             No items found
           </div>
         ) : (
           <>
             <div className="space-y-4">
-              {posts.map((post) => (
+              {items.map((item) => (
                 <ItemCard
-                  key={post.id}
-                  title={post.Title}
-                  description={post.Description}
-                  date={post.createdAt}
+                  key={item.id}
+                  title={item.Title}
+                  description={item.Description}
+                  date={item.createdAt}
                 />
               ))}
             </div>
@@ -86,7 +65,7 @@ const LostItemsPage = () => {
 
               <button
                 onClick={handleNextPage}
-                disabled={currentPage === totalPages}
+                disabled={currentPage === Math.ceil(total / itemsPerPage)}
                 className="flex items-center px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-md hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed"
               >
                 Next
