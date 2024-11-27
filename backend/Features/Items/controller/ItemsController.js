@@ -4,12 +4,10 @@ const db = require("../../../models"); // Adjust the path according to your proj
 const Item = db.Item; // Ensure this path is correct
 
 // Utility function for fetching items with pagination and filtering
-async function fetchItems(req, res, statusFilter) {
+async function fetchItems(req, res, statusFilter, itemTypeFilter) {
   const page = parseInt(req.query.page) || 1;
   const limit = parseInt(req.query.limit) || 10;
   const offset = (page - 1) * limit;
-
-  const itemTypeFilter = req.query.itemType;
 
   const whereClause = { Status: statusFilter };
 
@@ -37,6 +35,16 @@ const getItemApproved = async (req, res) => {
 // GET all not approved items with pagination and filtering
 const getItemNotApproved = async (req, res) => {
   return fetchItems(req, res, "Not Approved");
+};
+
+// GET all lost items with pagination and filtering
+const getLostItems = async (req, res) => {
+  return fetchItems(req, res, "Approved", "Lost");
+};
+
+// GET all found items with pagination and filtering
+const getFoundItems = async (req, res) => {
+  return fetchItems(req, res, "Approved", "Found");
 };
 
 // POST a new item
@@ -88,6 +96,8 @@ const patchItem = async (req, res) => {
 module.exports = {
   getItemApproved,
   getItemNotApproved,
+  getLostItems,
+  getFoundItems,
   postItem,
   deleteItem,
   patchItem,

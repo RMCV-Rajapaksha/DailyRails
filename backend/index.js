@@ -13,7 +13,7 @@ app.use(express.json());
 // CORS setup
 app.use(
   cors({
-    origin: "http://localhost:4000",
+    origin: "http://localhost:3000",
     methods: "GET,POST,PUT,DELETE",
     credentials: true,
   })
@@ -43,8 +43,8 @@ setupWebSocket(server);
 db.sequelize
   .sync()
   .then(() => {
-    server.listen(3000, () => {
-      console.log("Server running on port 3000");
+    server.listen(4000, () => {
+      console.log("Server running on port 4000");
     });
   })
   .catch((err) => {
