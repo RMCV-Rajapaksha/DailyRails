@@ -1,13 +1,13 @@
-import React from "react";
-import logo from "../../../assets/images/Logo-1.png";
-import { useState } from "react";
+import React, { useState } from "react";
+import logo from "../../../assets/images/Logo-3.png";
 
 const SignUpPage = () => {
   const [formData, setFormData] = useState({
-    username: "",
+    email: "",
     password: "",
-    jobRole: "Station Admin",
+    confirmPassword: "",
     id: "",
+    phone: "",
   });
 
   const handleChange = (e) => {
@@ -16,95 +16,141 @@ const SignUpPage = () => {
 
   const handleSubmit = (e) => {
     e.preventDefault();
+    if (formData.password !== formData.confirmPassword) {
+      alert("Passwords do not match!");
+      return;
+    }
     console.log("Form submitted:", formData);
     // Add your signup logic here
   };
 
   return (
-    <div className="flex items-center justify-center min-h-screen p-4 bg-gray-100 font-body">
-      <div className="w-full max-w-md p-8 bg-white rounded-sm shadow-md font-body">
-        <div className="flex justify-center mb-6">
-          <img src={logo} alt="DailyRails Logo" className="h-16" />
-        </div>
-        <h2 className="mb-6 text-2xl font-bold text-center text-primary font-body">
+    <div className="flex flex-col justify-center min-h-screen py-12 bg-gray-100 sm:px-6 lg:px-8 font-body">
+      <div className="sm:mx-auto sm:w-full sm:max-w-md">
+        <img className="w-auto h-20 mx-auto" src={logo} alt="DailyRails" />
+        <h2 className="mt-6 text-3xl font-extrabold text-center text-primary">
           Signup to DailyRails
         </h2>
-        <form onSubmit={handleSubmit} className="font-body">
-          <div className="mb-4">
-            <label
-              htmlFor="username"
-              className="block mb-2 text-sm font-bold text-primary font-body"
-            >
-              Username
-            </label>
-            <input
-              type="text"
-              id="username"
-              name="username"
-              placeholder="Username"
-              value={formData.username}
-              onChange={handleChange}
-              className="w-full px-3 py-2 border border-gray-300 rounded-sm focus:outline-none focus:ring-2 focus:ring-primary font-body"
-            />
-          </div>
-          <div className="mb-4">
-            <label
-              htmlFor="password"
-              className="block mb-2 text-sm font-bold text-primary font-body"
-            >
-              Password
-            </label>
-            <input
-              type="password"
-              id="password"
-              name="password"
-              placeholder="Password"
-              value={formData.password}
-              onChange={handleChange}
-              className="w-full px-3 py-2 border border-gray-300 rounded-sm focus:outline-none focus:ring-2 focus:ring-primary font-body"
-            />
-          </div>
-          <div className="mb-4">
-            <label
-              htmlFor="jobRole"
-              className="block mb-2 text-sm font-bold text-primary font-body"
-            >
-              Job Role
-            </label>
-            <input
-              type="text"
-              id="jobRole"
-              name="jobRole"
-              placeholder="Station Admin"
-              value={formData.jobRole}
-              onChange={handleChange}
-              className="w-full px-3 py-2 border border-gray-300 rounded-sm focus:outline-none focus:ring-2 focus:ring-primary font-body"
-            />
-          </div>
-          <div className="mb-6">
-            <label
-              htmlFor="id"
-              className="block mb-2 text-sm font-bold text-primary font-body"
-            >
-              ID
-            </label>
-            <input
-              type="text"
-              id="id"
-              name="id"
-              placeholder="ID"
-              value={formData.id}
-              onChange={handleChange}
-              className="w-full px-3 py-2 border border-gray-300 rounded-sm focus:outline-none focus:ring-2 focus:ring-primary font-body"
-            />
-          </div>
-          <button
-            type="submit"
-            className="w-full px-4 py-2 font-bold text-white bg-blue-600 rounded-sm hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-primary focus:ring-opacity-50 font-body"
-          >
-            Signup
-          </button>
-        </form>
+      </div>
+
+      <div className="mt-8 sm:mx-auto sm:w-full sm:max-w-md">
+        <div className="px-4 py-8 bg-white shadow sm:rounded-lg sm:px-10">
+          <form className="space-y-6" onSubmit={handleSubmit}>
+            <div>
+              <label
+                htmlFor="email"
+                className="block text-sm font-medium text-primary"
+              >
+                Email
+              </label>
+              <div className="mt-1">
+                <input
+                  id="email"
+                  name="email"
+                  type="email"
+                  required
+                  placeholder="abcde@gmail.com"
+                  className="block w-full px-3 py-2 placeholder-gray-400 border border-gray-300 rounded-md shadow-sm appearance-none focus:outline-none focus:border-primary sm:text-sm"
+                  value={formData.email}
+                  onChange={handleChange}
+                />
+              </div>
+            </div>
+
+            <div>
+              <label
+                htmlFor="password"
+                className="block text-sm font-medium text-primary"
+              >
+                Password
+              </label>
+              <div className="mt-1">
+                <input
+                  id="password"
+                  name="password"
+                  type="password"
+                  required
+                  placeholder="**********"
+                  className="block w-full px-3 py-2 placeholder-gray-400 border border-gray-300 rounded-md shadow-sm appearance-none focus:outline-none focus:border-primary sm:text-sm"
+                  value={formData.password}
+                  onChange={handleChange}
+                />
+              </div>
+            </div>
+
+            <div>
+              <label
+                htmlFor="confirmPassword"
+                className="block text-sm font-medium text-primary"
+              >
+                Confirm Password
+              </label>
+              <div className="mt-1">
+                <input
+                  id="confirmPassword"
+                  name="confirmPassword"
+                  type="password"
+                  required
+                  placeholder="**********"
+                  className="block w-full px-3 py-2 placeholder-gray-400 border border-gray-300 rounded-md shadow-sm appearance-none focus:outline-none focus:border-primary sm:text-sm"
+                  value={formData.confirmPassword}
+                  onChange={handleChange}
+                />
+              </div>
+            </div>
+
+            <div>
+              <label
+                htmlFor="id"
+                className="block text-sm font-medium text-primary"
+              >
+                ID
+              </label>
+              <div className="mt-1">
+                <input
+                  id="id"
+                  name="id"
+                  type="text"
+                  required
+                  placeholder="123456789123456"
+                  className="block w-full px-3 py-2 placeholder-gray-400 border border-gray-300 rounded-md shadow-sm appearance-none focus:outline-none focus:border-primary sm:text-sm"
+                  value={formData.id}
+                  onChange={handleChange}
+                />
+              </div>
+            </div>
+
+            <div>
+              <label
+                htmlFor="phone"
+                className="block text-sm font-medium text-primary"
+              >
+                Phone
+              </label>
+              <div className="mt-1">
+                <input
+                  id="phone"
+                  name="phone"
+                  type="tel"
+                  required
+                  placeholder="07123456789"
+                  className="block w-full px-3 py-2 placeholder-gray-400 border border-gray-300 rounded-md shadow-sm appearance-none focus:outline-none focus:border-primary sm:text-sm"
+                  value={formData.phone}
+                  onChange={handleChange}
+                />
+              </div>
+            </div>
+
+            <div>
+              <button
+                type="submit"
+                className="flex justify-center w-full px-4 py-2 text-sm font-medium text-white bg-primary border border-transparent rounded-md shadow-sm hover:bg-tertiary focus:outline-none focus:ring-2 focus:ring-offset-2"
+              >
+                Signup
+              </button>
+            </div>
+          </form>
+        </div>
       </div>
     </div>
   );
