@@ -9,6 +9,7 @@ import ReportBlockage from "./features/Authentication/pages/Report_blockage";
 import NotificationPage from "./features/MainAdmin/Notification/pages/NotificationPage";
 import TrainManagement from "./features/MainAdmin/trains/Train_management.js";
 import TrainSchedule from "./features/MainAdmin/trains/Train_schedule.js";
+import Tickets from "./features/MainAdmin/tickets/Tickets.js";
 
 
 function App() {
@@ -25,6 +26,7 @@ function App() {
           <Route path="/report-blockage" element={<ReportBlockage />} />{" "}
           <Route path="/train-management" element={<TrainManagement />} />{" "}
           <Route path="/train-schedule" element={<TrainSchedule />} />{" "}
+          <Route path="/tickets" element={<Tickets />} />{" "}
 
         </Routes>{" "}
       </div>{" "}
