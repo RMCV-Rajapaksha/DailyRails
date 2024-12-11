@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { fetchAnnouncements } from "../../../store/actions/announcementActions";
 import Loader from "../../../components/Loader";
-import LostItems from "../components/LostItems";
+import NewsCard from "../components/newsCard";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 
 const News = () => {
@@ -46,7 +46,7 @@ const News = () => {
           <>
             <div className="space-y-4">
               {announcements.map((item) => (
-                <LostItems key={item.ID} item={item} />
+                <NewsCard key={item.ID} item={item} />
               ))}
             </div>
 

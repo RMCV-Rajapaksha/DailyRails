@@ -1,8 +1,8 @@
 import React from "react";
-import { Info } from "lucide-react";
+import { Newspaper } from "lucide-react";
 import { motion } from "framer-motion";
 
-const LostItems = ({ item }) => {
+const NewsCard = ({ item }) => {
   // Animation variants for the card
   const cardVariants = {
     hidden: {
@@ -79,7 +79,7 @@ const LostItems = ({ item }) => {
     >
       <div className="flex items-start space-x-3">
         <motion.div className="flex-shrink-0" variants={iconVariants}>
-          <Info className="w-6 h-6 text-tertiary" />
+          <Newspaper className="w-6 h-6 text-tertiary" />
         </motion.div>
         <motion.div className="flex-1" variants={contentVariants}>
           <motion.h2
@@ -107,4 +107,4 @@ const LostItems = ({ item }) => {
   );
 };
 
-export default LostItems;
+export default NewsCard;
