@@ -1,10 +1,12 @@
 import { createStore, applyMiddleware, combineReducers } from "redux";
-import { thunk } from "redux-thunk"; // Changed to named import
+import { thunk } from "redux-thunk"; // Use named import
 import { composeWithDevTools } from "@redux-devtools/extension";
 import itemReducer from "./reducers/itemReducer";
+import announcementReducer from "./reducers/announcementReducer";
 
 const rootReducer = combineReducers({
   items: itemReducer,
+  announcements: announcementReducer,
 });
 
 const store = createStore(

@@ -1,33 +1,109 @@
 import React from "react";
+import { Info } from "lucide-react";
+import { motion } from "framer-motion";
 
-const LostItems = ({ LostItems }) => {
+const LostItems = ({ item }) => {
+  // Animation variants for the card
+  const cardVariants = {
+    hidden: {
+      opacity: 0,
+      y: 20,
+      scale: 0.95,
+    },
+    visible: {
+      opacity: 1,
+      y: 0,
+      scale: 1,
+      transition: {
+        duration: 0.5,
+        ease: "easeOut",
+        staggerChildren: 0.1,
+      },
+    },
+    hover: {
+      scale: 1.02,
+      boxShadow: "0 4px 12px rgba(0, 0, 0, 0.05)",
+      transition: {
+        duration: 0.3,
+        ease: "easeInOut",
+      },
+    },
+  };
+
+  const contentVariants = {
+    hidden: {
+      opacity: 0,
+      x: -20,
+    },
+    visible: {
+      opacity: 1,
+      x: 0,
+      transition: {
+        duration: 0.5,
+      },
+    },
+  };
+
+  const iconVariants = {
+    hidden: {
+      opacity: 0,
+      rotate: -45,
+      scale: 0.5,
+    },
+    visible: {
+      opacity: 1,
+      rotate: 0,
+      scale: 1,
+      transition: {
+        duration: 0.5,
+        ease: "easeOut",
+      },
+    },
+    hover: {
+      rotate: 360,
+      transition: {
+        duration: 0.8,
+        ease: "easeInOut",
+      },
+    },
+  };
+
   return (
-    <div className="flex w-full p-4 mt-8 space-x-4 border-2 rounded-sm border-secondary-1">
-      {/* Left */}
-      <div className="w-[35%] h-[200px] flex justify-center items-center">
-        <img
-          src={LostItems.imgSrc}
-          alt=""
-          className="object-cover w-full h-full"
-        />
+    <motion.div
+      className="p-6 bg-white border rounded-sm border-secondary"
+      variants={cardVariants}
+      initial="hidden"
+      animate="visible"
+      whileHover="hover"
+      layout
+    >
+      <div className="flex items-start space-x-3">
+        <motion.div className="flex-shrink-0" variants={iconVariants}>
+          <Info className="w-6 h-6 text-tertiary" />
+        </motion.div>
+        <motion.div className="flex-1" variants={contentVariants}>
+          <motion.h2
+            className="mb-2 text-xl font-semibold text-secondary-1"
+            variants={contentVariants}
+          >
+            {item.Title}
+          </motion.h2>
+          <motion.p className="mb-4 text-secondary" variants={contentVariants}>
+            {item.Description}
+          </motion.p>
+          <motion.div
+            className="flex items-center justify-between text-sm text-gray-500"
+            variants={contentVariants}
+          >
+            <p>{item.Announcement_To}</p>
+            <div className="flex space-x-2">
+              <p>{new Date(item.createdAt).toLocaleDateString()}</p>
+              <p>{new Date(item.updatedAt).toLocaleDateString()}</p>
+            </div>
+          </motion.div>
+        </motion.div>
       </div>
-      {/* Right */}
-      <div className="flex flex-col w-[65%]">
-        <h1 className="mb-1 text-xl font-bold md:-2 md:text-2xl text-primary">
-          {LostItems.title}
-        </h1>
-        <div className="flex items-center justify-between mb-2 space-x-4 text-sm font-semibold text-secondary-1 md:mb-4">
-          <p>{LostItems.reportedBy}</p>
-          <div className="flex space-x-2 text-secondary-1">
-            <p>{LostItems.dateFound}</p>
-            <p>{LostItems.dateReported}</p>
-          </div>
-        </div>
-        <p className="text-sm md:text-lg text-secondary-1">
-          {LostItems.description}
-        </p>
-      </div>
-    </div>
+    </motion.div>
   );
 };
 
