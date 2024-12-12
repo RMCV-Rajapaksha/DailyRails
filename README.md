@@ -46,16 +46,10 @@ Key goals of the system:
 - Instant alerts for delays, cancellations, route changes, and emergencies.
 - Multi-channel notifications (SMS, email, in-app alerts).
 
-### 📊 Data Analytics & Reporting
-- Historical data visualized with graphs to help with performance analysis.
-- Real-time metrics on train punctuality, delays, and other KPIs.
-
 ### 🖥 Admin Dashboard
 - Simple-to-use dashboard for monitoring and managing train statuses, routes, and schedules.
 - Access detailed logs of past incidents, delays, and operational performance.
 
-### 🌍 Multilingual Support
-- Available in multiple languages to cater to a global audience.
 
 ---
 
