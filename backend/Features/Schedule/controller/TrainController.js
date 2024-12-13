@@ -1,6 +1,6 @@
 // controllers/TrainController.js
 
-const db = require("../models");
+const db = require("../../../models");
 const { Train, StoppingPoint } = db;
 
 const createTrain = async (req, res) => {
@@ -64,7 +64,7 @@ const createTrain = async (req, res) => {
     return res.status(500).json({
       success: false,
       message: "Error creating train schedule",
-      error: error.message,
+      error: error,
     });
   }
 };
