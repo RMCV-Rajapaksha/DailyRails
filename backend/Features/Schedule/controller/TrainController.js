@@ -2,14 +2,14 @@
 
 const db = require("../../../models");
 const { Train, StoppingPoint } = db;
-
+// TrainController.js - Updated createTrain function
 const createTrain = async (req, res) => {
   const t = await db.sequelize.transaction();
 
   try {
-    // 1. Create the train record
     const {
       Name,
+      TrainID,
       StartStations,
       EndStations,
       StartTime,
@@ -20,15 +20,15 @@ const createTrain = async (req, res) => {
     const train = await Train.create(
       {
         Name,
-        StartStations,
-        EndStations,
+        TrainID,
+        StartStations, // Map to correct column name
+        EndStations, // Map to correct column name
         StartTime,
         EndTime,
       },
       { transaction: t }
     );
 
-    // 2. Create stopping points with train ID
     if (stoppingPoints && stoppingPoints.length > 0) {
       const stoppingPointsWithTrainId = stoppingPoints.map((point) => ({
         ...point,
@@ -40,10 +40,8 @@ const createTrain = async (req, res) => {
       });
     }
 
-    // 3. Commit transaction
     await t.commit();
 
-    // 4. Fetch complete train data with stopping points
     const trainWithStops = await Train.findByPk(train.ID, {
       include: [
         {
@@ -58,17 +56,15 @@ const createTrain = async (req, res) => {
       data: trainWithStops,
     });
   } catch (error) {
-    // Rollback transaction on error
     await t.rollback();
 
     return res.status(500).json({
       success: false,
       message: "Error creating train schedule",
-      error: error,
+      error: error.message || error, // Better error handling
     });
   }
 };
-
 // Get all trains with their stopping points
 const getAllTrains = async (req, res) => {
   try {
@@ -158,9 +154,67 @@ const deleteTrain = async (req, res) => {
   }
 };
 
+const searchTrainsByLocation = async (req, res) => {
+  try {
+    const { StartLocation, EndLocation } = req.body;
+
+    if (!StartLocation || !EndLocation) {
+      return res.status(400).json({
+        success: false,
+        message: "Start and End locations are required",
+      });
+    }
+
+    const trains = await Train.findAll({
+      where: {
+        [db.Sequelize.Op.or]: [
+          {
+            // Direct trains
+            [db.Sequelize.Op.and]: [{ StartLocation }, { EndLocation }],
+          },
+        ],
+      },
+      include: [
+        {
+          model: StoppingPoint,
+          as: "stoppingPoints",
+          where: {
+            // Check if either location is in stopping points
+            [db.Sequelize.Op.or]: [
+              { StationName: StartLocation },
+              { StationName: EndLocation },
+            ],
+          },
+          required: false, // LEFT JOIN to include trains even if no stopping points match
+        },
+      ],
+    });
+
+    if (!trains.length) {
+      return res.status(404).json({
+        success: false,
+        message: "No trains found between these locations",
+      });
+    }
+
+    return res.status(200).json({
+      success: true,
+      data: trains,
+    });
+  } catch (error) {
+    return res.status(500).json({
+      success: false,
+      message: "Error searching trains",
+      error: error.message,
+    });
+  }
+};
+
+// Add to exports
 module.exports = {
   createTrain,
   getAllTrains,
   getTrainById,
   deleteTrain,
+  searchTrainsByLocation, // Add new function to exports
 };
