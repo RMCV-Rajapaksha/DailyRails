@@ -154,67 +154,51 @@ const deleteTrain = async (req, res) => {
   }
 };
 
+
+
+// Add this new function in TrainController.js
 const searchTrainsByLocation = async (req, res) => {
   try {
     const { StartLocation, EndLocation } = req.body;
-
-    if (!StartLocation || !EndLocation) {
-      return res.status(400).json({
-        success: false,
-        message: "Start and End locations are required",
-      });
-    }
-
+    
     const trains = await Train.findAll({
       where: {
-        [db.Sequelize.Op.or]: [
-          {
-            // Direct trains
-            [db.Sequelize.Op.and]: [{ StartLocation }, { EndLocation }],
-          },
-        ],
+        StartStations: StartLocation,
+        EndStations: EndLocation
       },
       include: [
         {
           model: StoppingPoint,
-          as: "stoppingPoints",
-          where: {
-            // Check if either location is in stopping points
-            [db.Sequelize.Op.or]: [
-              { StationName: StartLocation },
-              { StationName: EndLocation },
-            ],
-          },
-          required: false, // LEFT JOIN to include trains even if no stopping points match
-        },
-      ],
+          as: "stoppingPoints"
+        }
+      ]
     });
 
-    if (!trains.length) {
+    if (!trains || trains.length === 0) {
       return res.status(404).json({
         success: false,
-        message: "No trains found between these locations",
+        message: "No trains found for this route"
       });
     }
 
     return res.status(200).json({
       success: true,
-      data: trains,
+      data: trains
     });
   } catch (error) {
     return res.status(500).json({
-      success: false,
+      success: false, 
       message: "Error searching trains",
-      error: error.message,
+      error: error.message
     });
   }
 };
 
-// Add to exports
+// Add searchTrainsByLocation to module exports
 module.exports = {
   createTrain,
   getAllTrains,
-  getTrainById,
+  getTrainById, 
   deleteTrain,
-  searchTrainsByLocation, // Add new function to exports
+  searchTrainsByLocation // Add this line
 };
