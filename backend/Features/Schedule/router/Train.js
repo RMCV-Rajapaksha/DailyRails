@@ -7,7 +7,7 @@ const {
   getAllTrains,
   getTrainById,
   deleteTrain,
-  searchTrainsByLocation
+  searchTrainsByLocation,
 } = require("../controller/TrainController");
 
 // Add new route
