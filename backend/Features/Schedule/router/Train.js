@@ -7,7 +7,11 @@ const {
   getAllTrains,
   getTrainById,
   deleteTrain,
+  searchTrainsByLocation
 } = require("../controller/TrainController");
+
+// Add new route
+router.post("/search", searchTrainsByLocation);
 
 // Create new train with stopping points
 router.post("/", createTrain);

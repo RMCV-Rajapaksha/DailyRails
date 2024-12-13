@@ -1,3 +1,4 @@
+// TrainModel.js
 const { Sequelize, DataTypes } = require("sequelize");
 
 module.exports = (sequelize) => {
@@ -9,15 +10,21 @@ module.exports = (sequelize) => {
         autoIncrement: true,
         primaryKey: true,
       },
+      TrainID: {
+        type: DataTypes.STRING(20),
+        allowNull: false,
+      },
       Name: {
         type: DataTypes.STRING(20),
         allowNull: false,
       },
       StartStations: {
+        // Changed from StartStations
         type: DataTypes.STRING(20),
         allowNull: false,
       },
       EndStations: {
+        // Changed from EndStations
         type: DataTypes.STRING(50),
         allowNull: false,
       },
