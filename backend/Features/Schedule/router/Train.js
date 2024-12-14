@@ -9,6 +9,11 @@ const {
   deleteTrain,
   searchTrainsByLocation,
 } = require("../controller/TrainController");
+const {
+  validateNewTrain,
+  validateUpdateTrain,
+  validateTrainId,
+} = require("../validators/TrainValidators");
 
 // Add new route
 router.post("/search", searchTrainsByLocation);
