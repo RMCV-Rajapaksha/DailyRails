@@ -1,35 +1,46 @@
 import React, { useState } from "react";
+import apiService from "../../../http";
 
 const TrainManagement = () => {
   const [trains, setTrains] = useState([
     {
       id: 1,
       name: "1008 Intercity Express - Badulla - Colombo Fort",
-      departure: "10:15",
-      arrival: "21:10",
-      class: "Observation Saloon",
-      availableSeats: 14,
-      price: "3000 LKR",
-    },
-    {
-      id: 2,
-      name: "1046 Night Mail - Badulla - Colombo Fort",
-      departure: "18:00",
-      arrival: "05:40",
-      class: "Second Class Sleeper",
-      availableSeats: 5,
-      price: "5000 LKR",
+      TrainID: "IC1008",
+      StartStations: "Badulla",
+      EndStations: "Colombo Fort",
+      StartTime: "10:15",
+      EndTime: "21:10",
+      stoppingPoints: [
+        {
+          StationName: "Nanu Oya",
+          ArrivalTime: "12:30",
+          DepartureTime: "12:35",
+        },
+        {
+          StationName: "Peradeniya",
+          ArrivalTime: "16:00",
+          DepartureTime: "16:05",
+        },
+      ],
     },
   ]);
 
   const [editTrain, setEditTrain] = useState(null);
   const [form, setForm] = useState({
     name: "",
-    departure: "",
-    arrival: "",
-    class: "",
-    availableSeats: "",
-    price: "",
+    TrainID: "",
+    StartStations: "",
+    EndStations: "",
+    StartTime: "",
+    EndTime: "",
+    stoppingPoints: [],
+  });
+
+  const [newStop, setNewStop] = useState({
+    StationName: "",
+    ArrivalTime: "",
+    DepartureTime: "",
   });
 
   // Handle form change
@@ -37,8 +48,30 @@ const TrainManagement = () => {
     setForm({ ...form, [e.target.name]: e.target.value });
   };
 
+  // Handle stopping points change
+  const handleStopChange = (e) => {
+    setNewStop({ ...newStop, [e.target.name]: e.target.value });
+  };
+
+  // Add a stopping point
+  const handleAddStop = () => {
+    setForm((prev) => ({
+      ...prev,
+      stoppingPoints: [...prev.stoppingPoints, newStop],
+    }));
+    setNewStop({ StationName: "", ArrivalTime: "", DepartureTime: "" });
+  };
+
+  // Remove a stopping point
+  const handleRemoveStop = (index) => {
+    setForm((prev) => ({
+      ...prev,
+      stoppingPoints: prev.stoppingPoints.filter((_, i) => i !== index),
+    }));
+  };
+
   // Add or update train
-  const handleSave = () => {
+  const handleSave = async () => {
     if (editTrain) {
       setTrains((prev) =>
         prev.map((train) =>
@@ -46,18 +79,23 @@ const TrainManagement = () => {
         )
       );
     } else {
-      setTrains((prev) => [
-        ...prev,
-        { id: Date.now(), ...form, availableSeats: Number(form.availableSeats) },
-      ]);
+      setTrains((prev) => [...prev, { id: Date.now(), ...form }]);
+      console.log(form);
+      try {
+        await apiService.post("/api/trains/", form);
+        console.log("Train added successfully!");
+      } catch (error) {
+        console.error("Failed to add train. Please try again.");
+      }
     }
     setForm({
       name: "",
-      departure: "",
-      arrival: "",
-      class: "",
-      availableSeats: "",
-      price: "",
+      TrainID: "",
+      StartStations: "",
+      EndStations: "",
+      StartTime: "",
+      EndTime: "",
+      stoppingPoints: [],
     });
     setEditTrain(null);
   };
@@ -83,11 +121,12 @@ const TrainManagement = () => {
           <tr>
             <th className="py-2 px-4">#</th>
             <th className="py-2 px-4">Train Name</th>
-            <th className="py-2 px-4">Departs</th>
-            <th className="py-2 px-4">Arrives</th>
-            <th className="py-2 px-4">Class</th>
-            <th className="py-2 px-4">Available Seats</th>
-            <th className="py-2 px-4">Price</th>
+            <th className="py-2 px-4">Train ID</th>
+            <th className="py-2 px-4">Start Station</th>
+            <th className="py-2 px-4">End Station</th>
+            <th className="py-2 px-4">Start Time</th>
+            <th className="py-2 px-4">End Time</th>
+            <th className="py-2 px-4">Stopping Points</th>
             <th className="py-2 px-4">Actions</th>
           </tr>
         </thead>
@@ -96,11 +135,18 @@ const TrainManagement = () => {
             <tr key={train.id} className="border-b">
               <td className="py-2 px-4">{index + 1}</td>
               <td className="py-2 px-4">{train.name}</td>
-              <td className="py-2 px-4">{train.departure}</td>
-              <td className="py-2 px-4">{train.arrival}</td>
-              <td className="py-2 px-4">{train.class}</td>
-              <td className="py-2 px-4">{train.availableSeats}</td>
-              <td className="py-2 px-4">{train.price}</td>
+              <td className="py-2 px-4">{train.TrainID}</td>
+              <td className="py-2 px-4">{train.StartStations}</td>
+              <td className="py-2 px-4">{train.EndStations}</td>
+              <td className="py-2 px-4">{train.StartTime}</td>
+              <td className="py-2 px-4">{train.EndTime}</td>
+              <td className="py-2 px-4">
+                {train.stoppingPoints.map((stop, i) => (
+                  <div key={i}>
+                    {stop.StationName} ({stop.ArrivalTime} - {stop.DepartureTime})
+                  </div>
+                ))}
+              </td>
               <td className="py-2 px-4 space-x-2">
                 <button
                   onClick={() => handleEdit(train)}
@@ -136,45 +182,96 @@ const TrainManagement = () => {
           />
           <input
             type="text"
-            name="departure"
-            placeholder="Departure Time"
-            value={form.departure}
+            name="TrainID"
+            placeholder="Train ID"
+            value={form.TrainID}
             onChange={handleChange}
             className="p-2 border rounded"
           />
           <input
             type="text"
-            name="arrival"
-            placeholder="Arrival Time"
-            value={form.arrival}
+            name="StartStations"
+            placeholder="Start Station"
+            value={form.StartStations}
             onChange={handleChange}
             className="p-2 border rounded"
           />
           <input
             type="text"
-            name="class"
-            placeholder="Class"
-            value={form.class}
+            name="EndStations"
+            placeholder="End Station"
+            value={form.EndStations}
             onChange={handleChange}
             className="p-2 border rounded"
           />
           <input
-            type="number"
-            name="availableSeats"
-            placeholder="Available Seats"
-            value={form.availableSeats}
+            type="time"
+            name="StartTime"
+            placeholder="Start Time"
+            value={form.StartTime}
             onChange={handleChange}
             className="p-2 border rounded"
           />
           <input
-            type="text"
-            name="price"
-            placeholder="Price"
-            value={form.price}
+            type="time"
+            name="EndTime"
+            placeholder="End Time"
+            value={form.EndTime}
             onChange={handleChange}
             className="p-2 border rounded"
           />
         </div>
+
+        {/* Stopping Points */}
+        <div className="mt-4">
+          <h3 className="text-lg font-semibold mb-2">Stopping Points</h3>
+          {form.stoppingPoints.map((stop, index) => (
+            <div key={index} className="flex items-center space-x-4 mb-2">
+              <span>
+                {stop.StationName} ({stop.ArrivalTime} - {stop.DepartureTime})
+              </span>
+              <button
+                onClick={() => handleRemoveStop(index)}
+                className="px-2 py-1 bg-red-500 text-white rounded hover:bg-red-600"
+              >
+                Remove
+              </button>
+            </div>
+          ))}
+          <div className="grid grid-cols-3 gap-4 mt-4">
+            <input
+              type="text"
+              name="StationName"
+              placeholder="Station Name"
+              value={newStop.StationName}
+              onChange={handleStopChange}
+              className="p-2 border rounded"
+            />
+            <input
+              type="time"
+              name="ArrivalTime"
+              placeholder="Arrival Time"
+              value={newStop.ArrivalTime}
+              onChange={handleStopChange}
+              className="p-2 border rounded"
+            />
+            <input
+              type="time"
+              name="DepartureTime"
+              placeholder="Departure Time"
+              value={newStop.DepartureTime}
+              onChange={handleStopChange}
+              className="p-2 border rounded"
+            />
+          </div>
+          <button
+            onClick={handleAddStop}
+            className="mt-2 px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600"
+          >
+            Add Stop
+          </button>
+        </div>
+
         <button
           onClick={handleSave}
           className="mt-4 px-4 py-2 bg-green-500 text-white rounded hover:bg-green-600"

@@ -12,7 +12,7 @@ module.exports = (sequelize) => {
       },
       TrainID: {
         type: DataTypes.STRING(20),
-        allowNull: false,
+        allowNull: false,  //need to now allow null
       },
       Name: {
         type: DataTypes.STRING(20),
@@ -30,11 +30,11 @@ module.exports = (sequelize) => {
       },
       StartTime: {
         type: DataTypes.TIME,
-        allowNull: false,
+        allowNull: false, //need to now allow null
       },
       EndTime: {
         type: DataTypes.TIME,
-        allowNull: false,
+        allowNull: false, //need to now allow null
       },
     },
     {

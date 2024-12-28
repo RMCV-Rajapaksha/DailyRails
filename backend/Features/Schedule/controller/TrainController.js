@@ -4,7 +4,9 @@ const db = require("../../../models");
 const { Train, StoppingPoint } = db;
 // TrainController.js - Updated createTrain function
 const createTrain = async (req, res) => {
+
   const t = await db.sequelize.transaction();
+   console.log("req.body", req.body);
 
   try {
     const {
@@ -16,8 +18,10 @@ const createTrain = async (req, res) => {
       EndTime,
       stoppingPoints,
     } = req.body;
+   console.log(1);
 
     const train = await Train.create(
+      console.log("inside create"),
       {
         Name,
         TrainID,
@@ -28,7 +32,7 @@ const createTrain = async (req, res) => {
       },
       { transaction: t }
     );
-
+   console.log(2);
     if (stoppingPoints && stoppingPoints.length > 0) {
       const stoppingPointsWithTrainId = stoppingPoints.map((point) => ({
         ...point,
@@ -39,7 +43,7 @@ const createTrain = async (req, res) => {
         transaction: t,
       });
     }
-
+    console.log(3);
     await t.commit();
 
     const trainWithStops = await Train.findByPk(train.ID, {
@@ -50,11 +54,12 @@ const createTrain = async (req, res) => {
         },
       ],
     });
-
+    console.log(4);
     return res.status(201).json({
       success: true,
       data: trainWithStops,
     });
+    console.log(5);
   } catch (error) {
     await t.rollback();
 

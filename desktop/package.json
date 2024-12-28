@@ -11,6 +11,7 @@
     "@testing-library/user-event": "^13.5.0",
     "add": "^2.0.6",
     "autoprefixer": "^10.4.20",
+    "axios": "^1.7.9",
     "classnames": "^2.5.1",
     "cross-env": "^7.0.3",
     "electron-builder": "^24.13.3",

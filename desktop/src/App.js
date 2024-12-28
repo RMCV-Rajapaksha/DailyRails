@@ -27,6 +27,7 @@ function App() {
           <Route path="/train-management" element={<TrainManagement />} />{" "}
           <Route path="/train-schedule" element={<TrainSchedule />} />{" "}
           <Route path="/tickets" element={<Tickets />} />{" "}
+         
 
         </Routes>{" "}
       </div>{" "}

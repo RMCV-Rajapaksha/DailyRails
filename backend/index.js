@@ -13,11 +13,26 @@ app.use(express.json());
 // CORS setup
 app.use(
   cors({
-    origin: "http://localhost:3000",
+    origin: "http://localhost:3001",
     methods: "GET,POST,PUT,DELETE",
     credentials: true,
-  })
+  })  
 );
+// app.use(
+//   cors({
+//     origin: (origin, callback) => {
+//       const regex = /^http:\/\/localhost:300[0-5]$/;
+//       if (!origin || regex.test(origin)) {
+//         callback(null, true);
+//       } else {
+//         callback(new Error("Not allowed by CORS"));
+//       }
+//     },
+//     methods: "GET,POST,PUT,DELETE",
+//     credentials: true,
+//   })
+// );
+
 
 // Routers
 const AnnouncementRouter = require("./Features/Announcement/router/Announcements");
@@ -27,7 +42,7 @@ const AdminRouter = require("./Features/Auth/router/AdminRouter");
 const UserRouter = require("./Features/Auth/router/UserRouter");
 const trainRoutes = require("./Features/Schedule/router/Train");
 
-// Use the routers
+// Use the routers 
 app.use("/api/admin", AdminRouter);
 app.use("/api/user", UserRouter);
 app.use("/api/announcements", AnnouncementRouter);

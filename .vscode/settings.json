@@ -1,0 +1,19 @@
+{
+    "sqltools.connections": [
+        {
+            "mysqlOptions": {
+                "authProtocol": "default",
+                "enableSsl": "Disabled"
+            },
+            "previewLimit": 50,
+            "server": "localhost",
+            "port": 3306,
+            "driver": "MySQL",
+            "name": "MyLocalDB",
+            "group": "Development",
+            "database": "DailyRails",
+            "username": "root",
+            "connectionTimeout": 10000
+        }
+    ]
+}
