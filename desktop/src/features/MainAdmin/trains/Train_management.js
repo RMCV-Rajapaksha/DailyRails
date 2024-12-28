@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import apiService from "../../../http";
+import { toast } from "react-toastify";
 
 const TrainManagement = () => {
   const [trains, setTrains] = useState([
@@ -28,7 +29,7 @@ const TrainManagement = () => {
 
   const [editTrain, setEditTrain] = useState(null);
   const [form, setForm] = useState({
-    name: "",
+    Name: "",
     TrainID: "",
     StartStations: "",
     EndStations: "",
@@ -84,12 +85,14 @@ const TrainManagement = () => {
       try {
         await apiService.post("/api/trains/", form);
         console.log("Train added successfully!");
+        toast.success("Train added successfully!");
       } catch (error) {
         console.error("Failed to add train. Please try again.");
+        toast.error("Failed to add train. Please try again.");
       }
     }
     setForm({
-      name: "",
+      Name: "",
       TrainID: "",
       StartStations: "",
       EndStations: "",

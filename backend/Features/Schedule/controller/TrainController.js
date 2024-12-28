@@ -21,7 +21,7 @@ const createTrain = async (req, res) => {
    console.log(1);
 
     const train = await Train.create(
-      console.log("inside create"),
+   
       {
         Name,
         TrainID,
@@ -54,12 +54,13 @@ const createTrain = async (req, res) => {
         },
       ],
     });
+
     console.log(4);
     return res.status(201).json({
       success: true,
       data: trainWithStops,
     });
-    console.log(5);
+
   } catch (error) {
     await t.rollback();
 
@@ -70,6 +71,10 @@ const createTrain = async (req, res) => {
     });
   }
 };
+
+
+
+
 // Get all trains with their stopping points
 const getAllTrains = async (req, res) => {
   try {

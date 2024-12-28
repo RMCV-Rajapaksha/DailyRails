@@ -4,7 +4,7 @@ const TrainSchedulesPage = () => {
   const [schedules, setSchedules] = useState([
     {
       id: 1,
-      trainName: "1008 Intercity Express",
+      Name: "1008 Intercity Express",
       startLocation: "Badulla",
       endLocation: "Colombo Fort",
       departure: "10:15",
@@ -13,7 +13,7 @@ const TrainSchedulesPage = () => {
     },
     {
       id: 2,
-      trainName: "1046 Night Mail",
+      Name: "1046 Night Mail",
       startLocation: "Badulla",
       endLocation: "Colombo Fort",
       departure: "18:00",
@@ -24,7 +24,7 @@ const TrainSchedulesPage = () => {
 
   const [form, setForm] = useState({
     id: null,
-    trainName: "",
+    Name: "",
     startLocation: "",
     endLocation: "",
     departure: "",
@@ -44,7 +44,7 @@ const TrainSchedulesPage = () => {
   const handleAddSchedule = () => {
     const newSchedule = { ...form, id: Date.now() };
     setSchedules([...schedules, newSchedule]);
-    setForm({ id: null, trainName: "", startLocation: "", endLocation: "", departure: "", arrival: "", days: "" });
+    setForm({ id: null, Name: "", startLocation: "", endLocation: "", departure: "", arrival: "", days: "" });
   };
 
   // Edit an existing schedule
@@ -56,7 +56,7 @@ const TrainSchedulesPage = () => {
   // Update an edited schedule
   const handleUpdateSchedule = () => {
     setSchedules(schedules.map((sch) => (sch.id === form.id ? form : sch)));
-    setForm({ id: null, trainName: "", startLocation: "", endLocation: "", departure: "", arrival: "", days: "" });
+    setForm({ id: null, Name: "", startLocation: "", endLocation: "", departure: "", arrival: "", days: "" });
     setIsEditing(false);
   };
 
@@ -119,7 +119,7 @@ const TrainSchedulesPage = () => {
           type="text"
           name="trainName"
           placeholder="Train Name"
-          value={form.trainName}
+          value={form.Name}
           onChange={handleChange}
           style={inputStyle}
         />

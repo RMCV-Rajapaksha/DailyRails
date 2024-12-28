@@ -11,9 +11,14 @@ import TrainManagement from "./features/MainAdmin/trains/Train_management.js";
 import TrainSchedule from "./features/MainAdmin/trains/Train_schedule.js";
 import Tickets from "./features/MainAdmin/tickets/Tickets.js";
 
+import { ToastContainer } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 function App() {
   return (
+    <>
+  
+    <ToastContainer/>
     <Router>
       <div className="App">
         <Routes>
@@ -32,6 +37,7 @@ function App() {
         </Routes>{" "}
       </div>{" "}
     </Router>
+    </>
   );
 }
 
