@@ -1,30 +1,30 @@
-import React, { useState } from "react";
+import React, { useState ,useEffect} from "react";
 import apiService from "../../../http";
 import { toast } from "react-toastify";
 
 const TrainManagement = () => {
   const [trains, setTrains] = useState([
-    {
-      id: 1,
-      name: "1008 Intercity Express - Badulla - Colombo Fort",
-      TrainID: "IC1008",
-      StartStations: "Badulla",
-      EndStations: "Colombo Fort",
-      StartTime: "10:15",
-      EndTime: "21:10",
-      stoppingPoints: [
-        {
-          StationName: "Nanu Oya",
-          ArrivalTime: "12:30",
-          DepartureTime: "12:35",
-        },
-        {
-          StationName: "Peradeniya",
-          ArrivalTime: "16:00",
-          DepartureTime: "16:05",
-        },
-      ],
-    },
+    // {
+    //   id: 1,
+    //   name: "1008 Intercity Express - Badulla - Colombo Fort",
+    //   TrainID: "IC1008",
+    //   StartStations: "Badulla",
+    //   EndStations: "Colombo Fort",
+    //   StartTime: "10:15",
+    //   EndTime: "21:10",
+    //   stoppingPoints: [
+    //     {
+    //       StationName: "Nanu Oya",
+    //       ArrivalTime: "12:30",
+    //       DepartureTime: "12:35",
+    //     },
+    //     {
+    //       StationName: "Peradeniya",
+    //       ArrivalTime: "16:00",
+    //       DepartureTime: "16:05",
+    //     },
+    //   ],
+    // },
   ]);
 
   const [editTrain, setEditTrain] = useState(null);
@@ -103,6 +103,23 @@ const TrainManagement = () => {
     setEditTrain(null);
   };
 
+  const fetchTrains = async () => {
+    try {
+      const response = await apiService.get("/api/trains/");
+      setTrains(response.data);
+      console.log(response.data);   
+      console.log("Trains fetched successfully!");
+      toast.success("Trains fetched successfully!");
+    }
+      catch (error) {
+      console.error("Failed to fetch trains. Please try again.");
+      toast.error("Failed to fetch trains. Please try again.");
+    }
+  };
+  useEffect(() => {
+    console.log(fetchTrains());
+  }, []);
+  
   // Edit train
   const handleEdit = (train) => {
     setEditTrain(train);
@@ -137,7 +154,7 @@ const TrainManagement = () => {
           {trains.map((train, index) => (
             <tr key={train.id} className="border-b">
               <td className="py-2 px-4">{index + 1}</td>
-              <td className="py-2 px-4">{train.name}</td>
+              <td className="py-2 px-4">{train.Name}</td>
               <td className="py-2 px-4">{train.TrainID}</td>
               <td className="py-2 px-4">{train.StartStations}</td>
               <td className="py-2 px-4">{train.EndStations}</td>

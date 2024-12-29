@@ -11,27 +11,27 @@ const {
 app.use(express.json());
 
 // CORS setup
-app.use(
-  cors({
-    origin: "http://localhost:3001",
-    methods: "GET,POST,PUT,DELETE",
-    credentials: true,
-  })  
-);
 // app.use(
 //   cors({
-//     origin: (origin, callback) => {
-//       const regex = /^http:\/\/localhost:300[0-5]$/;
-//       if (!origin || regex.test(origin)) {
-//         callback(null, true);
-//       } else {
-//         callback(new Error("Not allowed by CORS"));
-//       }
-//     },
+//     origin: "http://localhost:3001",
 //     methods: "GET,POST,PUT,DELETE",
 //     credentials: true,
-//   })
+//   })  
 // );
+app.use(
+  cors({
+    origin: (origin, callback) => {
+      const regex = /^http:\/\/localhost:300[0-5]$/;
+      if (!origin || regex.test(origin)) {
+        callback(null, true);
+      } else {
+        callback(new Error("Not allowed by CORS"));
+      }
+    },
+    methods: "GET,POST,PUT,DELETE",
+    credentials: true,
+  })
+);
 
 
 // Routers
