@@ -1,8 +1,11 @@
 import React, { useState ,useEffect} from "react";
 import apiService from "../../../http";
 import { toast } from "react-toastify";
+import Joi from "joi";
+import {Input} from "../components/UI/Input";
 
 const TrainManagement = () => {
+
   const [trains, setTrains] = useState([
     // {
     //   id: 1,
@@ -38,57 +41,244 @@ const TrainManagement = () => {
     stoppingPoints: [],
   });
 
-  const [newStop, setNewStop] = useState({
-    StationName: "",
-    ArrivalTime: "",
-    DepartureTime: "",
-  });
+  // const [newStop, setNewStop] = useState({
+  //   StationName: "",
+  //   ArrivalTime: "",
+  //   DepartureTime: "",
+  // });
 
-  // Handle form change
-  const handleChange = (e) => {
-    setForm({ ...form, [e.target.name]: e.target.value });
+    const inputDataStructure ={
+      Name:{
+        key: "Name",
+        type: "text",
+        data: "",
+        type: "text",
+        placeholderholder: "Name",
+        validation: Joi.string()
+         .required()
+         .messages({
+          "string.empty": "Name should not be empty",
+          "any.required": "Name is required",
+          "string.min": "Name must be at least 1 character",
+          "string.max": "Name must be at most 50 characters",
+        }),
+      },
+      TrainID:{
+        key: "TrainID",
+        type: "text",
+        data: "",
+        type: "text",
+        placeholderholder: "Train ID",
+        validation: Joi.string()
+         .required()
+        //  .pattern(/^[A-Z]\d{4}$/)
+         .messages({
+          "string.empty": "TrainID should not be empty",
+          "any.required": "TrainID is required",
+          // "string.pattern.base": "TrainID must be 1 letter followed by 4 digits",
+        }),
+      },
+      StartStations:{
+        key: "StartStations",
+        type: "text",
+        data: "",
+        type: "text",
+        placeholderholder: "Start Station",
+        validation: Joi.string()
+         .required()
+         .messages({
+          "string.empty": "Start Station should not be empty",
+          "any.required": "Start Station is required", 
+        }),
+      },
+      EndStations:{
+        key: "EndStations",
+        type: "text",
+        data: "",
+        type: "text",
+        placeholderholder: "End Station",
+        validation: Joi.string()
+         .required()
+         .messages({
+          "string.empty": "End Station should not be empty",
+          "any.required": "End Station is required",
+        }),
+      },
+      StartTime: {
+        key: "StartTime",
+        type: "time",
+        data: "",
+        placeholder: "Start Time",
+        validation: Joi.string()
+            // .pattern(/^([01]\d|2[0-3]):([0-5]\d))$/)
+            .required()
+            .messages({
+                "string.empty": "Start Time should not be empty",
+                "any.required": "Start Time is required",
+                // "string.pattern.base": "Start Time must be in the format HH:mm",
+                "string.type": "Start Time should be a String",
+            }),
+    },
+      EndTime:{
+        key: "EndTime",
+        type: "time",
+        data: "",
+        placeholderholder: "End Time",
+        validation: Joi.string()
+        // .pattern(/^([01]\d|2[0-3]):([0-5]\d))$/)
+         .required()
+         .messages({
+          "string.empty": "End Time should not be empty",
+          "any.required": "End Time is required",
+          // "string.pattern.base": "End Time must be in the format  HH:mm",
+          "string.type": "End Time should be a String",
+        }),
+      },
+    }
+
+    const [inputs, setInputs] = useState(inputDataStructure);
+
+    const inputStoppingDataStructure = {
+      StationName:{
+        key: "StationName",
+        type: "text",
+        data: "",
+        type: "text",
+        placeholderholder: "Station Name",
+        validation: Joi.string()
+        .required()
+        .messages({
+          "string.empty": "Station Name should not be empty",
+          "any.required": "Station Name is required",
+        })
+      },
+      ArrivalTime:{
+        key: "ArrivalTime",
+        type: "time",
+        data: "",
+   
+        placeholderholder: "Arrival Time",
+        validation: Joi.string()
+        // .pattern(/^([01]\d|2[0-3]):([0-5]\d))$/)
+        .required()
+        .messages({
+          "string.empty": "Arrival Time should not be empty",
+          "any.required": "Arrival Time is required",
+          // "string.pattern.base": "Arrival Time must be in the format  HH:mm",
+          "string.type": "Arrival Time should be a String",
+        }),
+      },
+      DepartureTime:{
+        key: "DepatureTime",
+        type: "time",
+        data: "",
+        placeholderholder: "Arrival Time",
+        validation: Joi.string()
+        // .pattern(/^([01]\d|2[0-3]):([0-5]\d))$/)
+        .required()
+        .messages({
+          "string.empty": "Arrival Time should not be empty",
+          "any.required": "Arrival Time is required",
+          // "string.pattern.base": "Arrival Time must be in the format  HH:mm",
+          "string.type": "Arrival Time should be a String",
+        }),
+      }
+
+    }
+    
+    const [newStop, setNewStop] = useState(inputStoppingDataStructure);
+
+  
+   const handleChange = (input) => {
+      let input_list = { ...inputs };
+      input_list[inputs.key] = input;
+      setInputs(input_list);
   };
 
   // Handle stopping points change
   const handleStopChange = (e) => {
-    setNewStop({ ...newStop, [e.target.name]: e.target.value });
+    let input_list = { ...newStop };
+    input_list[newStop.key] = e;
+    setNewStop(input_list);
   };
 
   // Add a stopping point
+  // const handleAddStop = () => {
+  //   setForm((prev) => ({
+  //     ...prev,
+  //     stoppingPoints: [...prev.stoppingPoints, newStop],
+  //   }));
+  //   setNewStop({ StationName: "", ArrivalTime: "", DepartureTime: "" });
+  // };
+ 
   const handleAddStop = () => {
     setForm((prev) => ({
       ...prev,
-      stoppingPoints: [...prev.stoppingPoints, newStop],
+      stoppingPoints: [
+        ...prev.stoppingPoints,
+        {
+          StationName: newStop.StationName.data,
+          ArrivalTime: newStop.ArrivalTime.data,
+          DepartureTime: newStop.DepartureTime.data,
+        },
+      ],
     }));
-    setNewStop({ StationName: "", ArrivalTime: "", DepartureTime: "" });
+    setNewStop(inputStoppingDataStructure);
   };
 
-  // Remove a stopping point
-  const handleRemoveStop = (index) => {
-    setForm((prev) => ({
-      ...prev,
-      stoppingPoints: prev.stoppingPoints.filter((_, i) => i !== index),
-    }));
-  };
+  //console.log("Form after update:", form);
 
   // Add or update train
   const handleSave = async () => {
+
+    const updatedForm = {
+      ...form,
+      Name: inputs.Name?.data || "",
+      TrainID: inputs.TrainID?.data || "",
+      StartStations: inputs.StartStations?.data || "",
+      EndStations: inputs.EndStations?.data || "",
+      StartTime: inputs.StartTime?.data || "",
+      EndTime: inputs.EndTime?.data || "",
+  };
+
+  console.log("Form to save:", updatedForm);
+
+    // const formData = {
+    //   TrainID: form.TrainID.data,
+    //   StartStations: form.StartStations.data,
+    //   EndStations: form.EndStations.data,
+    //   StartTime: form.StartTime.data,
+    //   EndTime: form.EndTime.data,
+    //   stoppingPoints: form.stoppingPoints,
+    // };
+
+    
     if (editTrain) {
       setTrains((prev) =>
         prev.map((train) =>
-          train.id === editTrain.id ? { ...editTrain, ...form } : train
+          train.ID === editTrain.ID ? { ...editTrain, ...updatedForm } : train
         )
       );
-    } else {
-      setTrains((prev) => [...prev, { id: Date.now(), ...form }]);
-      console.log(form);
       try {
-        await apiService.post("/api/trains/", form);
+        await apiService.put(`/api/trains/${editTrain.ID}`, updatedForm);
+        console.log("Train updated successfully!");
+        toast.success("Train updated successfully!");
+      } catch (error) {
+        console.error("Failed to update train. Please try again.");
+        toast.error("Failed to update train. Please try again.");
+      }
+    } else {
+      setTrains((prev) => [...prev, { id: Date.now(), ...updatedForm }]);
+      console.log("4",updatedForm);
+      try {
+        await apiService.post("/api/trains/", updatedForm);
         console.log("Train added successfully!");
         toast.success("Train added successfully!");
       } catch (error) {
         console.error("Failed to add train. Please try again.");
         toast.error("Failed to add train. Please try again.");
+        console.error(error);
+     
       }
     }
     setForm({
@@ -127,10 +317,29 @@ const TrainManagement = () => {
   };
 
   // Remove train
-  const handleRemove = (id) => {
-    setTrains((prev) => prev.filter((train) => train.id !== id));
-  };
+  const handleRemove = async (id) => {
 
+    try {
+     await apiService.delete(`/api/trains/${id}`);
+      console.log("Train removed successfully!");
+      toast.success("Train removed successfully!");
+      //need fetch code after delete
+      
+      setTrains((prevTrains) => prevTrains.filter((train) => train.id !== id));
+     await fetchTrains();
+    } catch (error) {
+      console.error("Failed to remove train. Please try again.");
+      toast.error("Failed to remove train. Please try again.");
+    }
+  };
+    // Remove a stopping point
+    const handleRemoveStop = (index) => {
+      setForm((prev) => ({
+        ...prev,
+        stoppingPoints: prev.stoppingPoints.filter((_, i) => i !== index),
+      }));
+    };
+  
   return (
     <div className="p-6 bg-gray-100 min-h-screen">
       <h1 className="text-2xl font-bold mb-4 text-primary">Manage Trains</h1>
@@ -175,7 +384,7 @@ const TrainManagement = () => {
                   Edit
                 </button>
                 <button
-                  onClick={() => handleRemove(train.id)}
+                  onClick={() => handleRemove(train.ID)}
                   className="px-4 py-1 bg-red-500 text-white rounded hover:bg-red-600"
                 >
                   Remove
@@ -191,57 +400,15 @@ const TrainManagement = () => {
         <h2 className="text-xl font-bold mb-4">
           {editTrain ? "Edit Train" : "Add Train"}
         </h2>
-        <div className="grid grid-cols-2 gap-4">
-          <input
-            type="text"
-            name="name"
-            placeholder="Train Name"
-            value={form.name}
-            onChange={handleChange}
-            className="p-2 border rounded"
-          />
-          <input
-            type="text"
-            name="TrainID"
-            placeholder="Train ID"
-            value={form.TrainID}
-            onChange={handleChange}
-            className="p-2 border rounded"
-          />
-          <input
-            type="text"
-            name="StartStations"
-            placeholder="Start Station"
-            value={form.StartStations}
-            onChange={handleChange}
-            className="p-2 border rounded"
-          />
-          <input
-            type="text"
-            name="EndStations"
-            placeholder="End Station"
-            value={form.EndStations}
-            onChange={handleChange}
-            className="p-2 border rounded"
-          />
-          <input
-            type="time"
-            name="StartTime"
-            placeholder="Start Time"
-            value={form.StartTime}
-            onChange={handleChange}
-            className="p-2 border rounded"
-          />
-          <input
-            type="time"
-            name="EndTime"
-            placeholder="End Time"
-            value={form.EndTime}
-            onChange={handleChange}
-            className="p-2 border rounded"
-          />
-        </div>
+         <div className="grid grid-cols-2 gap-4">
 
+                    <Input input={inputs.Name || ""} handleChange={handleChange} labelClassName={inputs.Name}/>
+                    <Input input={inputs.TrainID || ""} handleChange={handleChange} labelClassName={inputs.TrainID} />
+                    <Input input={inputs.StartStations || ""} handleChange={handleChange} labelClassName={inputs.StartStations} />
+                    <Input input={inputs.EndStations || ""} handleChange={handleChange} labelClassName={inputs.EndStations} />
+                    <Input input={inputs.StartTime || ""} handleChange={handleChange} labelClassName={inputs.StartTime} />
+                    <Input input={inputs.EndTime || ""} handleChange={handleChange} labelClassName={inputs.EndTime} />               
+      
         {/* Stopping Points */}
         <div className="mt-4">
           <h3 className="text-lg font-semibold mb-2">Stopping Points</h3>
@@ -259,31 +426,12 @@ const TrainManagement = () => {
             </div>
           ))}
           <div className="grid grid-cols-3 gap-4 mt-4">
-            <input
-              type="text"
-              name="StationName"
-              placeholder="Station Name"
-              value={newStop.StationName}
-              onChange={handleStopChange}
-              className="p-2 border rounded"
-            />
-            <input
-              type="time"
-              name="ArrivalTime"
-              placeholder="Arrival Time"
-              value={newStop.ArrivalTime}
-              onChange={handleStopChange}
-              className="p-2 border rounded"
-            />
-            <input
-              type="time"
-              name="DepartureTime"
-              placeholder="Departure Time"
-              value={newStop.DepartureTime}
-              onChange={handleStopChange}
-              className="p-2 border rounded"
-            />
-          </div>
+        
+        <Input input={newStop.StationName || ""} handleChange={handleStopChange} labelClassName={newStop.StationName} />
+        <Input input={newStop.ArrivalTime || ""} handleChange={handleStopChange} labelClassName={newStop.ArrivalTime} /> 
+        <Input input={newStop.DepartureTime || ""} handleChange={handleStopChange} labelClassName={newStop.DepartureTime} />
+      
+      
           <button
             onClick={handleAddStop}
             className="mt-2 px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600"
@@ -299,7 +447,9 @@ const TrainManagement = () => {
           {editTrain ? "Update Train" : "Add Train"}
         </button>
       </div>
-    </div>
+   </div>
+  </div>
+  </div>
   );
 };
 
