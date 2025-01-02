@@ -11,23 +11,23 @@ module.exports = (sequelize) => {
       },
       TrainID: {
         type: DataTypes.INTEGER,
-        allowNull: false,
-        references: {
+        allowNull: false, //need to now allow null
+        references: { 
           model: "TRAINS",
           key: "ID",
         },
       },
       StationName: {
         type: DataTypes.STRING(50),
-        allowNull: false,
+        allowNull: false, //need to now allow null
       },
       ArrivalTime: {
         type: DataTypes.TIME,
-        allowNull: false,
+        allowNull: false, //need to now allow null
       },
       DepartureTime: {
         type: DataTypes.TIME,
-        allowNull: false,
+        allowNull: false, //need to now allow null
       },
     },
     {

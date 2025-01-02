@@ -55,7 +55,7 @@ const models = [
   {
     name: "StoppingPoint",
     path: "../Features/Schedule/models/StoppingPointModel",
-  },
+  }
 ];
 
 // Load models from current directory

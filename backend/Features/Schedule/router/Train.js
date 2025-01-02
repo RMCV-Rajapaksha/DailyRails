@@ -7,19 +7,22 @@ const {
   getAllTrains,
   getTrainById,
   deleteTrain,
+  editTrain,
   searchTrainsByLocation,
 } = require("../controller/TrainController");
 const {
+  validateRequest,
   validateNewTrain,
   validateUpdateTrain,
   validateTrainId,
 } = require("../validators/TrainValidators");
 
+
 // Add new route
 router.post("/search", searchTrainsByLocation);
 
 // Create new train with stopping points
-router.post("/", createTrain);
+router.post("/",validateNewTrain, validateRequest, createTrain);
 
 // Get all trains with their stopping points
 router.get("/", getAllTrains);
@@ -29,5 +32,11 @@ router.get("/:id", getTrainById);
 
 // Delete train and its stopping points
 router.delete("/:id", deleteTrain);
+
+// Update train with stopping points
+// router.put("/:id", validateUpdateTrain, editTrain);
+
+router.put("/:id",  editTrain);
+
 
 module.exports = router;
