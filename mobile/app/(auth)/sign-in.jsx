@@ -12,7 +12,11 @@ const SignIn = () => {
 
   const handleSignIn = () => {
     if (email && password) {
-      router.push('/home');
+      if(email === 'admin' && password === 'admin') {
+        router.push('/admin-home');
+      }else{
+        router.push('/home');
+      }
     } else {
       alert('Please fill in all fields');
     }
