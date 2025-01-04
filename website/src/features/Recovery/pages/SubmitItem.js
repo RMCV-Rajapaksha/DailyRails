@@ -99,7 +99,7 @@ function SubmitItem() {
                 type="radio"
                 checked={formData.ItemType === "Found"}
                 onChange={handleItemTypeChange}
-                className="w-4 h-4 border border-gray-300 rounded bg-gray-50 focus:ring-3 focus:ring-blue-300 dark:bg-gray-700 dark:border-gray-600 dark:focus:ring-primary dark:ring-offset-gray-800 dark:focus:ring-offset-gray-800"
+                className="shadow-sm bg-gray-50 border border-secondary-1 text-tertiary text-sm rounded-sm focus:border-primary block w-full p-2.5"
                 required
               />
               <label
@@ -110,7 +110,13 @@ function SubmitItem() {
               </label>
             </div>
           </div>
-          <Button type="submit" disabled={isLoading} className={"mg-5"}>
+          <Button
+            type="submit"
+            disabled={isLoading}
+            className={
+              "p-3 text-white rounded-sm bg-primary hover:bg-secondary"
+            }
+          >
             {isLoading ? "Submitting..." : "Submit"}
           </Button>
         </form>

@@ -17,7 +17,7 @@ const Button = ({
       }`}
       whileHover={{
         scale: 1.05,
-        backgroundColor: "bg-primary",
+        backgroundColor: "bg-secondary",
       }}
       whileTap={{ scale: 0.95 }}
       initial={{ opacity: 0, y: 20 }}
