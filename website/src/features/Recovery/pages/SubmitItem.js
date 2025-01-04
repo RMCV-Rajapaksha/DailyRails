@@ -110,7 +110,7 @@ function SubmitItem() {
               </label>
             </div>
           </div>
-          <Button type="submit" disabled={isLoading}>
+          <Button type="submit" disabled={isLoading} className={"mg-5"}>
             {isLoading ? "Submitting..." : "Submit"}
           </Button>
         </form>
