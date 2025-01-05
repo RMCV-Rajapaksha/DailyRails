@@ -28,7 +28,6 @@ const NotificationsPage = () => {
       content:
         "Due to track maintenance, expect delays on Line 3 for the next two hours.",
     },
-    // Add more notifications here...
   ]);
 
   const handleChange = (e) => {
@@ -78,25 +77,29 @@ const NotificationsPage = () => {
   };
 
   return (
-    <div className="flex">
+    <div className="flex min-h-screen bg-gray-100">
       <Sidebar />
-      <div className="flex-1 p-4 mx-auto">
+      <div className="flex-1 p-6">
         <h1 className="mb-6 text-3xl font-bold text-primary">Notifications</h1>
-        <div className="flex flex-col gap-6 md:flex-row">
+        <div className="flex flex-col md:flex-row gap-6">
+          {/* Form Section */}
           <div className="w-full md:w-1/3">
             <form
               onSubmit={handleSubmit}
-              className="px-8 pt-6 pb-8 mb-4 bg-white rounded-sm shadow-md"
+              className="p-6 bg-white rounded-md shadow-md"
             >
+              <h2 className="mb-4 text-xl font-bold text-gray-800">
+                {formData.id ? "Edit Notification" : "Create Notification"}
+              </h2>
               <div className="mb-4">
                 <label
-                  className="block mb-2 text-sm font-bold text-gray-700"
+                  className="block mb-2 text-sm font-semibold text-gray-700"
                   htmlFor="username"
                 >
                   To
                 </label>
                 <input
-                  className="w-full px-3 py-2 leading-tight text-gray-700 border rounded-sm shadow appearance-none focus:outline-none focus:shadow-outline"
+                  className="w-full px-4 py-2 text-gray-700 border rounded-md focus:outline-none focus:ring-2 focus:ring-primary"
                   id="username"
                   type="text"
                   placeholder="Username"
@@ -107,13 +110,13 @@ const NotificationsPage = () => {
               </div>
               <div className="mb-4">
                 <label
-                  className="block mb-2 text-sm font-bold text-gray-700"
+                  className="block mb-2 text-sm font-semibold text-gray-700"
                   htmlFor="title"
                 >
                   Title
                 </label>
                 <input
-                  className="w-full px-3 py-2 leading-tight text-gray-700 border rounded-sm shadow appearance-none focus:outline-none focus:shadow-outline"
+                  className="w-full px-4 py-2 text-gray-700 border rounded-md focus:outline-none focus:ring-2 focus:ring-primary"
                   id="title"
                   type="text"
                   placeholder="Title"
@@ -124,13 +127,13 @@ const NotificationsPage = () => {
               </div>
               <div className="mb-6">
                 <label
-                  className="block mb-2 text-sm font-bold text-gray-700"
+                  className="block mb-2 text-sm font-semibold text-gray-700"
                   htmlFor="description"
                 >
                   Description
                 </label>
                 <textarea
-                  className="w-full px-3 py-2 leading-tight text-gray-700 border rounded-sm shadow appearance-none focus:outline-none focus:shadow-outline"
+                  className="w-full px-4 py-2 text-gray-700 border rounded-md focus:outline-none focus:ring-2 focus:ring-primary"
                   id="description"
                   placeholder="Description"
                   name="description"
@@ -139,56 +142,62 @@ const NotificationsPage = () => {
                   rows="3"
                 ></textarea>
               </div>
-              <div className="flex items-center justify-between">
-                <button
-                  className="w-full px-4 py-2 font-bold text-white rounded-sm bg-primary hover:bg-tertiary focus:outline-none focus:shadow-outline"
-                  type="submit"
-                >
-                  {formData.id ? "Update Notification" : "Submit Notification"}
-                </button>
-              </div>
+              <button
+                className="w-full px-4 py-2 font-bold text-white bg-primary rounded-md hover:bg-tertiary focus:outline-none focus:ring-2 focus:ring-tertiary"
+                type="submit"
+              >
+                {formData.id ? "Update Notification" : "Submit Notification"}
+              </button>
             </form>
           </div>
+
+          {/* Notifications List Section */}
           <div className="w-full md:w-2/3">
-            {notifications.map((notification) => (
-              <div
-                key={notification.id}
-                className="px-8 pt-6 pb-8 mb-4 bg-white rounded-sm shadow-md"
-              >
-                <div className="flex items-start justify-between mb-2">
-                  <div className="flex items-center">
-                    <FaInfoCircle className="mr-2 text-primary" />
-                    <h2 className="text-xl font-bold">{notification.title}</h2>
-                  </div>
-                  <div className="flex space-x-2">
-                    <button
-                      className="text-primary hover:text-primary"
-                      onClick={() => handleEdit(notification)}
-                    >
-                      <FaPencilAlt />
-                    </button>
-                    <button
-                      className="text-red-500 hover:text-red-700"
-                      onClick={() => handleDelete(notification.id)}
-                    >
-                      <FaTrash />
-                    </button>
+            {notifications.length > 0 ? (
+              notifications.map((notification) => (
+                <div
+                  key={notification.id}
+                  className="p-6 mb-4 bg-white rounded-md shadow-md"
+                >
+                  <div className="flex items-start justify-between">
+                    <div>
+                      <h2 className="flex items-center mb-2 text-xl font-bold text-primary">
+                        <FaInfoCircle className="mr-2" />
+                        {notification.title}
+                      </h2>
+                      <p className="text-gray-700">{notification.content}</p>
+                    </div>
+                    <div className="flex space-x-2">
+                      <button
+                        className="text-primary hover:text-primary-dark"
+                        onClick={() => handleEdit(notification)}
+                      >
+                        <FaPencilAlt />
+                      </button>
+                      <button
+                        className="text-red-500 hover:text-red-700"
+                        onClick={() => handleDelete(notification.id)}
+                      >
+                        <FaTrash />
+                      </button>
+                    </div>
                   </div>
                 </div>
-                <p className="text-base text-gray-700">
-                  {notification.content}
-                </p>
-              </div>
-            ))}
+              ))
+            ) : (
+              <p className="text-gray-500">No notifications available.</p>
+            )}
+
+            {/* Pagination */}
             <div className="flex justify-center mt-4">
-              <nav className="inline-flex shadow rounded-sm-md">
-                <button className="px-4 py-2 text-sm font-medium text-gray-500 bg-white border border-gray-300 rounded-sm-l-md hover:bg-gray-50">
+              <nav className="inline-flex shadow rounded-md">
+                <button className="px-4 py-2 text-sm font-medium text-gray-500 bg-white border border-gray-300 rounded-l-md hover:bg-gray-50">
                   <FaChevronLeft />
                 </button>
                 <button className="px-4 py-2 text-sm font-medium bg-white border-t border-b border-gray-300 text-primary">
                   1
                 </button>
-                <button className="px-4 py-2 text-sm font-medium text-gray-500 bg-white border border-gray-300 rounded-sm-r-md hover:bg-gray-50">
+                <button className="px-4 py-2 text-sm font-medium text-gray-500 bg-white border border-gray-300 rounded-r-md hover:bg-gray-50">
                   <FaChevronRight />
                 </button>
               </nav>
