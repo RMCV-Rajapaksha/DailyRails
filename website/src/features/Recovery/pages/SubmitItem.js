@@ -16,6 +16,7 @@ const initialFormData = {
 
 function SubmitItem() {
   const [formData, setFormData] = useState(initialFormData);
+  const [errors, setErrors] = useState({});
   const dispatch = useDispatch();
   const isLoading = useSelector((state) => state.items.isLoading);
 
@@ -24,6 +25,10 @@ function SubmitItem() {
     setFormData((prevFormData) => ({
       ...prevFormData,
       [id]: value,
+    }));
+    setErrors((prevErrors) => ({
+      ...prevErrors,
+      [id]: "",
     }));
   };
 
@@ -34,15 +39,35 @@ function SubmitItem() {
     }));
   };
 
+  const validateForm = () => {
+    const newErrors = {};
+    if (!formData.Name.trim()) newErrors.Name = "Name is required.";
+    if (!formData.Title.trim()) newErrors.Title = "Title is required.";
+    if (!formData.Description.trim())
+      newErrors.Description = "Description is required.";
+    if (!formData.ContactNo.trim()) {
+      newErrors.ContactNo = "Contact number is required.";
+    } else if (!/^\d{10}$/.test(formData.ContactNo)) {
+      newErrors.ContactNo = "Enter a valid 10-digit contact number.";
+    }
+    return newErrors;
+  };
+
   const handleSubmit = (e) => {
     e.preventDefault();
+    const validationErrors = validateForm();
+    if (Object.keys(validationErrors).length > 0) {
+      setErrors(validationErrors);
+      return;
+    }
     dispatch(submitItem(formData));
     setFormData(initialFormData);
+    toast.success("Item submitted successfully!");
   };
 
   return (
     <>
-      <div className="mt-20 mb-20 font-body">
+      <div className="mt-28 mb-30 h-3/5 font-body">
         <form className="max-w-sm mx-auto" onSubmit={handleSubmit}>
           <InputField
             label="Name"
@@ -52,6 +77,8 @@ function SubmitItem() {
             placeholder="Enter your name"
             required
           />
+          {errors.Name && <p className="text-sm text-red-500">{errors.Name}</p>}
+
           <InputField
             label="Title"
             id="Title"
@@ -60,6 +87,10 @@ function SubmitItem() {
             placeholder="Enter title"
             required
           />
+          {errors.Title && (
+            <p className="text-sm text-red-500">{errors.Title}</p>
+          )}
+
           <InputField
             label="Description"
             id="Description"
@@ -68,6 +99,10 @@ function SubmitItem() {
             placeholder="Enter description"
             required
           />
+          {errors.Description && (
+            <p className="text-sm text-red-500">{errors.Description}</p>
+          )}
+
           <InputField
             label="Contact Number"
             id="ContactNo"
@@ -76,6 +111,10 @@ function SubmitItem() {
             placeholder="Enter contact number"
             required
           />
+          {errors.ContactNo && (
+            <p className="text-sm text-red-500">{errors.ContactNo}</p>
+          )}
+
           <div className="flex items-start mb-5">
             <div className="flex items-center h-5">
               <input

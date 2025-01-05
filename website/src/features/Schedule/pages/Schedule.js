@@ -91,7 +91,7 @@ const TrainSchedule = () => {
     <motion.div
       initial="hidden"
       animate="visible"
-      className="p-4 mx-auto max-w-7xl font-body"
+      className="h-full p-4 mx-auto max-w-7xl font-body"
     >
       {/* Search Section */}
       <motion.div
@@ -131,22 +131,6 @@ const TrainSchedule = () => {
             />
           </motion.div>
 
-          {/* Date */}
-          <motion.div variants={itemVariants} className="relative">
-            <InputField
-              label="Date"
-              id="date"
-              type="date"
-              value={formData.date}
-              onChange={handleInputChange}
-              className="mb-0"
-            />
-            <Calendar
-              className="absolute top-[42px] right-5 text-tertiary"
-              size={20}
-            />
-          </motion.div>
-
           {/* Search Button */}
           <motion.div
             variants={itemVariants}
@@ -156,7 +140,7 @@ const TrainSchedule = () => {
           >
             <Button
               onClick={handleSearch}
-              className="items-center justify-center w-full"
+              className="text-white rounded-sm hover:bg-secondary"
             >
               Search
             </Button>
