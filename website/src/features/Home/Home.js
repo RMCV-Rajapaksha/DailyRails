@@ -109,10 +109,17 @@ const Home = () => {
               viewport={{ once: true }}
               transition={{ duration: 0.5, delay: 0.8 }}
             >
-              <Button onClick={handleMapClick}>Map</Button>
+              <Button
+                onClick={handleMapClick}
+                className={
+                  "p-3 text-white rounded-sm bg-primary hover:bg-secondary"
+                }
+              >
+                Map
+              </Button>
               <Button
                 onClick={handleScheduleClick}
-                className="!bg-transparent !text-primary border border-primary hover:!bg-primary hover:!text-white"
+                className="!bg-transparent !text-primary border border-primary hover:!bg-primary hover:!text-white "
               >
                 Schedule
               </Button>

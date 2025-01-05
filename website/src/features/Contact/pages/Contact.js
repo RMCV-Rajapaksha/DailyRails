@@ -1,6 +1,7 @@
 import { useState } from "react";
 import axios from "axios";
 import { toast, ToastContainer } from "react-toastify";
+import Button from "../../../components/Button";
 
 function Contact() {
   const [name, setName] = useState("");
@@ -17,9 +18,9 @@ function Contact() {
     if (!/^[A-Za-z\s]{3,}$/.test(name))
       newErrors.name = "Name must be at least 3 characters, letters only";
 
-    if (!nicNo.trim()) newErrors.nicNo = "NIC is required";
-    if (!/^[0-9]{9}[vVxX]$|^[0-9]{12}$/.test(nicNo))
-      newErrors.nicNo = "Invalid NIC format";
+    // if (!nicNo.trim()) newErrors.nicNo = "NIC is required";
+    // if (!/^[0-9]{9}[vVxX]$|^[0-9]{12}$/.test(nicNo))
+    //   newErrors.nicNo = "Invalid NIC format";
 
     if (!incidentType.trim())
       newErrors.incidentType = "Incident type is required";
@@ -170,19 +171,19 @@ function Contact() {
           )}
         </div>
 
-        <button
+        <Button
           type="submit"
           className="p-3 mr-2 text-white rounded-sm bg-primary hover:bg-secondary"
         >
           Report
-        </button>
-        <button
+        </Button>
+        <Button
           type="button"
           onClick={handleReset}
           className="p-3 text-white rounded-sm bg-primary hover:bg-secondary"
         >
           Reset
-        </button>
+        </Button>
       </form>
     </div>
   );

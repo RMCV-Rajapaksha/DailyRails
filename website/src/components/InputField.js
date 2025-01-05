@@ -12,7 +12,7 @@ const InputField = ({
   className = "",
 }) => {
   return (
-    <div className={`w-full px-3 mb-5 ${className}`}>
+    <div className={`w-full mb-5 ${className}`}>
       <label htmlFor={id} className="block mb-2 text-sm text-primary font-body">
         {label}
       </label>

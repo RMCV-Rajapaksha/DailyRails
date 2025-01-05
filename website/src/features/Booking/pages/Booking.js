@@ -204,7 +204,10 @@ function Booking() {
               whileHover="hover"
               whileTap="tap"
             >
-              <Button type="submit" className="mr-2">
+              <Button
+                type="submit"
+                className="p-3 text-white rounded-sm bg-primary hover:bg-secondary"
+              >
                 Submit
               </Button>
             </motion.div>
@@ -214,7 +217,13 @@ function Booking() {
               whileHover="hover"
               whileTap="tap"
             >
-              <Button type="reset" onClick={reset}>
+              <Button
+                type="reset"
+                onClick={reset}
+                className={
+                  "p-3 text-white rounded-sm bg-primary hover:bg-secondary"
+                }
+              >
                 Reset
               </Button>
             </motion.div>
