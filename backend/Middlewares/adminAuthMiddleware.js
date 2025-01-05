@@ -92,6 +92,7 @@ const isTrainDriver = async (res, req, next) => {
 
 module.exports = {
   isAuthenticated,
+  isStationAdmin,
   isMainAdmin,
   isCounter,
   isTrainDriver,
