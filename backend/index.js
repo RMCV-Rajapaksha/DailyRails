@@ -24,6 +24,8 @@ const ItemRouter = require("./Features/Items/router/Items");
 const ReportRouter = require("./Features/Reports/router/Report");
 const AdminRouter = require("./Features/Auth/router/AdminRouter");
 const UserRouter = require("./Features/Auth/router/UserRouter");
+const contactRoutes = require('./contact/router/contactRoutes');
+
 
 // Use the routers
 app.use("/api/admin", AdminRouter);
@@ -31,6 +33,7 @@ app.use("/api/user", UserRouter);
 app.use("/api/announcements", AnnouncementRouter);
 app.use("/api/items", ItemRouter);
 app.use("/api/reports", ReportRouter);
+app.use('/api/contact', contactRoutes);
 
 // Create HTTP server
 const server = http.createServer(app);
