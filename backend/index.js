@@ -16,7 +16,7 @@ app.use(express.json());
 //     origin: "http://localhost:3001",
 //     methods: "GET,POST,PUT,DELETE",
 //     credentials: true,
-//   })  
+//   })
 // );
 app.use(
   cors({
@@ -33,7 +33,6 @@ app.use(
   })
 );
 
-
 // Routers
 const AnnouncementRouter = require("./Features/Announcement/router/Announcements");
 const ItemRouter = require("./Features/Items/router/Items");
@@ -42,7 +41,7 @@ const AdminRouter = require("./Features/Auth/router/AdminRouter");
 const UserRouter = require("./Features/Auth/router/UserRouter");
 const trainRoutes = require("./Features/Schedule/router/Train");
 
-// Use the routers 
+// Use the routers
 app.use("/api/admin", AdminRouter);
 app.use("/api/user", UserRouter);
 app.use("/api/announcements", AnnouncementRouter);

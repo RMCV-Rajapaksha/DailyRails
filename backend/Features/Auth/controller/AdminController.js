@@ -67,6 +67,25 @@ const adminLogin = async (req, res) => {
   }
 };
 
+const adminUpdate = async (req, res) => {
+  const adminData = req.body;
+  try {
+    const admin = await Admin.findOne({
+      where: { ID: req.params.id },
+    });
+    if (!admin) {
+      return res.status(404).json({ error: "Admin not found" });
+    }
+
+    const updatedAdmin = await admin.update(adminData);
+
+    res.json(updatedAdmin);
+  } catch (error) {
+    console.error("Error details:", error);
+    res.status(500).json({ error: "Failed to update admin" });
+  }
+};
+
 const adminLogout = async (req, res) => {
   try {
     res.clearCookie("token", { sameSite: "None", secure: true });
@@ -80,4 +99,5 @@ module.exports = {
   postAdmin,
   adminLogin,
   adminLogout,
+  adminUpdate,
 };
