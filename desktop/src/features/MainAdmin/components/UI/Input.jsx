@@ -6,6 +6,7 @@ export const Input = ({
     handleChange,
     inputClassName = "",
     labelClassName,
+    options=[],
 }) => {
     const [showPassword, setShowPassword] = useState(false);
     const error = input.error;
@@ -63,17 +64,33 @@ export const Input = ({
                     <div className="absolute left-3 top-4 text-gray-500">
                         {input.icon}
                     </div>
-                )}
-                <input
-                    name={input.key}
-                    type={showPassword ? "text" : input.type}
-                    className={inputClasses()}
-                    placeholder={input.placeholder}
-                    value={input.data}
-                    min={input.min}
-                    readOnly={input.readOnly}
-                    onChange={(e) => validate(e.target.value)}
-                />
+                )}{
+                    input.type === "select" ? (
+                        <select
+                          name={input.key}
+                          value={input.data || ""}
+                          onChange={(e) => validate(e.target.value)}
+                          className={inputClasses()}
+                        >
+                          <option value="">Select a Role</option>
+                          {options.map((option, index) => (
+                            <option key={index} value={option}>
+                              {option}
+                            </option>
+                          ))}
+                        </select>
+                      ):( <input
+                        name={input.key}
+                        type={showPassword ? "text" : input.type}
+                        className={inputClasses()}
+                        placeholder={input.placeholder}
+                        value={input.data}
+                        min={input.min}
+                        readOnly={input.readOnly}
+                        onChange={(e) => validate(e.target.value)}
+                    />)
+                }
+               
                 {input.type === "password" && (
                     <span
                         className="absolute text-gray-800 right-3 top-4 cursor-pointer"
@@ -82,10 +99,16 @@ export const Input = ({
                         {showPassword ? <FaEyeSlash /> : <FaEye />}
                     </span>
                 )}
+                {/* {
+                 input.type === "select" && (
+                    <div className="absolute right-3 top-4 text-gray-500">
+                        <selectedFruit/>
+                    </div>
+                )
+                } */}
             </div>
             {error && <p className="text-red-500 block">{error}</p>}
         </div>
     );
 };
-
 
