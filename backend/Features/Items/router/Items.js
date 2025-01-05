@@ -2,6 +2,8 @@ const express = require("express");
 const {
   getItemApproved,
   getItemNotApproved,
+  getLostItems,
+  getFoundItems,
   postItem,
   deleteItem,
   patchItem,
@@ -24,7 +26,11 @@ const router = express.Router();
 const validate = (req, res, next) => {
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
-    return res.status(400).json({ errors: errors.array() });
+    const formattedErrors = {};
+    errors.array().forEach((error) => {
+      formattedErrors[error.path] = error.msg;
+    });
+    return res.status(400).json({ errors: formattedErrors });
   }
   next();
 };
@@ -32,6 +38,8 @@ const validate = (req, res, next) => {
 // Define routes
 router.get("/", getItemApproved);
 router.get("/notapprove", getItemNotApproved);
+router.get("/lost", getLostItems);
+router.get("/found", getFoundItems);
 router.post("/", validateNewItem, validate, postItem);
 router.delete("/:id", validateItemId, validate, deleteItem);
 router.patch("/:id", validateItemId, validate, patchItem);

@@ -9,6 +9,7 @@ const env = process.env.NODE_ENV || "development";
 const config = require(path.join(__dirname, "../config/config.json"))[env];
 const db = {};
 
+// Initialize Sequelize
 let sequelize;
 if (config.use_env_variable) {
   sequelize = new Sequelize(process.env[config.use_env_variable], config);
@@ -21,7 +22,43 @@ if (config.use_env_variable) {
   );
 }
 
-// Dynamically load models from the current directory
+// Model definitions
+const models = [
+  {
+    name: "Item",
+    path: "../Features/Items/models/ItemsModels",
+  },
+  {
+    name: "Announcement",
+    path: "../Features/Announcement/models/AnnouncementModel",
+  },
+  {
+    name: "Report",
+    path: "../Features/Reports/models/ReportModels",
+  },
+  {
+    name: "Admin",
+    path: "../Features/Auth/models/AdminModel",
+  },
+  {
+    name: "User",
+    path: "../Features/Auth/models/UserModel",
+  },
+  {
+    name: "Train",
+    path: "../Features/Schedule/models/TrainModel",
+  },
+  {
+    name: "Payment",
+    path: "../Features/Booking/models/PaymentModel",
+  },
+  {
+    name: "StoppingPoint",
+    path: "../Features/Schedule/models/StoppingPointModel",
+  }
+];
+
+// Load models from current directory
 fs.readdirSync(__dirname)
   .filter((file) => {
     return (
@@ -37,84 +74,36 @@ fs.readdirSync(__dirname)
       Sequelize.DataTypes
     );
     db[model.name] = model;
-    console.log(model.name);
+    console.log(`Loaded model from directory: ${model.name}`);
   });
 
-// Explicitly import models from different directories
-const itemModel = require(path.join(
-  __dirname,
-  "../Features/Items/models/ItemsModels"
-))(sequelize, Sequelize.DataTypes);
-db[itemModel.name] = itemModel;
-console.log(itemModel.name);
-
-if (db[itemModel.name].associate) {
-  db[itemModel.name].associate(db);
-}
-
-const announcementModel = require(path.join(
-  __dirname,
-  "../Features/Announcement/models/AnnouncementModel"
-))(sequelize, Sequelize.DataTypes);
-db[announcementModel.name] = announcementModel;
-console.log(announcementModel.name);
-
-if (db[announcementModel.name].associate) {
-  db[announcementModel.name].associate(db);
-}
-
-const reportModel = require(path.join(
-  __dirname,
-  "../Features/Reports/models/ReportModels"
-))(sequelize, Sequelize.DataTypes);
-db[reportModel.name] = reportModel;
-console.log(reportModel.name);
-
-if (db[reportModel.name].associate) {
-  db[reportModel.name].associate(db);
-}
-
-const adminModel = require(path.join(
-  __dirname,
-  "../Features/Auth/models/AdminModel"
-))(sequelize, Sequelize.DataTypes);
-db[adminModel.name] = adminModel; // Corrected assignment here
-console.log(adminModel.name);
-
-if (db[adminModel.name].associate) {
-  db[adminModel.name].associate(db);
-}
-
-const userModel = require(path.join(
-  __dirname,
-  "../Features/Auth/models/UserModel"
-))(sequelize, Sequelize.DataTypes);
-db[userModel.name] = userModel; // Corrected assignment here
-console.log(userModel.name);
-
-if (db[userModel.name].associate) {
-  db[userModel.name].associate(db);
-}
-
-const paymentModel = require(path.join(
-  __dirname,
-  "../Features/Booking/models/PaymentModel"
-))(sequelize, Sequelize.DataTypes);
-
-db[paymentModel.name] = paymentModel; // Corrected assignment here
-console.log(paymentModel.name);
-
-if (db[paymentModel.name].associate) {
-  db[paymentModel.name].associate(db);
-}
-
-// If there are associations, make sure they're set up correctly
-Object.keys(db).forEach((modelName) => {
-  if (db[modelName].associate) {
-    db[modelName].associate(db);
+// Load models from features
+models.forEach(({ name, path: modelPath }) => {
+  try {
+    const model = require(path.join(__dirname, modelPath))(
+      sequelize,
+      Sequelize.DataTypes
+    );
+    db[model.name] = model;
+    console.log(`Loaded model: ${model.name}`);
+  } catch (error) {
+    console.error(`Error loading model ${name}:`, error);
   }
 });
 
+// Initialize associations
+Object.keys(db).forEach((modelName) => {
+  if (db[modelName].associate) {
+    try {
+      db[modelName].associate(db);
+      console.log(`Associated model: ${modelName}`);
+    } catch (error) {
+      console.error(`Error associating model ${modelName}:`, error);
+    }
+  }
+});
+
+// Add sequelize instance and class to db object
 db.sequelize = sequelize;
 db.Sequelize = Sequelize;
 

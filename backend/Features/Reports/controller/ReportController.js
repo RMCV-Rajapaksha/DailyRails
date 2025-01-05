@@ -1,20 +1,16 @@
 const express = require("express");
 const { Sequelize, DataTypes } = require("sequelize");
 const db = require("../../../models"); // Adjust the path according to your project structure
-
+const WebSocket = require("ws");
 const Report = db.Report;
 // GET all reports with pagination
 const getReport = async (req, res) => {
   const page = parseInt(req.query.page) || 1;
   const limit = parseInt(req.query.limit) || 10;
   const offset = (page - 1) * limit;
-  const typeToFilter = req.query.Type;
-
-  const whereClause = typeToFilter ? { Type: typeToFilter } : {};
 
   try {
     const { count, rows: reports } = await Report.findAndCountAll({
-      where: whereClause,
       offset,
       limit,
     });
@@ -32,10 +28,10 @@ const getReport = async (req, res) => {
 
 // POST a new report
 
+// Modified postReport function
 const postReport = async (req, res) => {
   const reportData = req.body;
 
-  // Validate the incoming data (example validation)
   if (
     !reportData.Name ||
     !reportData.NIC ||
@@ -48,9 +44,22 @@ const postReport = async (req, res) => {
 
   try {
     const newReport = await Report.create(reportData);
-    res.status(201).json(newReport); // Use 201 status code for resource creation
+
+    // WebSocket broadcast
+    const ws = new WebSocket("ws://localhost:3000");
+    ws.on("open", () => {
+      const message = formatWSMessage("NEW_REPORT", nsewReport);
+      ws.send(message);
+      ws.close();
+    });
+
+    ws.on("error", (error) => {
+      console.error("WebSocket error:", error);
+    });
+
+    res.status(201).json(newReport);
   } catch (error) {
-    console.error(error); // Log the error for debugging
+    console.error(error);
     res.status(500).json({ error: "Failed to create report" });
   }
 };

@@ -10,6 +10,7 @@ const {
   validateUpdateReport,
   validateReportId,
 } = require("../validators/ReportValidators");
+
 const { validationResult } = require("express-validator");
 const {
   isAuthenticated,
