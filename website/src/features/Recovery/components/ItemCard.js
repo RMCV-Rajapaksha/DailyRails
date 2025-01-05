@@ -2,7 +2,7 @@ import React from "react";
 import { Info } from "lucide-react";
 import { motion } from "framer-motion";
 
-const ItemCard = ({ title, description, date }) => {
+const ItemCard = ({ title, description, date, contactNo }) => {
   // Animation variants for the card
   const cardVariants = {
     hidden: {
@@ -92,11 +92,21 @@ const ItemCard = ({ title, description, date }) => {
             {description}
           </motion.p>
           <motion.p
+            className="text-sm text-left text-gray-500"
+            variants={contentVariants}
+          >
+            {contactNo}
+          </motion.p>
+          <motion.p
             className="text-sm text-right text-gray-500"
             variants={contentVariants}
           >
             {date}
           </motion.p>
+          <motion.p
+            className="text-sm text-right text-gray-500"
+            variants={contentVariants}
+          ></motion.p>
         </motion.div>
       </div>
     </motion.div>

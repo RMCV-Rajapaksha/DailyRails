@@ -47,6 +47,7 @@ const LostItemsPage = () => {
                   title={item.Title}
                   description={item.Description}
                   date={item.createdAt}
+                  contactNo={item.ContactNo}
                 />
               ))}
             </div>
