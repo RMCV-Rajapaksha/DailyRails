@@ -18,9 +18,9 @@ function Contact() {
     if (!/^[A-Za-z\s]{3,}$/.test(name))
       newErrors.name = "Name must be at least 3 characters, letters only";
 
-    // if (!nicNo.trim()) newErrors.nicNo = "NIC is required";
-    // if (!/^[0-9]{9}[vVxX]$|^[0-9]{12}$/.test(nicNo))
-    //   newErrors.nicNo = "Invalid NIC format";
+    if (!nicNo.trim()) newErrors.nicNo = "NIC is required";
+    if (!/^[0-9]{9}[vVxX]$|^[0-9]{12}$/.test(nicNo))
+      newErrors.nicNo = "Invalid NIC format";
 
     if (!incidentType.trim())
       newErrors.incidentType = "Incident type is required";
