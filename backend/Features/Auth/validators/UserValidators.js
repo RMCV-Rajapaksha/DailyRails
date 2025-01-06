@@ -1,7 +1,13 @@
 const { body, param } = require("express-validator");
 
 const validateNewUser = [
-  body("Name")
+  body("FirstName")
+    .isString()
+    .withMessage("Name must be a string")
+    .isLength({ min: 1, max: 50 })
+    .withMessage("Name should be between 1 and 50 characters"),
+
+  body("FirstName")
     .isString()
     .withMessage("Name must be a string")
     .isLength({ min: 1, max: 50 })
