@@ -19,7 +19,7 @@ const {
 } = require("../validators/TrainValidators");
 
 // Add new route
-router.get("/search", getTrainDetailsByLocations);
+router.post("/search", getTrainDetailsByLocations);
 
 // Create new train with stopping points
 router.post("/", validateNewTrain, validateRequest, createTrain);
