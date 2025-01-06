@@ -9,6 +9,7 @@ const {
   deleteTrain,
   editTrain,
   getStoppingPointsByLocations,
+  getTrainDetailsByLocations,
 } = require("../controller/TrainController");
 const {
   validateRequest,
@@ -18,7 +19,7 @@ const {
 } = require("../validators/TrainValidators");
 
 // Add new route
-router.post("/search", getStoppingPointsByLocations);
+router.get("/search", getTrainDetailsByLocations);
 
 // Create new train with stopping points
 router.post("/", validateNewTrain, validateRequest, createTrain);

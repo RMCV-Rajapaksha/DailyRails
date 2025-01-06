@@ -1,3 +1,4 @@
+const { Sequelize, DataTypes, Op } = require("sequelize");
 const db = require("../../../models");
 const StoppingPoint = db.StoppingPoint;
 const Train = db.Train;
@@ -279,6 +280,75 @@ const getStoppingPointsByLocations = async (req, res) => {
   }
 };
 
+const getTrainDetailsByLocations = async (req, res) => {
+  const { Location_1, Location_2 } = req.body;
+
+  try {
+    // Find stopping points for the given locations
+    const stoppingPoints = await StoppingPoint.findAll({
+      where: {
+        StationName: {
+          [Op.or]: [Location_1, Location_2],
+        },
+      },
+    });
+
+    // Group stopping points by TrainID
+    const groupedByTrainID = stoppingPoints.reduce((acc, point) => {
+      if (!acc[point.TrainID]) {
+        acc[point.TrainID] = [];
+      }
+      acc[point.TrainID].push(point);
+      return acc;
+    }, {});
+
+    // Filter groups to find those with both locations
+    const matchingTrainIDs = Object.keys(groupedByTrainID).filter((trainID) => {
+      const points = groupedByTrainID[trainID];
+      const hasLocation1 = points.some(
+        (point) => point.StationName === Location_1
+      );
+      const hasLocation2 = points.some(
+        (point) => point.StationName === Location_2
+      );
+      return hasLocation1 && hasLocation2;
+    });
+
+    if (matchingTrainIDs.length === 0) {
+      return res.status(404).json({
+        success: false,
+        message: "No trains found with the given locations",
+      });
+    }
+
+    // Fetch train details and stopping points for the matching TrainID
+    const trains = await Train.findAll({
+      where: {
+        ID: {
+          [Op.in]: matchingTrainIDs,
+        },
+      },
+      include: [
+        {
+          model: StoppingPoint,
+          as: "stoppingPoints",
+        },
+      ],
+    });
+
+    return res.status(200).json({
+      success: true,
+      data: trains,
+    });
+  } catch (error) {
+    return res.status(500).json({
+      success: false,
+      message: "Error fetching train details",
+      error: error.message,
+    });
+  }
+};
+
 // Add searchTrainsByLocation to module exports
 module.exports = {
   createTrain,
@@ -287,4 +357,5 @@ module.exports = {
   deleteTrain,
   editTrain,
   getStoppingPointsByLocations, // Add this line
+  getTrainDetailsByLocations,
 };
