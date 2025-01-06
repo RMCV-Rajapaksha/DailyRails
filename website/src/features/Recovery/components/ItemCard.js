@@ -101,7 +101,7 @@ const ItemCard = ({ title, description, date, contactNo }) => {
             className="text-sm text-right text-gray-500"
             variants={contentVariants}
           >
-            {date}
+            <p>{new Date(date).toLocaleDateString()}</p>
           </motion.p>
           <motion.p
             className="text-sm text-right text-gray-500"

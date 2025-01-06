@@ -98,7 +98,7 @@ const NewsCard = ({ item }) => {
             <p>{item.Announcement_To}</p>
             <div className="flex space-x-2">
               <p>{new Date(item.createdAt).toLocaleDateString()}</p>
-              <p>{new Date(item.updatedAt).toLocaleDateString()}</p>
+            
             </div>
           </motion.div>
         </motion.div>
