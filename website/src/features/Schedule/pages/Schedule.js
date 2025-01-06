@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { MapPin, Train, Calendar } from "lucide-react";
 import { motion } from "framer-motion";
+import axios from "axios";
 import Button from "../../../components/Button";
 import InputField from "../../../components/InputField";
 
@@ -8,30 +9,9 @@ const TrainSchedule = () => {
   const [formData, setFormData] = useState({
     startLocation: "",
     endLocation: "",
-    date: "",
   });
 
-  const [scheduleData] = useState([
-    {
-      id: 1,
-      trainName:
-        "1008 Intercity Express - Badulla - Colombo Fort 10:15 - 21:10",
-      departs: "10:15",
-      arrives: "21:10",
-      class: "Observation Saloon",
-      available: 14,
-      price: "3000 LKR",
-    },
-    {
-      id: 2,
-      trainName: "1046 Night Mail - Badulla - Colombo Fort 18:00 - 05:40",
-      departs: "02:00",
-      arrives: "22:00",
-      class: "Second Class Sleeperetts",
-      available: 5,
-      price: "5000 LKR",
-    },
-  ]);
+  const [scheduleData, setScheduleData] = useState([]);
 
   const handleInputChange = (e) => {
     const { id, value } = e.target;
@@ -41,8 +21,29 @@ const TrainSchedule = () => {
     }));
   };
 
-  const handleSearch = () => {
-    console.log("Search with:", formData);
+  const handleSearch = async () => {
+    try {
+      const response = await axios.post(
+        "http://localhost:4000/api/trains/search",
+        JSON.stringify({
+          Location_1: formData.startLocation,
+          Location_2: formData.endLocation,
+        }),
+        {
+          headers: {
+            "Content-Type": "application/json",
+          },
+        }
+      );
+      console.log(response.data);
+      if (response.data.success) {
+        setScheduleData(response.data.data);
+      } else {
+        console.error("Error fetching train data:", response.data.message);
+      }
+    } catch (error) {
+      console.error("Error fetching train data:", error);
+    }
   };
 
   // Animation variants
@@ -98,7 +99,7 @@ const TrainSchedule = () => {
         variants={containerVariants}
         className="mb-8 bg-white rounded-lg shadow-sm"
       >
-        <div className="grid grid-cols-1 gap-2 p-4 md:grid-cols-4">
+        <div className="grid grid-cols-1 gap-2 p-4 md:grid-cols-4 ">
           {/* Start Location */}
           <motion.div variants={itemVariants} className="relative">
             <InputField
@@ -163,15 +164,12 @@ const TrainSchedule = () => {
               <th className="p-4 text-left text-primary">TRAIN NAME</th>
               <th className="p-4 text-left text-primary">DEPARTS</th>
               <th className="p-4 text-left text-primary">ARRIVES</th>
-              <th className="p-4 text-left text-primary">CLASS</th>
-              <th className="p-4 text-left text-primary">AVAILABLE</th>
-              <th className="p-4 text-left text-primary">PRICE</th>
             </motion.tr>
           </thead>
           <tbody>
             {scheduleData.map((train, index) => (
               <motion.tr
-                key={train.id}
+                key={train.ID}
                 variants={rowVariants}
                 initial="hidden"
                 animate="visible"
@@ -182,13 +180,10 @@ const TrainSchedule = () => {
                 <td className="p-4">
                   <input type="checkbox" className="rounded" />
                 </td>
-                <td className="p-4 text-secondary-1">{train.id}</td>
-                <td className="p-4 text-secondary-1">{train.trainName}</td>
-                <td className="p-4 text-secondary-1">{train.departs}</td>
-                <td className="p-4 text-secondary-1">{train.arrives}</td>
-                <td className="p-4 text-secondary-1">{train.class}</td>
-                <td className="p-4 text-secondary-1">{train.available}</td>
-                <td className="p-4 text-secondary-1">{train.price}</td>
+                <td className="p-4 text-secondary-1">{train.ID}</td>
+                <td className="p-4 text-secondary-1">{train.Name}</td>
+                <td className="p-4 text-secondary-1">{train.StartTime}</td>
+                <td className="p-4 text-secondary-1">{train.EndTime}</td>
               </motion.tr>
             ))}
           </tbody>
