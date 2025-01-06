@@ -1,12 +1,10 @@
-// controllers/TrainController.js
-
 const db = require("../../../models");
-const { Train, StoppingPoint } = db;
+const StoppingPoint = db.StoppingPoint;
+const Train = db.Train;
 // TrainController.js - Updated createTrain function
 const createTrain = async (req, res) => {
-
   const t = await db.sequelize.transaction();
-   console.log("req.body", req.body);
+  console.log("req.body", req.body);
 
   try {
     const {
@@ -18,10 +16,9 @@ const createTrain = async (req, res) => {
       EndTime,
       stoppingPoints,
     } = req.body;
-   console.log(1);
+    console.log(1);
 
     const train = await Train.create(
-   
       {
         Name,
         TrainID,
@@ -32,7 +29,7 @@ const createTrain = async (req, res) => {
       },
       { transaction: t }
     );
-   console.log(2);
+    console.log(2);
     if (stoppingPoints && stoppingPoints.length > 0) {
       const stoppingPointsWithTrainId = stoppingPoints.map((point) => ({
         ...point,
@@ -60,7 +57,6 @@ const createTrain = async (req, res) => {
       success: true,
       data: trainWithStops,
     });
-
   } catch (error) {
     await t.rollback();
 
@@ -264,43 +260,22 @@ const editTrain = async (req, res) => {
     });
   }
 };
- 
- 
-// Add this new function in TrainController.js
-const searchTrainsByLocation = async (req, res) => {
+
+const getStoppingPointsByLocations = async (req, res) => {
+  const { Location_1, Location_2 } = req.body;
+
   try {
-    const { StartLocation, EndLocation } = req.body;
-    
-    const trains = await Train.findAll({
+    const stoppingPoints = await StoppingPoint.findAll({
       where: {
-        StartStations: StartLocation,
-        EndStations: EndLocation
+        StationName: {
+          [Sequelize.Op.or]: [Location_1, Location_2],
+        },
       },
-      include: [
-        {
-          model: StoppingPoint,
-          as: "stoppingPoints"
-        }
-      ]
     });
 
-    if (!trains || trains.length === 0) {
-      return res.status(404).json({
-        success: false,
-        message: "No trains found for this route"
-      });
-    }
-
-    return res.status(200).json({
-      success: true,
-      data: trains
-    });
+    res.status(200).json(stoppingPoints);
   } catch (error) {
-    return res.status(500).json({
-      success: false, 
-      message: "Error searching trains",
-      error: error.message
-    });
+    res.status(500).json({ error: error.message });
   }
 };
 
@@ -308,8 +283,8 @@ const searchTrainsByLocation = async (req, res) => {
 module.exports = {
   createTrain,
   getAllTrains,
-  getTrainById, 
+  getTrainById,
   deleteTrain,
   editTrain,
-  searchTrainsByLocation // Add this line
+  getStoppingPointsByLocations, // Add this line
 };
