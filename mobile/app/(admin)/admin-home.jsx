@@ -41,7 +41,7 @@ const UploadData = () => {
       updateLocation();
       
       // Then set up interval for regular updates
-      interval = setInterval(updateLocation, 10000);
+      interval = setInterval(updateLocation, 2000);
     }
 
     return () => {
