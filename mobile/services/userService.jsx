@@ -1,27 +1,24 @@
-// src/services/userService.js
+import axios from "axios";
+
+const API_BASE_URL = "http://10.0.2.2:4000/api/user"; // Replace with your backend's base URL
+
 export const registerUser = async (userData) => {
+  try {
+    const response = await axios.post(`${API_BASE_URL}/register`, userData);
+    return response.data; // Backend's success response
+  } catch (error) {
+    console.error("Registration failed:", error.response?.data || error.message);
+    throw error.response?.data || { message: "Registration failed" };
+  }
+};
+
+
+export const signInUser = async (credentials) => {
     try {
-      console.log('Sending registration request for:', userData.Email);
-      
-      const response = await fetch(`http://10.0.2.2:4000/register`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'Accept': 'application/json'
-        },
-        body: JSON.stringify(userData),
-      });
-  
-      const data = await response.json();
-      console.log('Server response:', data);
-      
-      if (!response.ok) {
-        throw new Error(data.error || data.details || 'Registration failed');
-      }
-      
-      return data;
+      const response = await axios.post(`${API_BASE_URL}/login`, credentials);
+      return response.data; // Backend's success response
     } catch (error) {
-      console.error('Registration error:', error);
-      throw error;
+      console.error("Sign-in failed:", error.response?.data || error.message);
+      throw error.response?.data || { message: "Sign-in failed" };
     }
   };
