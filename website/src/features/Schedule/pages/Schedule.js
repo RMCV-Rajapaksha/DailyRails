@@ -1,6 +1,5 @@
 import React, { useState } from "react";
-import { MapPin, Train, Calendar } from "lucide-react";
-import { motion } from "framer-motion";
+import { MapPin } from "lucide-react";
 import axios from "axios";
 import Button from "../../../components/Button";
 import InputField from "../../../components/InputField";
@@ -9,6 +8,7 @@ const TrainSchedule = () => {
   const [formData, setFormData] = useState({
     startLocation: "",
     endLocation: "",
+    date: "",
   });
 
   const [scheduleData, setScheduleData] = useState([]);
@@ -35,7 +35,6 @@ const TrainSchedule = () => {
           },
         }
       );
-      console.log(response.data);
       if (response.data.success) {
         setScheduleData(response.data.data);
       } else {
@@ -46,150 +45,81 @@ const TrainSchedule = () => {
     }
   };
 
-  // Animation variants
-  const containerVariants = {
-    hidden: { opacity: 0, y: -20 },
-    visible: {
-      opacity: 1,
-      y: 0,
-      transition: {
-        duration: 0.5,
-        staggerChildren: 0.1,
-      },
-    },
-  };
-
-  const itemVariants = {
-    hidden: { opacity: 0, x: -20 },
-    visible: {
-      opacity: 1,
-      x: 0,
-      transition: { duration: 0.5 },
-    },
-  };
-
-  const tableVariants = {
-    hidden: { opacity: 0 },
-    visible: {
-      opacity: 1,
-      transition: {
-        duration: 0.6,
-        staggerChildren: 0.1,
-      },
-    },
-  };
-
-  const rowVariants = {
-    hidden: { opacity: 0, x: -20 },
-    visible: {
-      opacity: 1,
-      x: 0,
-      transition: { duration: 0.3 },
-    },
-  };
-
   return (
-    <motion.div
-      initial="hidden"
-      animate="visible"
-      className="h-full p-4 mx-auto max-w-7xl font-body"
-    >
+    <div className="p-4 mx-auto max-w-7xl">
       {/* Search Section */}
-      <motion.div
-        variants={containerVariants}
-        className="mb-8 bg-white rounded-lg shadow-sm"
-      >
-        <div className="grid grid-cols-1 gap-2 p-4 md:grid-cols-4 ">
-          {/* Start Location */}
-          <motion.div variants={itemVariants} className="relative">
+      <div className="mb-6 bg-white rounded-lg shadow">
+        <div className="flex flex-wrap gap-2 p-2">
+          <div className="flex-1 min-w-[200px] relative">
             <InputField
-              label="Start Location"
               id="startLocation"
               value={formData.startLocation}
               onChange={handleInputChange}
-              placeholder="From"
-              className="mb-0"
+              placeholder="Start Location"
+              className="w-full py-3 pl-10 pr-4 border rounded"
             />
             <MapPin
-              className="absolute top-[42px] right-5 text-tertiary"
+              className="absolute text-gray-400 -translate-y-1/2 left-3 top-1/2"
               size={20}
             />
-          </motion.div>
+          </div>
 
-          {/* End Location */}
-          <motion.div variants={itemVariants} className="relative">
+          <div className="flex-1 min-w-[200px] relative">
             <InputField
-              label="End Location"
               id="endLocation"
               value={formData.endLocation}
               onChange={handleInputChange}
-              placeholder="To"
-              className="mb-0"
+              placeholder="End Location"
+              className="w-full py-3 pl-10 pr-4 border rounded"
             />
-            <Train
-              className="absolute top-[42px] right-5 text-tertiary"
+            <MapPin
+              className="absolute text-gray-400 -translate-y-1/2 left-3 top-1/2"
               size={20}
             />
-          </motion.div>
+          </div>
 
-          {/* Search Button */}
-          <motion.div
-            variants={itemVariants}
-            className="flex items-end pb-2.5"
-            whileHover={{ scale: 1.02 }}
-            whileTap={{ scale: 0.98 }}
+          <Button
+            onClick={handleSearch}
+            className="p-3 text-white rounded-sm bg-primary hover:bg-secondary"
           >
-            <Button
-              onClick={handleSearch}
-              className="text-white rounded-sm hover:bg-secondary"
-            >
-              Search
-            </Button>
-          </motion.div>
+            Search
+          </Button>
         </div>
-      </motion.div>
+      </div>
 
       {/* Results Table */}
-      <motion.div
-        variants={tableVariants}
-        className="overflow-x-auto bg-white rounded-lg shadow-sm"
-      >
+      <div className="overflow-x-auto bg-white rounded-lg shadow">
         <table className="w-full">
           <thead>
-            <motion.tr variants={rowVariants} className="bg-[#E5F0F0]">
+            <tr className="bg-[#e3f2fd] text-sm">
               <th className="w-8 p-4 text-left">
                 <input type="checkbox" className="rounded" />
               </th>
-              <th className="p-4 text-left text-primary">#</th>
-              <th className="p-4 text-left text-primary">TRAIN NAME</th>
-              <th className="p-4 text-left text-primary">DEPARTS</th>
-              <th className="p-4 text-left text-primary">ARRIVES</th>
-            </motion.tr>
+              <th className="p-4 text-left">#</th>
+              <th className="p-4 text-left">TRAIN NAME</th>
+              <th className="p-4 text-left">DEPARTS</th>
+              <th className="p-4 text-left">ARRIVES</th>
+            </tr>
           </thead>
           <tbody>
             {scheduleData.map((train, index) => (
-              <motion.tr
-                key={train.ID}
-                variants={rowVariants}
-                initial="hidden"
-                animate="visible"
-                transition={{ delay: index * 0.1 }}
-                className="border-b hover:bg-gray-50"
-                whileHover={{ scale: 1.005, backgroundColor: "#F8FAFC" }}
-              >
+              <tr key={train.ID} className="border-b hover:bg-gray-50">
                 <td className="p-4">
                   <input type="checkbox" className="rounded" />
                 </td>
-                <td className="p-4 text-secondary-1">{train.ID}</td>
-                <td className="p-4 text-secondary-1">{train.Name}</td>
-                <td className="p-4 text-secondary-1">{train.StartTime}</td>
-                <td className="p-4 text-secondary-1">{train.EndTime}</td>
-              </motion.tr>
+                <td className="p-4">{index + 1}</td>
+                <td className="p-4">
+                  <div className="font-medium">{train.Name}</div>
+                  <div className="text-sm text-gray-500">{`${train.StartLocation} - ${train.EndLocation}`}</div>
+                </td>
+                <td className="p-4">{train.StartTime}</td>
+                <td className="p-4">{train.EndTime}</td>
+              </tr>
             ))}
           </tbody>
         </table>
-      </motion.div>
-    </motion.div>
+      </div>
+    </div>
   );
 };
 
