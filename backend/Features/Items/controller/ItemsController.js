@@ -21,7 +21,15 @@ async function fetchItems(req, res, statusFilter, itemTypeFilter) {
       offset,
       limit,
     });
-    res.json({ count, items });
+
+    const totalPages = Math.ceil(count / limit);
+
+    res.json({
+      total: count,
+      totalPages,
+      currentPage: page,
+      items,
+    });
   } catch (error) {
     res.status(500).json({ error: error.message });
   }

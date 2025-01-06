@@ -7,9 +7,11 @@ import { ChevronLeft, ChevronRight } from "lucide-react";
 
 const LostItemsPage = () => {
   const dispatch = useDispatch();
-  const { items, isLoading, error, total } = useSelector((state) => state.items);
+  const { items, isLoading, error, total } = useSelector(
+    (state) => state.items
+  );
   const [currentPage, setCurrentPage] = useState(1);
-  const itemsPerPage = 5;
+  const itemsPerPage = 1;
 
   useEffect(() => {
     dispatch(fetchItems("lost", currentPage, itemsPerPage));
@@ -20,7 +22,9 @@ const LostItemsPage = () => {
   };
 
   const handleNextPage = () => {
-    setCurrentPage((prev) => Math.min(prev + 1, Math.ceil(total / itemsPerPage)));
+    setCurrentPage((prev) =>
+      Math.min(prev + 1, Math.ceil(total / itemsPerPage))
+    );
   };
 
   return (
