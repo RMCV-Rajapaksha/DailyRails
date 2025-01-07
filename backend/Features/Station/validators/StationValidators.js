@@ -1,84 +1,33 @@
-const { body, param } = require("express-validator");
+// filepath: /C:/Users/ROG/OneDrive/Desktop/Projects/5 Sem  and 6 Sem  project/Code-5/DailyRails/backend/Features/Station/validators/StationValidators.js
 
-// Validation rules for creating a new report
-const validateNewReport = [
-  body("Name")
-    .isString()
-    .withMessage("Name must be a string")
-    .isLength({ min: 1, max: 20 })
-    .withMessage("Name should be between 1 and 20 characters"),
+const { body } = require("express-validator");
 
-  body("NIC")
+const stationValidators = [
+  body("StationName")
     .isString()
-    .withMessage("NIC must be a string")
-    .isLength({ min: 10, max: 20 })
-    .withMessage("NIC should be between 10 and 20 characters"),
-
-  body("Type")
+    .withMessage("StationName must be a string")
+    .isLength({ min: 1 })
+    .withMessage("StationName is required"),
+  body("StationID")
     .isString()
-    .withMessage("Type must be a string")
-    .isLength({ min: 1, max: 50 })
-    .withMessage("Type should be between 1 and 50 characters"),
-
-  body("Description")
+    .withMessage("StationID must be a string")
+    .isLength({ min: 1 })
+    .withMessage("StationID is required"),
+  body("StationAddress")
     .isString()
-    .withMessage("Description must be a string")
-    .isLength({ min: 1, max: 1000 })
-    .withMessage("Description should be between 1 and 1000 characters"),
-
-  body("ClosestStation")
+    .withMessage("StationAddress must be a string")
+    .isLength({ min: 1 })
+    .withMessage("StationAddress is required"),
+  body("StationLine")
     .isString()
-    .withMessage("ClosestStation must be a string")
-    .isLength({ min: 1, max: 1000 })
-    .withMessage("ClosestStation should be between 1 and 1000 characters"),
+    .withMessage("StationLine must be a string")
+    .isLength({ min: 1 })
+    .withMessage("StationLine is required"),
+  body("ContactNumber")
+    .isString()
+    .withMessage("ContactNumber must be a string")
+    .isLength({ min: 1 })
+    .withMessage("ContactNumber is required"),
 ];
 
-// Validation rules for updating an existing report
-const validateUpdateReport = [
-  param("id").isInt().withMessage("Report ID must be an integer"),
-  body("Name")
-    .optional()
-    .isString()
-    .withMessage("Name must be a string")
-    .isLength({ min: 1, max: 20 })
-    .withMessage("Name should be between 1 and 20 characters"),
-
-  body("NIC")
-    .optional()
-    .isString()
-    .withMessage("NIC must be a string")
-    .isLength({ min: 10, max: 20 })
-    .withMessage("NIC should be between 10 and 20 characters"),
-
-  body("Type")
-    .optional()
-    .isString()
-    .withMessage("Type must be a string")
-    .isLength({ min: 1, max: 50 })
-    .withMessage("Type should be between 1 and 50 characters"),
-
-  body("Description")
-    .optional()
-    .isString()
-    .withMessage("Description must be a string")
-    .isLength({ min: 1, max: 1000 })
-    .withMessage("Description should be between 1 and 1000 characters"),
-
-  body("ClosestStation")
-    .optional()
-    .isString()
-    .withMessage("ClosestStation must be a string")
-    .isLength({ min: 1, max: 1000 })
-    .withMessage("ClosestStation should be between 1 and 1000 characters"),
-];
-
-// Validation rules for deleting a report by ID
-const validateReportId = [
-  param("id").isInt().withMessage("Report ID must be an integer"),
-];
-
-module.exports = {
-  validateNewReport,
-  validateUpdateReport,
-  validateReportId,
-};
+module.exports = stationValidators;

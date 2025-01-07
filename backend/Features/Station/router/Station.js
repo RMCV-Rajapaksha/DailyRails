@@ -1,27 +1,17 @@
+// filepath: /C:/Users/ROG/OneDrive/Desktop/Projects/5 Sem  and 6 Sem  project/Code-5/DailyRails/backend/Features/Station/router/Station.js
 const express = require("express");
 const {
-  getReport,
-  postReport,
-  deleteReport,
-  putReport,
-} = require("../controller/ReportController");
-const {
-  validateNewReport,
-  validateUpdateReport,
-  validateReportId,
-} = require("../validators/ReportValidators");
-
-const { validationResult } = require("express-validator");
-const {
-  isAuthenticated,
-  isMainAdmin,
-  isCounter,
-  isTrainDriver,
-} = require("../../../Middlewares/adminAuthMiddleware");
+  createStation,
+  getAllStations,
+  getStationById,
+  updateStationById,
+  deleteStationById,
+} = require("../controller/StationController");
+const { validationResult } = require('express-validator');
+const stationValidators = require('../validators/StationValidators');
 
 const router = express.Router();
 
-// Middleware to check validation errors
 const validate = (req, res, next) => {
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
@@ -35,9 +25,10 @@ const validate = (req, res, next) => {
 };
 
 // Define routes
-router.get("/", getReport);
-router.post("/", validateNewReport, validate, postReport);
-router.put("/:id", validateReportId, validateUpdateReport, validate, putReport);
-router.delete("/:id", validateReportId, validate, deleteReport);
+router.post("/", stationValidators, validate, createStation);
+router.get("/", getAllStations);
+router.get("/:id", getStationById);
+router.patch("/:id", stationValidators, validate, updateStationById);
+router.delete("/:id", deleteStationById);
 
 module.exports = router;
