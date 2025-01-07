@@ -284,6 +284,27 @@ const getTrainDetailsByLocations = async (req, res) => {
   const { Location_1, Location_2 } = req.body;
 
   try {
+    // Check if there are trains with StartStations and EndStations matching Location_1 and Location_2
+    const directTrains = await Train.findAll({
+      where: {
+        StartStations: Location_1,
+        EndStations: Location_2,
+      },
+      include: [
+        {
+          model: StoppingPoint,
+          as: "stoppingPoints",
+        },
+      ],
+    });
+
+    if (directTrains.length > 0) {
+      return res.status(200).json({
+        success: true,
+        data: directTrains,
+      });
+    }
+
     // Find stopping points for the given locations
     const stoppingPoints = await StoppingPoint.findAll({
       where: {
@@ -348,7 +369,6 @@ const getTrainDetailsByLocations = async (req, res) => {
     });
   }
 };
-
 // Add searchTrainsByLocation to module exports
 module.exports = {
   createTrain,

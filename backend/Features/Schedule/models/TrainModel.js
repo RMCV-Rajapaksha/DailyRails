@@ -12,10 +12,10 @@ module.exports = (sequelize) => {
       },
       TrainID: {
         type: DataTypes.STRING(20),
-        allowNull: false,  //need to now allow null
+        allowNull: false, //need to now allow null
       },
       Name: {
-        type: DataTypes.STRING(20),
+        type: DataTypes.STRING(50),
         allowNull: true,
         required: true,
       },
@@ -56,4 +56,3 @@ module.exports = (sequelize) => {
 
   return Train;
 };
-
