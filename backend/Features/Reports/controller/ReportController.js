@@ -3,6 +3,7 @@ const { Sequelize, DataTypes } = require("sequelize");
 const db = require("../../../models"); // Adjust the path according to your project structure
 const WebSocket = require("ws");
 const Report = db.Report;
+
 // GET all reports with pagination
 const getReport = async (req, res) => {
   const page = parseInt(req.query.page) || 1;
