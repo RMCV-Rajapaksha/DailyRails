@@ -1,14 +1,9 @@
 const { DataTypes } = require("sequelize");
 
 module.exports = (sequelize) => {
-  const Payment = sequelize.define(
-    "Payment",
+  const BookingSeats = sequelize.define(
+    "BookingSeats",
     {
-      PaymentID: {
-        type: DataTypes.INTEGER,
-        autoIncrement: true,
-        primaryKey: true,
-      },
       BookingID: {
         type: DataTypes.INTEGER,
         allowNull: false,
@@ -16,21 +11,23 @@ module.exports = (sequelize) => {
           model: 'BOOKING', // References the BOOKING table
           key: 'BookingID',
         },
+        primaryKey: true,
       },
-      amount: {
+      TicketID: {
         type: DataTypes.INTEGER,
         allowNull: false,
+        primaryKey: true,
       },
-      status: {
+      SeatNumber: {
         type: DataTypes.INTEGER,
         allowNull: false,
       },
     },
     {
-      tableName: "PAYMENT",
+      tableName: "BOOKINGSEATS",
       timestamps: true,
     }
   );
 
-  return Payment;
+  return BookingSeats;
 };
