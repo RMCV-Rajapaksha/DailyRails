@@ -60,6 +60,18 @@ const models = [
     name: "Station",
     path: "../Features/Station/models/StationModel",
   },
+  {
+    name: "Journey",
+    path: "../Features/Booking/models/JourneyModel",
+  },
+  {
+    name: "Booking",
+    path: "../Features/Booking/models/BookingModel",
+  },
+  {
+    name: "BookingSeats",
+    path: "../Features/Booking/models/BookingModelTwo",
+  },
 ];
 
 // Load models from current directory
