@@ -30,19 +30,11 @@ const validateLogin = [
   body("Password")
     .isString()
     .withMessage("Password must be a string")
-    .isLength({ min: 8 })
-    .withMessage("Password should be at least 8 characters long")
-    .withMessage(
-      "Password must include uppercase, lowercase, numbers, and symbols"
-    ),
-];
-
-const validateUserId = [
-  param("ID").isInt().withMessage("User ID must be an integer"),
+    .notEmpty()
+    .withMessage("Password cannot be empty"),
 ];
 
 module.exports = {
   validateNewUser,
-  validateUserId,
   validateLogin,
 };
