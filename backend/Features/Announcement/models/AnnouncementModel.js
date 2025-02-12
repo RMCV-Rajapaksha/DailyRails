@@ -4,20 +4,21 @@ module.exports = (sequelize) => {
   const Announcement = sequelize.define(
     "Announcement",
     {
-      ID: {
-        type: DataTypes.INTEGER,
-        autoIncrement: true,
+      AnnouncementID: {
+        type: DataTypes.STRING(20),
         primaryKey: true,
       },
-      Announcement_To: {
+      AnnouncementTo: {
         type: DataTypes.STRING(20),
         allowNull: false,
       },
       Title: {
         type: DataTypes.STRING(50),
+        allowNull: false,
       },
       Description: {
         type: DataTypes.STRING(1000),
+        allowNull: false,
       },
     },
     {

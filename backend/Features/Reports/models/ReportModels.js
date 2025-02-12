@@ -4,9 +4,8 @@ module.exports = (sequelize) => {
   const Report = sequelize.define(
     "Report",
     {
-      ID: {
-        type: DataTypes.INTEGER,
-        autoIncrement: true,
+      ReportID: {
+        type: DataTypes.STRING(20),
         primaryKey: true,
       },
       Name: {
@@ -26,7 +25,7 @@ module.exports = (sequelize) => {
         allowNull: false,
       },
       ClosestStation: {
-        type: DataTypes.STRING(1000),
+        type: DataTypes.STRING(50),
         allowNull: false,
       },
     },

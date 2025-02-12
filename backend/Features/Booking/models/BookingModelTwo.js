@@ -5,18 +5,16 @@ module.exports = (sequelize) => {
     "BookingSeats",
     {
       BookingID: {
-        type: DataTypes.INTEGER,
+        type: DataTypes.STRING(20),
         allowNull: false,
         references: {
           model: "BOOKING",
           key: "BookingID",
         },
-        primaryKey: true,
       },
       TicketID: {
-        type: DataTypes.INTEGER,
+        type: DataTypes.STRING(20),
         allowNull: false,
-        primaryKey: true,
       },
       SeatNumber: {
         type: DataTypes.INTEGER,
@@ -26,8 +24,22 @@ module.exports = (sequelize) => {
     {
       tableName: "BOOKINGSEATS",
       timestamps: true,
+      indexes: [
+        {
+          unique: true,
+          primary: true,
+          fields: ["BookingID", "TicketID"],
+        },
+      ],
     }
   );
+
+  BookingSeats.associate = (models) => {
+    BookingSeats.belongsTo(models.Booking, {
+      foreignKey: "BookingID",
+      onDelete: "CASCADE",
+    });
+  };
 
   return BookingSeats;
 };

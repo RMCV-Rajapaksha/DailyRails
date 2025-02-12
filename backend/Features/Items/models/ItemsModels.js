@@ -4,9 +4,8 @@ module.exports = (sequelize) => {
   const Item = sequelize.define(
     "Item",
     {
-      ID: {
-        type: DataTypes.INTEGER,
-        autoIncrement: true,
+      ItemID: {
+        type: DataTypes.STRING(20),
         primaryKey: true,
       },
       Name: {

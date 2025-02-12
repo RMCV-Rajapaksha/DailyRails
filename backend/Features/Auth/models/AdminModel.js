@@ -4,14 +4,10 @@ module.exports = (sequelize) => {
   const User = sequelize.define(
     "Admin",
     {
-      ID: {
-        type: DataTypes.INTEGER,
-        autoIncrement: true,
-        primaryKey: true,
-      },
       EmployeeID: {
         type: DataTypes.STRING(20),
         allowNull: false,
+        primaryKey: true,
       },
       Name: {
         type: DataTypes.STRING(50),

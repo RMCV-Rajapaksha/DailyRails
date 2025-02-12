@@ -4,17 +4,16 @@ module.exports = (sequelize) => {
   const StoppingPoint = sequelize.define(
     "StoppingPoint",
     {
-      ID: {
-        type: DataTypes.INTEGER,
-        autoIncrement: true,
+      PointID: {
+        type: DataTypes.STRING(20),
         primaryKey: true,
       },
       TrainID: {
-        type: DataTypes.INTEGER,
+        type: DataTypes.STRING(20),
         allowNull: false, //need to now allow null
-        references: { 
+        references: {
           model: "TRAINS",
-          key: "ID",
+          key: "TrainID",
         },
       },
       StationName: {
