@@ -10,19 +10,19 @@ module.exports = (sequelize) => {
         primaryKey: true,
       },
       TrainID: {
-        type: DataTypes.INTEGER,
+        type: DataTypes.STRING(20),
         allowNull: false,
         references: {
-          model: 'TRAINS', // References the TRAINS table
-          key: 'ID',
+          model: "TRAINS", // References the TRAINS table
+          key: "TrainID",
         },
       },
       JourneyID: {
         type: DataTypes.INTEGER,
         allowNull: false,
         references: {
-          model: 'JOURNEY', // References the JOURNEY table
-          key: 'ID',
+          model: "JOURNEY", // References the JOURNEY table
+          key: "ID",
         },
       },
       NoOfSeats: {

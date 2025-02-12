@@ -8,11 +8,11 @@ module.exports = (sequelize) => {
       ID: {
         type: DataTypes.INTEGER,
         autoIncrement: true,
-        primaryKey: true,
       },
       TrainID: {
         type: DataTypes.STRING(20),
         allowNull: false, //need to now allow null
+        primaryKey: true,
       },
       Name: {
         type: DataTypes.STRING(50),

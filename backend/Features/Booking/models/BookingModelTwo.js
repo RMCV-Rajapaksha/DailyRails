@@ -8,8 +8,8 @@ module.exports = (sequelize) => {
         type: DataTypes.INTEGER,
         allowNull: false,
         references: {
-          model: 'BOOKING', // References the BOOKING table
-          key: 'BookingID',
+          model: "BOOKING",
+          key: "BookingID",
         },
         primaryKey: true,
       },
