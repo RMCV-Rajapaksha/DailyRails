@@ -1,28 +1,31 @@
 const express = require("express");
 require("dotenv").config();
-const cors = require("cors"); // Make sure to import cors
+const cors = require("cors"); // Import cors
 const http = require("http"); // Import the http module
 const app = express();
 const db = require("./models"); // Ensure this path is correct
 const {
   setupWebSocket,
 } = require("./Features/Reports/controller/WebsocketServer");
+
 // Middleware to parse JSON
 app.use(express.json());
 
 // CORS setup
-// app.use(
-//   cors({
-//     origin: "http://localhost:3001",
-//     methods: "GET,POST,PUT,DELETE",
-//     credentials: true,
-//   })
-// );
 app.use(
   cors({
     origin: (origin, callback) => {
+      const allowedOrigins = [
+        "http://localhost:3001", // React web app (local development)
+        "http://localhost:19006", // Expo local development
+        "http://127.0.0.1:19006", // Expo local development (Android Emulator)
+        "http://<your-local-ip>:19006", // Replace with your machine's IP address (Expo on physical devices)
+        "https://<your-production-domain>", // Production domain
+      ];
       const regex = /^http:\/\/localhost:300[0-5]$/;
-      if (!origin || regex.test(origin)) {
+
+      // Allow if origin is undefined (e.g., Postman) or matches the allowed origins
+      if (!origin || allowedOrigins.includes(origin) || regex.test(origin)) {
         callback(null, true);
       } else {
         callback(new Error("Not allowed by CORS"));
