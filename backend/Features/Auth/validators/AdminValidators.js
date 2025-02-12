@@ -1,12 +1,6 @@
 const { body, param } = require("express-validator");
 
 const validateNewAdmin = [
-  body("EmployeeID")
-    .isString()
-    .withMessage("EmployeeID must be a string")
-    .isLength({ min: 1, max: 20 })
-    .withMessage("EmployeeID should be between 1 and 20 characters"),
-
   body("Name")
     .isString()
     .withMessage("Name must be a string")
@@ -45,12 +39,8 @@ const validateLogin = [
       "Password must be strong (min 8 chars, include uppercase, lowercase, number, and symbol)"
     ),
 ];
-const validateAdminId = [
-  param("ID").isInt().withMessage("User ID must be an integer"),
-];
 
 module.exports = {
   validateNewAdmin,
-  validateAdminId,
   validateLogin,
 };

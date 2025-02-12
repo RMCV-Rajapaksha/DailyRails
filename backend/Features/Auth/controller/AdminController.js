@@ -5,10 +5,36 @@ const db = require("../../../models");
 const Admin = db.Admin;
 const { sendEmail } = require("../../../Services/EmailService"); // Import the email service
 
-// POST a new admin
+// Add this helper function after the imports
+const generateNextEmployeeId = async () => {
+  try {
+    // Get the last admin ordered by EmployeeID
+    const lastAdmin = await Admin.findOne({
+      order: [["EmployeeID", "DESC"]],
+    });
+
+    if (!lastAdmin) {
+      // If no admins exist, start with EMP0001
+      return "EMP0001";
+    }
+
+    // Extract the numeric part and increment
+    const lastId = lastAdmin.EmployeeID;
+    const numericPart = parseInt(lastId.replace("EMP", ""));
+    const nextNumericPart = numericPart + 1;
+
+    // Format the new ID with leading zeros
+    return `EMP${String(nextNumericPart).padStart(4, "0")}`;
+  } catch (error) {
+    throw new Error("Failed to generate employee ID");
+  }
+};
+
+// Modified postAdmin function
 const postAdmin = async (req, res) => {
   const adminData = req.body;
   try {
+    // Check for existing email
     const existingAdmin = await Admin.findOne({
       where: { Email: adminData.Email },
     });
@@ -18,38 +44,72 @@ const postAdmin = async (req, res) => {
         .json({ error: "Admin with this email already exists" });
     }
 
+    // Generate the next employee ID
+    const nextId = await generateNextEmployeeId();
+
+    // Hash the password
     const hashedPassword = await bcrypt.hash(adminData.Password, 10);
-    adminData.Password = hashedPassword;
 
-    const newAdmin = await Admin.create(adminData);
+    // Create new admin with generated ID
+    const newAdmin = await Admin.create({
+      ...adminData,
+      EmployeeID: nextId,
+      Password: hashedPassword,
+    });
 
+    // Send email notification
     await sendEmail(adminData);
 
-    res.json("New Admin Role is Successfully Created");
+    // Remove password from response
+    const adminResponse = newAdmin.toJSON();
+    delete adminResponse.Password;
+
+    res.json({
+      success: true,
+      message: "New Admin Role is Successfully Created",
+      data: adminResponse,
+    });
   } catch (error) {
     console.error("Error details:", error);
-    res.status(500).json({ error: "Failed to create admin" });
+    res.status(500).json({
+      success: false,
+      error: "Failed to create admin",
+    });
   }
 };
 
 const adminLogin = async (req, res) => {
   try {
-    const admin = await Admin.findOne({ where: { Email: req.body.Email } });
+    // Find admin by email
+    const admin = await Admin.findOne({
+      where: { Email: req.body.Email },
+      attributes: ["EmployeeID", "Email", "Name", "JobTitle", "Password"], // Explicitly select fields
+    });
+
+    // Check if admin exists
     if (!admin) {
-      return res.status(404).json({ error: "Admin not found" });
+      return res.status(404).json({
+        success: false,
+        message: "Admin not found",
+      });
     }
+
+    // Compare passwords
     const validPassword = await bcrypt.compare(
       req.body.Password,
       admin.Password
     );
-
     if (!validPassword) {
-      return res.status(400).json({ error: "Invalid password" });
+      return res.status(401).json({
+        success: false,
+        message: "Invalid email or password",
+      });
     }
 
+    // Generate JWT token
     const jwtToken = jwt.sign(
       {
-        ID: admin.ID,
+        EmployeeID: admin.EmployeeID,
         Email: admin.Email,
         Name: admin.Name,
         JobTitle: admin.JobTitle,
@@ -60,10 +120,25 @@ const adminLogin = async (req, res) => {
       }
     );
 
-    res.json({ message: "Login successful", token: jwtToken });
+    // Send successful response
+    res.json({
+      success: true,
+      message: "Login successful",
+      token: jwtToken,
+      user: {
+        EmployeeID: admin.EmployeeID,
+        Email: admin.Email,
+        Name: admin.Name,
+        JobTitle: admin.JobTitle,
+      },
+    });
   } catch (error) {
-    console.error("Error details:", error);
-    res.status(500).json({ error: "Failed to login" });
+    console.error("Login error:", error);
+    res.status(500).json({
+      success: false,
+      message: "Failed to login",
+      error: error.message,
+    });
   }
 };
 
@@ -71,7 +146,7 @@ const adminUpdate = async (req, res) => {
   const adminData = req.body;
   try {
     const admin = await Admin.findOne({
-      where: { ID: req.params.id },
+      where: { EmployeeID: req.params.id },
     });
     if (!admin) {
       return res.status(404).json({ error: "Admin not found" });

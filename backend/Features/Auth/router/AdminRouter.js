@@ -3,10 +3,10 @@ const {
   postAdmin,
   adminLogin,
   adminLogout,
+  adminUpdate,
 } = require("../controller/AdminController");
 const {
   validateNewAdmin,
-  validateAdminId,
   validateLogin,
 } = require("../validators/AdminValidators");
 const { validationResult } = require("express-validator");
@@ -26,4 +26,5 @@ const validate = (req, res, next) => {
 router.post("/register", validateNewAdmin, validate, postAdmin);
 router.post("/login", validateLogin, validate, adminLogin);
 router.post("/logout", adminLogout);
+router.put("/:id", validate, adminUpdate);
 module.exports = router;
