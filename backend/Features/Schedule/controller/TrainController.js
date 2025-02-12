@@ -158,10 +158,9 @@ const editTrain = async (req, res) => {
   const t = await db.sequelize.transaction();
 
   try {
-    const { id } = req.params; // Assuming the train ID is passed as a URL parameter
+    const { id } = req.params;
     console.log("Edit Train Request ID:", id);
 
-    // Extract data from request body
     const {
       Name,
       TrainID,
@@ -172,21 +171,16 @@ const editTrain = async (req, res) => {
       stoppingPoints,
     } = req.body;
 
-    console.log("Request Body:", req.body);
-
     // Find the existing train
     const train = await Train.findByPk(id, { transaction: t });
 
     if (!train) {
-      console.log("Train not found:", id);
       await t.rollback();
       return res.status(404).json({
         success: false,
         message: "Train not found",
       });
     }
-
-    console.log("Found Train:", train);
 
     // Update train details
     await train.update(
@@ -201,35 +195,30 @@ const editTrain = async (req, res) => {
       { transaction: t }
     );
 
-    console.log("Train updated successfully");
-
     // Handle stopping points
     if (stoppingPoints && Array.isArray(stoppingPoints)) {
       // Remove existing stopping points
       await StoppingPoint.destroy({
-        where: { TrainID: train.ID },
+        where: { TrainID: train.TrainID }, // Changed from train.ID
         transaction: t,
       });
-      console.log("Existing stopping points removed");
 
-      // Add new stopping points
-      const stoppingPointsWithTrainId = stoppingPoints.map((point) => ({
+      // Add new stopping points with generated PointIDs
+      const stoppingPointsWithIds = stoppingPoints.map((point, index) => ({
         ...point,
-        TrainID: train.ID,
+        PointID: `SP${train.TrainID}${String(index + 1).padStart(2, "0")}`,
+        TrainID: train.TrainID, // Changed from train.ID
       }));
 
-      await StoppingPoint.bulkCreate(stoppingPointsWithTrainId, {
+      await StoppingPoint.bulkCreate(stoppingPointsWithIds, {
         transaction: t,
       });
-      console.log("New stopping points added");
     }
 
-    // Commit the transaction
     await t.commit();
-    console.log("Transaction committed successfully");
 
-    // Fetch the updated train with stopping points
-    const updatedTrain = await Train.findByPk(train.ID, {
+    // Fetch updated train with stopping points
+    const updatedTrain = await Train.findByPk(train.TrainID, {
       include: [
         {
           model: StoppingPoint,
@@ -238,22 +227,18 @@ const editTrain = async (req, res) => {
       ],
     });
 
-    console.log("Updated Train with Stopping Points:", updatedTrain);
-
-    // Send success response
     return res.status(200).json({
       success: true,
+      message: "Train updated successfully",
       data: updatedTrain,
     });
   } catch (error) {
-    // Rollback the transaction in case of error
     await t.rollback();
     console.error("Error editing train:", error);
-
     return res.status(500).json({
       success: false,
       message: "Error editing train schedule",
-      error: error.message || error,
+      error: error.message,
     });
   }
 };
