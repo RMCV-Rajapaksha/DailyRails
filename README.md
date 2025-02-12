@@ -84,7 +84,7 @@ The **Real-Time Train Tracking System** is built with the following technologies
 ## 🔒 Authors
 
 - Chamara Vishwajith       - [GitHub Profile](https://github.com/RMCV-Rajapaksha)
-- Viranga Weerabandara     - [GitHub Profile](https://github.com/Contributor2)
+- Viranga Weerabandara     - [GitHub Profile](https://github.com/VirangaWeerabandara)
 - Pasindu Imalsha          - [GitHub Profile](https://github.com/Contributor2)
 - Tharushika Surasinghe    - [GitHub Profile](https://github.com/TharushikaS)
   
