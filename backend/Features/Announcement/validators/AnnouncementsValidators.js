@@ -7,7 +7,7 @@ const validateNewAnnouncement = [
     .isLength({ min: 1, max: 100 })
     .withMessage("Title should be between 1 and 100 characters"),
 
-  body("Announcement_To")
+  body("AnnouncementTo")
     .isString()
     .withMessage("Announcement_To must be a string")
     .isLength({ min: 1 })
@@ -21,7 +21,7 @@ const validateNewAnnouncement = [
 ];
 
 const validateAnnouncementId = [
-  param("id").isInt().withMessage("Announcement ID must be an integer"),
+  param("id").isString().withMessage("Announcement ID must be a String"),
 ];
 
 module.exports = {

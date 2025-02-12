@@ -9,10 +9,10 @@ const getAnnouncement = async (req, res) => {
   const page = parseInt(req.query.page) || 1;
   const limit = parseInt(req.query.limit) || 10;
   const offset = (page - 1) * limit;
-  const announcementToFilter = req.query.Announcement_To;
+  const announcementToFilter = req.query.AnnouncementTo;
 
   const whereClause = announcementToFilter
-    ? { Announcement_To: announcementToFilter }
+    ? { AnnouncementTo: announcementToFilter }
     : {};
 
   try {
@@ -33,13 +33,47 @@ const getAnnouncement = async (req, res) => {
   }
 };
 
-// POST a new announcement
+// Helper function to generate next ID
+const generateNextAnnouncementId = async () => {
+  try {
+    // Get the last announcement ordered by ID
+    const lastAnnouncement = await Announcement.findOne({
+      order: [["AnnouncementID", "DESC"]],
+    });
+
+    if (!lastAnnouncement) {
+      // If no announcements exist, start with ANN0001
+      return "ANN0001";
+    }
+
+    // Extract the numeric part and increment
+    const lastId = lastAnnouncement.AnnouncementID;
+    const numericPart = parseInt(lastId.replace("ANN", ""));
+    const nextNumericPart = numericPart + 1;
+
+    // Format the new ID with leading zeros
+    return `ANN${String(nextNumericPart).padStart(4, "0")}`;
+  } catch (error) {
+    throw new Error("Failed to generate announcement ID");
+  }
+};
+
+// Modified POST announcement function
 const postAnnouncement = async (req, res) => {
   const announcement = req.body;
   try {
-    const newAnnouncement = await Announcement.create(announcement);
+    // Generate the next announcement ID
+    const nextId = await generateNextAnnouncementId();
+
+    // Create the announcement with the generated ID
+    const newAnnouncement = await Announcement.create({
+      ...announcement,
+      AnnouncementID: nextId,
+    });
+
     res.json(newAnnouncement);
   } catch (error) {
+    console.error("Error creating announcement:", error);
     res.status(500).json({ error: "Failed to create announcement" });
   }
 };
@@ -49,7 +83,7 @@ const deleteAnnouncement = async (req, res) => {
   const id = req.params.id;
   try {
     const rowsDeleted = await Announcement.destroy({
-      where: { ID: id },
+      where: { AnnouncementID: id },
     });
     if (rowsDeleted > 0) {
       res.json({ message: "Announcement deleted successfully" });
