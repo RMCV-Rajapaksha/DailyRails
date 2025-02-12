@@ -16,7 +16,7 @@ module.exports = (sequelize) => {
           key: "TrainID",
         },
       },
-      StationName: {
+      StationID: {
         type: DataTypes.STRING(50),
         allowNull: false, //need to now allow null
       },
@@ -43,8 +43,8 @@ module.exports = (sequelize) => {
     });
 
     StoppingPoint.belongsTo(models.Station, {
-      foreignKey: "StationName",
-      targetKey: "StationName",
+      foreignKey: "StationID",
+      targetKey: "StationID",
       as: "station",
     });
   };

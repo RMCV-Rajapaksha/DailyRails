@@ -249,10 +249,16 @@ const getStoppingPointsByLocations = async (req, res) => {
   try {
     const stoppingPoints = await StoppingPoint.findAll({
       where: {
-        StationName: {
-          [Sequelize.Op.or]: [Location_1, Location_2],
+        StationID: {
+          [Op.or]: [Location_1, Location_2],
         },
       },
+      include: [
+        {
+          model: db.Station,
+          as: "station",
+        },
+      ],
     });
 
     res.status(200).json(stoppingPoints);
@@ -289,10 +295,17 @@ const getTrainDetailsByLocations = async (req, res) => {
     // Find stopping points for the given locations
     const stoppingPoints = await StoppingPoint.findAll({
       where: {
-        StationName: {
+        StationID: {
+          // Changed from StationName
           [Op.or]: [Location_1, Location_2],
         },
       },
+      include: [
+        {
+          model: db.Station,
+          as: "station",
+        },
+      ],
     });
 
     // Group stopping points by TrainID
