@@ -10,7 +10,6 @@ const {
 } = require("../controller/ItemsController");
 const {
   validateNewItem,
-  validateItemId,
   validateStatusUpdate,
 } = require("../validators/ItemsValidators");
 const { validationResult } = require("express-validator");
@@ -41,7 +40,7 @@ router.get("/notapprove", getItemNotApproved);
 router.get("/lost", getLostItems);
 router.get("/found", getFoundItems);
 router.post("/", validateNewItem, validate, postItem);
-router.delete("/:id", validateItemId, validate, deleteItem);
-router.patch("/:id", validateItemId, validate, patchItem);
+router.delete("/:id", validate, deleteItem);
+router.patch("/:id", validate, patchItem);
 
 module.exports = router;
