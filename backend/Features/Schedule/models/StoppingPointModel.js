@@ -36,13 +36,17 @@ module.exports = (sequelize) => {
   );
 
   StoppingPoint.associate = (models) => {
-    if (models.Train) {
-      StoppingPoint.belongsTo(models.Train, {
-        foreignKey: "TrainID",
-        as: "train",
-        onDelete: "CASCADE",
-      });
-    }
+    StoppingPoint.belongsTo(models.Train, {
+      foreignKey: "TrainID",
+      as: "train",
+      onDelete: "CASCADE",
+    });
+
+    StoppingPoint.belongsTo(models.Station, {
+      foreignKey: "StationName",
+      targetKey: "StationName",
+      as: "station",
+    });
   };
 
   return StoppingPoint;

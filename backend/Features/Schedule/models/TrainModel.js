@@ -12,7 +12,6 @@ module.exports = (sequelize) => {
       },
       Name: {
         type: DataTypes.STRING(50),
-        allowNull: true,
         required: true,
       },
       StartStations: {

@@ -5,8 +5,6 @@ const Train = db.Train;
 // TrainController.js - Updated createTrain function
 const createTrain = async (req, res) => {
   const t = await db.sequelize.transaction();
-  console.log("req.body", req.body);
-
   try {
     const {
       Name,
@@ -17,34 +15,34 @@ const createTrain = async (req, res) => {
       EndTime,
       stoppingPoints,
     } = req.body;
-    console.log(1);
 
     const train = await Train.create(
       {
         Name,
         TrainID,
-        StartStations, // Map to correct column name
-        EndStations, // Map to correct column name
+        StartStations,
+        EndStations,
         StartTime,
         EndTime,
       },
       { transaction: t }
     );
-    console.log(2);
+
     if (stoppingPoints && stoppingPoints.length > 0) {
-      const stoppingPointsWithTrainId = stoppingPoints.map((point) => ({
+      const stoppingPointsWithTrainId = stoppingPoints.map((point, index) => ({
         ...point,
-        TrainID: train.ID,
+        PointID: `SP${TrainID}${String(index + 1).padStart(2, "0")}`,
+        TrainID: train.TrainID, // Changed from train.ID
       }));
 
       await StoppingPoint.bulkCreate(stoppingPointsWithTrainId, {
         transaction: t,
       });
     }
-    console.log(3);
+
     await t.commit();
 
-    const trainWithStops = await Train.findByPk(train.ID, {
+    const trainWithStops = await Train.findByPk(train.TrainID, {
       include: [
         {
           model: StoppingPoint,
@@ -53,18 +51,16 @@ const createTrain = async (req, res) => {
       ],
     });
 
-    console.log(4);
     return res.status(201).json({
       success: true,
       data: trainWithStops,
     });
   } catch (error) {
     await t.rollback();
-
     return res.status(500).json({
       success: false,
       message: "Error creating train schedule",
-      error: error.message || error, // Better error handling
+      error: error.message,
     });
   }
 };
