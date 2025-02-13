@@ -8,11 +8,6 @@ const stationValidators = [
     .withMessage("StationName must be a string")
     .isLength({ min: 1 })
     .withMessage("StationName is required"),
-  body("StationID")
-    .isString()
-    .withMessage("StationID must be a string")
-    .isLength({ min: 1 })
-    .withMessage("StationID is required"),
   body("StationAddress")
     .isString()
     .withMessage("StationAddress must be a string")

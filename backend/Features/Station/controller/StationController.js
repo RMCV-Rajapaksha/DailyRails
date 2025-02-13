@@ -1,5 +1,5 @@
 const express = require("express");
-const { Sequelize, DataTypes } = require("sequelize");
+const { Sequelize, DataTypes, Op } = require("sequelize");
 const db = require("../../../models");
 const Station = db.Station;
 
@@ -7,16 +7,33 @@ const Station = db.Station;
 const createStation = async (req, res) => {
   try {
     const existingStation = await Station.findOne({
-      where: { StationName: req.body.StationName },
+      where: {
+        [Op.or]: [
+          { StationName: req.body.StationName },
+          { StationID: req.body.StationID },
+        ],
+      },
     });
+
     if (existingStation) {
-      return res.status(400).send({ message: "Station already exists" });
+      return res.status(400).json({
+        success: false,
+        message: "Station with this name or ID already exists",
+      });
     }
 
     const station = await Station.create(req.body);
-    res.status(201).send(station);
+    res.status(201).json({
+      success: true,
+      message: "Station created successfully",
+      data: station,
+    });
   } catch (error) {
-    res.status(400).send(error);
+    res.status(500).json({
+      success: false,
+      message: "Failed to create station",
+      error: error.message,
+    });
   }
 };
 

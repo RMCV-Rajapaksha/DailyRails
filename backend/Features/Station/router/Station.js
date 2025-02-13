@@ -7,8 +7,8 @@ const {
   updateStationById,
   deleteStationById,
 } = require("../controller/StationController");
-const { validationResult } = require('express-validator');
-const stationValidators = require('../validators/StationValidators');
+const { validationResult } = require("express-validator");
+const stationValidators = require("../validators/StationValidators");
 
 const router = express.Router();
 
@@ -28,7 +28,7 @@ const validate = (req, res, next) => {
 router.post("/", stationValidators, validate, createStation);
 router.get("/", getAllStations);
 router.get("/:id", getStationById);
-router.patch("/:id", stationValidators, validate, updateStationById);
+router.patch("/:id", validate, updateStationById);
 router.delete("/:id", deleteStationById);
 
 module.exports = router;

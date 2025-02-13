@@ -36,10 +36,6 @@ const validateNewItem = [
     .withMessage("Invalid status"),
 ];
 
-const validateItemId = [
-  param("id").isInt().withMessage("Item ID must be an integer"),
-];
-
 const validateStatusUpdate = [
   param("status")
     .isIn(["Approved", "Not Approved"])
@@ -48,6 +44,5 @@ const validateStatusUpdate = [
 
 module.exports = {
   validateNewItem,
-  validateItemId,
   validateStatusUpdate,
 };

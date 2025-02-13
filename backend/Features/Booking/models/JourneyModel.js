@@ -4,9 +4,8 @@ module.exports = (sequelize) => {
   const Journey = sequelize.define(
     "Journey",
     {
-      ID: {
-        type: DataTypes.INTEGER,
-        autoIncrement: true,
+      JourneyID: {
+        type: DataTypes.STRING(20),
         primaryKey: true,
       },
       RouteID: {
@@ -18,12 +17,20 @@ module.exports = (sequelize) => {
         allowNull: false,
       },
       StartPoint: {
-        type: DataTypes.INTEGER,
+        type: DataTypes.STRING(20),
         allowNull: false,
+        references: {
+          model: "STATION",
+          key: "StationID",
+        },
       },
       EndPoint: {
-        type: DataTypes.INTEGER,
+        type: DataTypes.STRING(20),
         allowNull: false,
+        references: {
+          model: "STATION",
+          key: "StationID",
+        },
       },
     },
     {
@@ -31,6 +38,17 @@ module.exports = (sequelize) => {
       timestamps: true,
     }
   );
+
+  Journey.associate = (models) => {
+    Journey.belongsTo(models.Station, {
+      foreignKey: "StartPoint",
+      as: "startStation",
+    });
+    Journey.belongsTo(models.Station, {
+      foreignKey: "EndPoint",
+      as: "endStation",
+    });
+  };
 
   return Journey;
 };

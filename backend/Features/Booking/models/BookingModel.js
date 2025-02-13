@@ -5,24 +5,23 @@ module.exports = (sequelize) => {
     "Booking",
     {
       BookingID: {
-        type: DataTypes.INTEGER,
-        autoIncrement: true,
+        type: DataTypes.STRING(20),
         primaryKey: true,
       },
       TrainID: {
-        type: DataTypes.INTEGER,
+        type: DataTypes.STRING(20),
         allowNull: false,
         references: {
-          model: 'TRAINS', // References the TRAINS table
-          key: 'ID',
+          model: "TRAINS", // References the TRAINS table
+          key: "TrainID",
         },
       },
       JourneyID: {
-        type: DataTypes.INTEGER,
+        type: DataTypes.STRING(20),
         allowNull: false,
         references: {
-          model: 'JOURNEY', // References the JOURNEY table
-          key: 'ID',
+          model: "JOURNEY", // References the JOURNEY table
+          key: "JourneyID",
         },
       },
       NoOfSeats: {
@@ -45,8 +44,26 @@ module.exports = (sequelize) => {
     {
       tableName: "BOOKING",
       timestamps: true,
+      indexes: [
+        {
+          fields: ["TrainID"],
+        },
+        {
+          fields: ["JourneyID"],
+        },
+        {
+          fields: ["PassengerNIC"],
+        },
+      ],
     }
   );
+
+  Booking.associate = (models) => {
+    Booking.hasOne(models.Payment);
+    Booking.belongsTo(models.Train);
+    Booking.belongsTo(models.Journey);
+    Booking.hasMany(models.BookingSeats);
+  };
 
   return Booking;
 };

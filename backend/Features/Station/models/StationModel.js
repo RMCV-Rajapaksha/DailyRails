@@ -4,11 +4,6 @@ module.exports = (sequelize) => {
   const Station = sequelize.define(
     "Station",
     {
-      ID: {
-        type: DataTypes.INTEGER,
-        autoIncrement: true,
-        primaryKey: true,
-      },
       StationName: {
         type: DataTypes.STRING(20),
         allowNull: false,
@@ -16,25 +11,51 @@ module.exports = (sequelize) => {
       StationID: {
         type: DataTypes.STRING(20),
         allowNull: false,
+        primaryKey: true,
       },
       StationAddress: {
         type: DataTypes.STRING(50),
         allowNull: false,
       },
       StationLine: {
-        type: DataTypes.STRING(1000),
+        type: DataTypes.STRING(15),
         allowNull: false,
       },
       ContactNumber: {
-        type: DataTypes.STRING(1000),
+        type: DataTypes.STRING(15),
         allowNull: false,
       },
     },
     {
       tableName: "STATION",
       timestamps: true,
+      indexes: [
+        {
+          unique: true,
+          fields: ["StationID"],
+        },
+      ],
     }
   );
+
+  Station.associate = (models) => {
+    Station.hasMany(models.Journey, {
+      foreignKey: "StartPoint",
+      as: "departureJourneys",
+    });
+    Station.hasMany(models.Journey, {
+      foreignKey: "EndPoint",
+      as: "arrivalJourneys",
+    });
+    Station.hasMany(models.Train, {
+      foreignKey: "StartStations",
+      as: "departingTrains",
+    });
+    Station.hasMany(models.Train, {
+      foreignKey: "EndStations",
+      as: "arrivingTrains",
+    });
+  };
 
   return Station;
 };

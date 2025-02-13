@@ -1,8 +1,11 @@
 const express = require("express");
-const { postUser } = require("../controller/UserController");
+const {
+  postUser,
+  userLogin,
+  adminLogout,
+} = require("../controller/UserController");
 const {
   validateNewUser,
-  validateUserId,
   validateLogin,
 } = require("../validators/UserValidators");
 const { validationResult } = require("express-validator");
@@ -26,6 +29,6 @@ const validate = (req, res, next) => {
 
 // Route for creating a new user
 router.post("/register", validateNewUser, validate, postUser);
-// router.post("/login", validateLogin, validate, adminLogin);
+router.post("/login", validateLogin, validate, userLogin);
 // router.post("/logout", adminLogout);
 module.exports = router;

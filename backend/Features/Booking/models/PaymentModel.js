@@ -5,23 +5,22 @@ module.exports = (sequelize) => {
     "Payment",
     {
       PaymentID: {
-        type: DataTypes.INTEGER,
-        autoIncrement: true,
+        type: DataTypes.STRING(20),
         primaryKey: true,
       },
       BookingID: {
-        type: DataTypes.INTEGER,
+        type: DataTypes.STRING(20),
         allowNull: false,
         references: {
-          model: 'BOOKING', // References the BOOKING table
-          key: 'BookingID',
+          model: "BOOKING", // References the BOOKING table
+          key: "BookingID",
         },
       },
-      amount: {
+      Amount: {
         type: DataTypes.INTEGER,
         allowNull: false,
       },
-      status: {
+      Status: {
         type: DataTypes.INTEGER,
         allowNull: false,
       },
@@ -31,6 +30,13 @@ module.exports = (sequelize) => {
       timestamps: true,
     }
   );
+
+  Payment.associate = (models) => {
+    Payment.belongsTo(models.Booking, {
+      foreignKey: "BookingID",
+      onDelete: "CASCADE",
+    });
+  };
 
   return Payment;
 };

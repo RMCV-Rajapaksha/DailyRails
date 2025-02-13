@@ -5,29 +5,32 @@ module.exports = (sequelize) => {
   const Train = sequelize.define(
     "Train",
     {
-      ID: {
-        type: DataTypes.INTEGER,
-        autoIncrement: true,
-        primaryKey: true,
-      },
       TrainID: {
         type: DataTypes.STRING(20),
         allowNull: false, //need to now allow null
+        primaryKey: true,
       },
       Name: {
         type: DataTypes.STRING(50),
-        allowNull: true,
         required: true,
       },
       StartStations: {
         // Changed from StartStations
         type: DataTypes.STRING(20),
         allowNull: false,
+        references: {
+          model: "STATION",
+          key: "StationID",
+        },
       },
       EndStations: {
         // Changed from EndStations
-        type: DataTypes.STRING(50),
+        type: DataTypes.STRING(20),
         allowNull: false,
+        references: {
+          model: "STATION",
+          key: "StationID",
+        },
       },
       StartTime: {
         type: DataTypes.TIME,
@@ -45,13 +48,21 @@ module.exports = (sequelize) => {
   );
 
   Train.associate = (models) => {
-    if (models.StoppingPoint) {
-      Train.hasMany(models.StoppingPoint, {
-        foreignKey: "TrainID",
-        as: "stoppingPoints",
-        onDelete: "CASCADE",
-      });
-    }
+    Train.hasMany(models.StoppingPoint, {
+      foreignKey: "TrainID",
+      as: "stoppingPoints",
+      onDelete: "CASCADE",
+    });
+
+    Train.belongsTo(models.Station, {
+      foreignKey: "StartStations",
+      as: "startStation",
+    });
+
+    Train.belongsTo(models.Station, {
+      foreignKey: "EndStations",
+      as: "endStation",
+    });
   };
 
   return Train;
