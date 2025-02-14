@@ -41,7 +41,7 @@ const AdminRouter = require("./Features/Auth/router/AdminRouter");
 const UserRouter = require("./Features/Auth/router/UserRouter");
 const trainRoutes = require("./Features/Schedule/router/Train");
 const stations = require("./Features/Station/router/Station");
-
+const bookingRoutes = require("./Features/Booking/routes/BookingRoutes");
 // Use the routers
 app.use("/api/admin", AdminRouter);
 app.use("/api/user", UserRouter);
@@ -50,6 +50,8 @@ app.use("/api/items", ItemRouter);
 app.use("/api/reports", ReportRouter);
 app.use("/api/trains", trainRoutes);
 app.use("/api/stations", stations);
+app.use("/api/bookings", bookingRoutes);
+
 // Create HTTP server
 const server = http.createServer(app);
 
