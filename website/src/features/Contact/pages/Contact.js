@@ -1,6 +1,7 @@
 import { useState } from "react";
 import axios from "axios";
 import { toast, ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 import Button from "../../../components/Button";
 
 function Contact() {
@@ -13,28 +14,13 @@ function Contact() {
 
   const validateForm = () => {
     const newErrors = {};
-
-    if (!name.trim()) newErrors.name = "Name is required";
-    if (!/^[A-Za-z\s]{3,}$/.test(name))
-      newErrors.name = "Name must be at least 3 characters, letters only";
-
-    if (!nicNo.trim()) newErrors.nicNo = "NIC is required";
-    if (!/^[0-9]{9}[vVxX]$|^[0-9]{12}$/.test(nicNo))
-      newErrors.nicNo = "Invalid NIC format";
-
-    if (!incidentType.trim())
-      newErrors.incidentType = "Incident type is required";
-    if (incidentType.length < 10)
-      newErrors.incidentType = "Please provide more details";
-
-    if (!problemDescription.trim())
+    if (!name) newErrors.name = "Name is required";
+    if (!nicNo) newErrors.nicNo = "NIC No is required";
+    if (!incidentType) newErrors.incidentType = "Incident type is required";
+    if (!problemDescription)
       newErrors.problemDescription = "Description is required";
-    if (problemDescription.length < 20)
-      newErrors.problemDescription =
-        "Description must be at least 20 characters";
-
-    if (!nearestStation.trim())
-      newErrors.nearestStation = "Station name is required";
+    if (!nearestStation)
+      newErrors.nearestStation = "Nearest station is required";
 
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
@@ -43,31 +29,21 @@ function Contact() {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    if (!validateForm()) {
-      toast.error("Please fix all errors before submitting");
-      return;
-    }
+    if (!validateForm()) return;
+
+    const reportData = {
+      // ReportID: `RPT${Date.now()}`,
+      Name: name,
+      NIC: nicNo,
+      Type: incidentType,
+      Description: problemDescription,
+      ClosestStation: nearestStation,
+    };
 
     try {
-      // Generate ReportID
-      const date = new Date();
-      const randomNum = Math.floor(Math.random() * 1000)
-        .toString()
-        .padStart(3, "0");
-      const reportId = `RPT${date.getFullYear()}${(date.getMonth() + 1)
-        .toString()
-        .padStart(2, "0")}${randomNum}`;
-
       const response = await axios.post(
         "http://localhost:4000/api/reports",
-        {
-          ReportID: reportId,
-          Name: name.trim(),
-          NIC: nicNo.trim(),
-          Type: incidentType.trim(),
-          Description: problemDescription.trim(),
-          ClosestStation: nearestStation.trim(),
-        },
+        reportData,
         {
           headers: {
             "Content-Type": "application/json",
@@ -75,22 +51,16 @@ function Contact() {
         }
       );
 
-      if (response.status === 201) {
+      if (response.data) {
         toast.success("Report submitted successfully!");
         handleReset();
       }
     } catch (error) {
-      console.error("Submission error:", error.response?.data || error.message);
-
-      if (error.response?.data?.errors) {
-        setErrors((prev) => ({
-          ...prev,
-          ...error.response.data.errors,
-        }));
-        toast.error("Please check all fields");
-      } else {
-        toast.error(error.response?.data?.error || "Failed to submit report");
-      }
+      console.error("Error details:", error.response?.data);
+      toast.error(
+        error.response?.data?.message ||
+          "Failed to submit report. Please try again."
+      );
     }
   };
 
