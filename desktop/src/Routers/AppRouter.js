@@ -23,7 +23,8 @@ const router1 = createBrowserRouter([
           {path: "register", element: <Dashboard section="admins" />},
           {path: "notifications", element: <Dashboard section="notifications" />},
           {path: "lost", element: <Dashboard section="losts" />},
-           {path: "logout", element: <Dashboard section="logout" />},
+          {path: "found", element: <Dashboard section="founds" />},
+          {path: "logout", element: <Dashboard section="logout" />},
 
         ],
       }

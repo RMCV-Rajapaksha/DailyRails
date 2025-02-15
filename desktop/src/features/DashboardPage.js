@@ -19,6 +19,7 @@ import TrainSchedule from "./MainAdmin/trains/Train_schedule.js";
 import TrainManagement from "./MainAdmin/trains/Train_management.js";
 import Home from "./Pages/Home";
 import Lost from "./Items/Lost.js";
+import Found from "./Items/Found.js";
 
 
 
@@ -57,7 +58,8 @@ const DashboardPage = ({ section}) => {
         </div>
         <SideBar section={section1} isExpanded={isExpanded}
         setSection={setSection} />
-      
+        {/* <SideBar section={section1} isExpanded={isExpanded}
+        setSection={setSection} /> */}
 
       </div>
       
@@ -71,6 +73,7 @@ const DashboardPage = ({ section}) => {
                      {/* {section === "statistics" && < />} */}
                      {section === "notifications" && <NotificationPage />} 
                       {section === "losts" && < Lost/>}
+                      {section === "founds" && < Found/>}
                      {/* {section === "logout" && <LoginPage />} */}
                   
       </div>

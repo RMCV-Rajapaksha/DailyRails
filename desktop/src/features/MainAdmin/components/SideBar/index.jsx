@@ -70,6 +70,11 @@ const SideBar = ({ section, isExpanded, setSection }) => {
         url: "/lost",
         icon: <FaBell />,
         selected: section === "losts",
+      },{
+        title: "Found",
+        url: "/found",
+        icon: <FaBell />,
+        selected: section === "founds",
       },
       {
         title: "Logout",
