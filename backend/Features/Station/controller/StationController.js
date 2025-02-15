@@ -155,7 +155,6 @@ const getStationSchedule = async (req, res) => {
   try {
     const { stationId } = req.params;
 
-    // First, verify if the station exists
     const station = await Station.findByPk(stationId);
     if (!station) {
       return res.status(404).json({
@@ -180,6 +179,17 @@ const getStationSchedule = async (req, res) => {
           as: "endStation",
           attributes: ["StationName"],
         },
+        {
+          model: StoppingPoint,
+          as: "stoppingPoints",
+          include: [
+            {
+              model: Station,
+              as: "station",
+              attributes: ["StationName"],
+            },
+          ],
+        },
       ],
     });
 
@@ -203,12 +213,23 @@ const getStationSchedule = async (req, res) => {
               as: "endStation",
               attributes: ["StationName"],
             },
+            {
+              model: StoppingPoint,
+              as: "stoppingPoints",
+              include: [
+                {
+                  model: Station,
+                  as: "station",
+                  attributes: ["StationName"],
+                },
+              ],
+            },
           ],
         },
       ],
     });
 
-    // Format the response
+    // Format the response with stopping points
     const schedule = {
       stationName: station.StationName,
       directTrains: directTrains.map((train) => ({
@@ -220,6 +241,28 @@ const getStationSchedule = async (req, res) => {
         endStation: train.endStation?.StationName,
         departureTime: train.StartTime,
         arrivalTime: train.EndTime,
+        stoppingPoints: train.stoppingPoints
+          .filter(
+            (stop) =>
+              // For starting trains, show stops after this station
+              (train.StartStations === stationId &&
+                new Date(`2000-01-01T${stop.DepartureTime}`) >
+                  new Date(`2000-01-01T${train.StartTime}`)) ||
+              // For ending trains, show stops before this station
+              (train.EndStations === stationId &&
+                new Date(`2000-01-01T${stop.ArrivalTime}`) <
+                  new Date(`2000-01-01T${train.EndTime}`))
+          )
+          .sort(
+            (a, b) =>
+              new Date(`2000-01-01T${a.ArrivalTime}`) -
+              new Date(`2000-01-01T${b.ArrivalTime}`)
+          )
+          .map((stop) => ({
+            stationName: stop.station.StationName,
+            arrivalTime: stop.ArrivalTime,
+            departureTime: stop.DepartureTime,
+          })),
       })),
       stoppingTrains: stoppingPoints.map((stop) => ({
         trainId: stop.train.TrainID,
@@ -228,6 +271,23 @@ const getStationSchedule = async (req, res) => {
         endStation: stop.train.endStation?.StationName,
         arrivalTime: stop.ArrivalTime,
         departureTime: stop.DepartureTime,
+        // Include remaining stops after this station
+        remainingStops: stop.train.stoppingPoints
+          .filter(
+            (sp) =>
+              new Date(`2000-01-01T${sp.ArrivalTime}`) >
+              new Date(`2000-01-01T${stop.DepartureTime}`)
+          )
+          .sort(
+            (a, b) =>
+              new Date(`2000-01-01T${a.ArrivalTime}`) -
+              new Date(`2000-01-01T${b.ArrivalTime}`)
+          )
+          .map((sp) => ({
+            stationName: sp.station.StationName,
+            arrivalTime: sp.ArrivalTime,
+            departureTime: sp.DepartureTime,
+          })),
       })),
     };
 
