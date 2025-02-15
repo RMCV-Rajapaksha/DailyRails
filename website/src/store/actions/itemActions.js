@@ -25,10 +25,14 @@ export const fetchItems =
       const res = await axios.get(
         `http://localhost:4000/api/items/${itemType}?page=${currentPage}&limit=${itemsPerPage}`
       );
-      dispatch(fetchItemsSuccess(res.data.items, res.data.total));
+      // Update this to match the backend response structure
+      dispatch(fetchItemsSuccess(res.data.data.items, res.data.data.total));
     } catch (error) {
       dispatch(
-        fetchItemsFailure("Failed to load items. Please try again later.")
+        fetchItemsFailure(
+          error.response?.data?.message ||
+            "Failed to load items. Please try again later."
+        )
       );
     }
   };

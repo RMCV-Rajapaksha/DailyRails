@@ -62,7 +62,6 @@ function SubmitItem() {
     }
     dispatch(submitItem(formData));
     setFormData(initialFormData);
-    toast.success("Item submitted successfully!");
   };
 
   return (

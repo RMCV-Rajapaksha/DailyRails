@@ -7,9 +7,12 @@ import { ChevronLeft, ChevronRight } from "lucide-react";
 
 const FoundItemsPage = () => {
   const dispatch = useDispatch();
-  const { items, isLoading, error, total } = useSelector(
-    (state) => state.items
-  );
+  const {
+    items = [],
+    isLoading,
+    error,
+    total = 0,
+  } = useSelector((state) => state.items);
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 5;
 
