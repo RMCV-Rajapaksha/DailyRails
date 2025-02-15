@@ -3,26 +3,56 @@ const { Sequelize, DataTypes, Op } = require("sequelize");
 const db = require("../../../models");
 const Station = db.Station;
 
-// Create a new station
+// Helper function to generate next station ID
+const generateNextStationId = async () => {
+  try {
+    const lastStation = await Station.findOne({
+      order: [["StationID", "DESC"]],
+    });
+
+    if (!lastStation) {
+      // If no stations exist, start with STN0001
+      return "STN0001";
+    }
+
+    // Extract the numeric part and increment
+    const lastId = lastStation.StationID;
+    const numericPart = parseInt(lastId.replace("STN", ""));
+    const nextNumericPart = numericPart + 1;
+
+    // Format the new ID with leading zeros
+    return `STN${String(nextNumericPart).padStart(4, "0")}`;
+  } catch (error) {
+    throw new Error("Failed to generate station ID");
+  }
+};
+
+// Modified create station function
 const createStation = async (req, res) => {
   try {
+    // Check if station name already exists
     const existingStation = await Station.findOne({
       where: {
-        [Op.or]: [
-          { StationName: req.body.StationName },
-          { StationID: req.body.StationID },
-        ],
+        StationName: req.body.StationName,
       },
     });
 
     if (existingStation) {
       return res.status(400).json({
         success: false,
-        message: "Station with this name or ID already exists",
+        message: "Station with this name already exists",
       });
     }
 
-    const station = await Station.create(req.body);
+    // Generate the station ID
+    const stationId = await generateNextStationId();
+
+    // Create the station with generated ID
+    const station = await Station.create({
+      ...req.body,
+      StationID: stationId,
+    });
+
     res.status(201).json({
       success: true,
       message: "Station created successfully",
