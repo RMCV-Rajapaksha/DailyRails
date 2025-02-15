@@ -3,37 +3,13 @@ const db = require("../../../models");
 const StoppingPoint = db.StoppingPoint;
 const Train = db.Train;
 
-// Add this helper function for TrainID generation
-const generateNextTrainId = async () => {
-  try {
-    // Get the last train ordered by ID
-    const lastTrain = await Train.findOne({
-      order: [["TrainID", "DESC"]],
-    });
-
-    if (!lastTrain) {
-      // If no trains exist, start with TRN0001
-      return "TRN001";
-    }
-
-    // Extract the numeric part and increment
-    const lastId = lastTrain.TrainID;
-    const numericPart = parseInt(lastId.replace("TRN", ""));
-    const nextNumericPart = numericPart + 1;
-
-    // Format the new ID with leading zeros
-    return `TRN${String(nextNumericPart).padStart(4, "0")}`;
-  } catch (error) {
-    throw new Error("Failed to generate train ID");
-  }
-};
-
 // Modified createTrain function
 const createTrain = async (req, res) => {
   const t = await db.sequelize.transaction();
   try {
     const {
       Name,
+      TrainID,
       StartStations,
       EndStations,
       StartTime,
@@ -41,13 +17,19 @@ const createTrain = async (req, res) => {
       stoppingPoints,
     } = req.body;
 
-    // Generate the next train ID
-    const TrainID = await generateNextTrainId();
+    // Check if train with this ID already exists
+    const existingTrain = await Train.findByPk(TrainID);
+    if (existingTrain) {
+      return res.status(400).json({
+        success: false,
+        message: "Train with this ID already exists",
+      });
+    }
 
     const train = await Train.create(
       {
         Name,
-        TrainID, // Using generated ID
+        TrainID,
         StartStations,
         EndStations,
         StartTime,

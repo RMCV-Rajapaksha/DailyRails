@@ -22,7 +22,7 @@ const validateRequest = (req, res, next) => {
 };
 
 // Validation rules for creating a new train
-const validateNewTrain = [
+
   body("StartStations")
     .isString()
     .withMessage("StartStations must be a string")
