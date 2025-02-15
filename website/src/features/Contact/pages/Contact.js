@@ -49,17 +49,48 @@ function Contact() {
     }
 
     try {
-      await axios.post("http://localhost:4000/api/reports", {
-        Name: name,
-        NIC: nicNo,
-        Type: incidentType,
-        Description: problemDescription,
-        ClosestStation: nearestStation,
-      });
-      toast.success("Report submitted successfully!");
-      handleReset();
+      // Generate ReportID
+      const date = new Date();
+      const randomNum = Math.floor(Math.random() * 1000)
+        .toString()
+        .padStart(3, "0");
+      const reportId = `RPT${date.getFullYear()}${(date.getMonth() + 1)
+        .toString()
+        .padStart(2, "0")}${randomNum}`;
+
+      const response = await axios.post(
+        "http://localhost:4000/api/reports",
+        {
+          ReportID: reportId,
+          Name: name.trim(),
+          NIC: nicNo.trim(),
+          Type: incidentType.trim(),
+          Description: problemDescription.trim(),
+          ClosestStation: nearestStation.trim(),
+        },
+        {
+          headers: {
+            "Content-Type": "application/json",
+          },
+        }
+      );
+
+      if (response.status === 201) {
+        toast.success("Report submitted successfully!");
+        handleReset();
+      }
     } catch (error) {
-      toast.error(error.response?.data?.message || "Failed to submit report");
+      console.error("Submission error:", error.response?.data || error.message);
+
+      if (error.response?.data?.errors) {
+        setErrors((prev) => ({
+          ...prev,
+          ...error.response.data.errors,
+        }));
+        toast.error("Please check all fields");
+      } else {
+        toast.error(error.response?.data?.error || "Failed to submit report");
+      }
     }
   };
 

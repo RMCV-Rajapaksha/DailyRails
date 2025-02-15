@@ -24,6 +24,10 @@ module.exports = (sequelize) => {
           key: "JourneyID",
         },
       },
+      Class: {
+        type: DataTypes.INTEGER,
+        allowNull: false,
+      },
       NoOfSeats: {
         type: DataTypes.INTEGER,
         allowNull: false,
@@ -59,10 +63,35 @@ module.exports = (sequelize) => {
   );
 
   Booking.associate = (models) => {
-    Booking.hasOne(models.Payment);
-    Booking.belongsTo(models.Train);
-    Booking.belongsTo(models.Journey);
-    Booking.hasMany(models.BookingSeats);
+    if (
+      !models.Payment ||
+      !models.Train ||
+      !models.Journey ||
+      !models.BookingSeats
+    ) {
+      console.error("Required models are not loaded properly");
+      return;
+    }
+
+    Booking.hasOne(models.Payment, {
+      foreignKey: "BookingID",
+      as: "payment",
+    });
+
+    Booking.belongsTo(models.Train, {
+      foreignKey: "TrainID",
+      as: "train",
+    });
+
+    Booking.belongsTo(models.Journey, {
+      foreignKey: "JourneyID",
+      as: "journey",
+    });
+
+    Booking.hasMany(models.BookingSeats, {
+      foreignKey: "BookingID",
+      as: "bookingSeats",
+    });
   };
 
   return Booking;

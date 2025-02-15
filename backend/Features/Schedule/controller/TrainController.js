@@ -2,13 +2,38 @@ const { Sequelize, DataTypes, Op } = require("sequelize");
 const db = require("../../../models");
 const StoppingPoint = db.StoppingPoint;
 const Train = db.Train;
-// TrainController.js - Updated createTrain function
+
+// Add this helper function for TrainID generation
+const generateNextTrainId = async () => {
+  try {
+    // Get the last train ordered by ID
+    const lastTrain = await Train.findOne({
+      order: [["TrainID", "DESC"]],
+    });
+
+    if (!lastTrain) {
+      // If no trains exist, start with TRN0001
+      return "TRN001";
+    }
+
+    // Extract the numeric part and increment
+    const lastId = lastTrain.TrainID;
+    const numericPart = parseInt(lastId.replace("TRN", ""));
+    const nextNumericPart = numericPart + 1;
+
+    // Format the new ID with leading zeros
+    return `TRN${String(nextNumericPart).padStart(4, "0")}`;
+  } catch (error) {
+    throw new Error("Failed to generate train ID");
+  }
+};
+
+// Modified createTrain function
 const createTrain = async (req, res) => {
   const t = await db.sequelize.transaction();
   try {
     const {
       Name,
-      TrainID,
       StartStations,
       EndStations,
       StartTime,
@@ -16,10 +41,13 @@ const createTrain = async (req, res) => {
       stoppingPoints,
     } = req.body;
 
+    // Generate the next train ID
+    const TrainID = await generateNextTrainId();
+
     const train = await Train.create(
       {
         Name,
-        TrainID,
+        TrainID, // Using generated ID
         StartStations,
         EndStations,
         StartTime,
@@ -32,7 +60,7 @@ const createTrain = async (req, res) => {
       const stoppingPointsWithTrainId = stoppingPoints.map((point, index) => ({
         ...point,
         PointID: `SP${TrainID}${String(index + 1).padStart(2, "0")}`,
-        TrainID: train.TrainID, // Changed from train.ID
+        TrainID: train.TrainID,
       }));
 
       await StoppingPoint.bulkCreate(stoppingPointsWithTrainId, {

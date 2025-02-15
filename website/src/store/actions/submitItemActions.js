@@ -27,15 +27,19 @@ export const submitItem = (formData) => async (dispatch) => {
     );
     if (response.status === 201) {
       dispatch(submitItemSuccess());
+      // Only show toast notification here
       toast.success("Item submitted successfully!");
-    } else {
-      dispatch(submitItemFailure("Failed to submit item. Please try again."));
-      toast.error("Failed to submit item. Please try again.");
+      return true;
     }
+    // If status is not 201, throw an error to be caught in catch block
+    throw new Error("Failed to submit item");
   } catch (error) {
-    dispatch(
-      submitItemFailure("An error occurred. Please check your connection.")
-    );
-    toast.error("An error occurred. Please check your connection.");
+    const errorMessage =
+      error.response?.data?.message ||
+      "An error occurred. Please check your connection.";
+    dispatch(submitItemFailure(errorMessage));
+    // Only show toast notification here
+    toast.error(errorMessage);
+    return false;
   }
 };

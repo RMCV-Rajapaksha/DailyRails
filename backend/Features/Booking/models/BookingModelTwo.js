@@ -4,6 +4,10 @@ module.exports = (sequelize) => {
   const BookingSeats = sequelize.define(
     "BookingSeats",
     {
+      TicketID: {
+        type: DataTypes.STRING(20),
+        primaryKey: true,
+      },
       BookingID: {
         type: DataTypes.STRING(20),
         allowNull: false,
@@ -12,32 +16,26 @@ module.exports = (sequelize) => {
           key: "BookingID",
         },
       },
-      TicketID: {
-        type: DataTypes.STRING(20),
-        allowNull: false,
-      },
       SeatNumber: {
-        type: DataTypes.INTEGER,
+        type: DataTypes.STRING(10),
         allowNull: false,
       },
     },
     {
-      tableName: "BOOKINGSEATS",
+      tableName: "BOOKING_SEATS",
       timestamps: true,
-      indexes: [
-        {
-          unique: true,
-          primary: true,
-          fields: ["BookingID", "TicketID"],
-        },
-      ],
     }
   );
 
   BookingSeats.associate = (models) => {
+    if (!models.Booking) {
+      console.error("Booking model is not loaded properly");
+      return;
+    }
+
     BookingSeats.belongsTo(models.Booking, {
       foreignKey: "BookingID",
-      onDelete: "CASCADE",
+      as: "booking",
     });
   };
 

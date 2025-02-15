@@ -31,37 +31,52 @@ const getReport = async (req, res) => {
 
 // Modified postReport function
 const postReport = async (req, res) => {
-  const reportData = req.body;
-
-  if (
-    !reportData.Name ||
-    !reportData.NIC ||
-    !reportData.Type ||
-    !reportData.Description ||
-    !reportData.ClosestStation
-  ) {
-    return res.status(400).json({ error: "All fields are required" });
-  }
-
   try {
-    const newReport = await Report.create(reportData);
+    const newReport = await Report.create({
+      ReportID: req.body.ReportID,
+      Name: req.body.Name,
+      NIC: req.body.NIC,
+      Type: req.body.Type,
+      Description: req.body.Description,
+      ClosestStation: req.body.ClosestStation,
+    });
 
     // WebSocket broadcast
-    const ws = new WebSocket("ws://localhost:3000");
-    ws.on("open", () => {
-      const message = formatWSMessage("NEW_REPORT", nsewReport);
-      ws.send(message);
-      ws.close();
-    });
+    try {
+      const ws = new WebSocket("ws://localhost:3000");
+      ws.on("open", () => {
+        ws.send(
+          JSON.stringify({
+            type: "NEW_REPORT",
+            data: newReport,
+          })
+        );
+        ws.close();
+      });
+    } catch (wsError) {
+      console.error("WebSocket error:", wsError);
+      // Don't fail the request if WebSocket fails
+    }
 
-    ws.on("error", (error) => {
-      console.error("WebSocket error:", error);
-    });
-
-    res.status(201).json(newReport);
+    return res.status(201).json(newReport);
   } catch (error) {
-    console.error(error);
-    res.status(500).json({ error: "Failed to create report" });
+    console.error("Report creation error:", error);
+    if (error.name === "SequelizeValidationError") {
+      return res.status(400).json({
+        error: "Validation error",
+        errors: error.errors.reduce(
+          (acc, err) => ({
+            ...acc,
+            [err.path]: err.message,
+          }),
+          {}
+        ),
+      });
+    }
+    return res.status(500).json({
+      error: "Failed to create report",
+      details: error.message,
+    });
   }
 };
 
