@@ -21,8 +21,17 @@ app.use(express.json());
 app.use(
   cors({
     origin: (origin, callback) => {
-      const regex = /^http:\/\/localhost:300[0-5]$/;
-      if (!origin || regex.test(origin)) {
+      // Allow requests with no origin (like mobile apps)
+      if (!origin) return callback(null, true);
+
+      // Allow localhost and Android emulator
+      const allowedOrigins = [
+        /^http:\/\/localhost:300[0-5]$/,
+        /^http:\/\/10.0.2.2:300[0-5]$/,
+      ];
+
+      const isAllowed = allowedOrigins.some((regex) => regex.test(origin));
+      if (isAllowed) {
         callback(null, true);
       } else {
         callback(new Error("Not allowed by CORS"));
@@ -32,7 +41,6 @@ app.use(
     credentials: true,
   })
 );
-
 // Routers
 const AnnouncementRouter = require("./Features/Announcement/router/Announcements");
 const ItemRouter = require("./Features/Items/router/Items");

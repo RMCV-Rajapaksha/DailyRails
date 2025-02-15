@@ -2,6 +2,8 @@ const express = require("express");
 const { Sequelize, DataTypes, Op } = require("sequelize");
 const db = require("../../../models");
 const Station = db.Station;
+const Train = db.Train;
+const StoppingPoint = db.StoppingPoint;
 
 // Helper function to generate next station ID
 const generateNextStationId = async () => {
@@ -149,10 +151,105 @@ const deleteStationById = async (req, res) => {
   }
 };
 
+const getStationSchedule = async (req, res) => {
+  try {
+    const { stationId } = req.params;
+
+    // First, verify if the station exists
+    const station = await Station.findByPk(stationId);
+    if (!station) {
+      return res.status(404).json({
+        success: false,
+        message: "Station not found",
+      });
+    }
+
+    // Get all trains that start or end at this station
+    const directTrains = await Train.findAll({
+      where: {
+        [Op.or]: [{ StartStations: stationId }, { EndStations: stationId }],
+      },
+      include: [
+        {
+          model: Station,
+          as: "startStation",
+          attributes: ["StationName"],
+        },
+        {
+          model: Station,
+          as: "endStation",
+          attributes: ["StationName"],
+        },
+      ],
+    });
+
+    // Get all stopping points for this station
+    const stoppingPoints = await StoppingPoint.findAll({
+      where: {
+        StationID: stationId,
+      },
+      include: [
+        {
+          model: Train,
+          as: "train",
+          include: [
+            {
+              model: Station,
+              as: "startStation",
+              attributes: ["StationName"],
+            },
+            {
+              model: Station,
+              as: "endStation",
+              attributes: ["StationName"],
+            },
+          ],
+        },
+      ],
+    });
+
+    // Format the response
+    const schedule = {
+      stationName: station.StationName,
+      directTrains: directTrains.map((train) => ({
+        trainId: train.TrainID,
+        trainName: train.Name,
+        isStarting: train.StartStations === stationId,
+        isTerminating: train.EndStations === stationId,
+        startStation: train.startStation?.StationName,
+        endStation: train.endStation?.StationName,
+        departureTime: train.StartTime,
+        arrivalTime: train.EndTime,
+      })),
+      stoppingTrains: stoppingPoints.map((stop) => ({
+        trainId: stop.train.TrainID,
+        trainName: stop.train.Name,
+        startStation: stop.train.startStation?.StationName,
+        endStation: stop.train.endStation?.StationName,
+        arrivalTime: stop.ArrivalTime,
+        departureTime: stop.DepartureTime,
+      })),
+    };
+
+    return res.status(200).json({
+      success: true,
+      data: schedule,
+    });
+  } catch (error) {
+    console.error("Error fetching station schedule:", error);
+    return res.status(500).json({
+      success: false,
+      message: "Error fetching station schedule",
+      error: error.message,
+    });
+  }
+};
+
 module.exports = {
   createStation,
   getAllStations,
   getStationById,
   updateStationById,
   deleteStationById,
+  getStationSchedule,
 };

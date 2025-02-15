@@ -22,20 +22,6 @@ const validateRequest = (req, res, next) => {
 };
 
 // Validation rules for creating a new train
-const validateNewTrain = [
-  body("Name")
-    .isString()
-    .withMessage("Name must be a string")
-    .isLength({ min: 1, max: 50 })
-    .withMessage("Name should be between 1 and 50 characters")
-    .notEmpty()
-    .withMessage("Name is required"),
-
-  // body("TrainID")
-  //   .matches(/^[A-Z]\d{4}$/)
-  //   .withMessage("TrainID must be 1 letter followed by 4 digits")
-  //   .notEmpty()
-  //   .withMessage("TrainID is required"),
 
   body("StartStations")
     .isString()
@@ -67,10 +53,10 @@ const validateNewTrain = [
     .notEmpty()
     .withMessage("stoppingPoints is required"),
 
-  body("stoppingPoints.*.StationName")
+  body("stoppingPoints.*.StationID")
     .isString()
     .notEmpty()
-    .withMessage("Station name is required"),
+    .withMessage("StationID is required"),
 
   body("stoppingPoints.*.ArrivalTime")
     // .matches(/^([0-1][0-9]|2[0-3])$/)
