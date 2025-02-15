@@ -2,20 +2,19 @@ import {
   View,
   Text,
   ScrollView,
-  StatusBar,
   TouchableOpacity,
   Image,
   Dimensions,
+  Animated,
 } from "react-native";
-import React from "react";
-import { useRouter } from "expo-router"; // Import useRouter
+import React, { useState, useRef } from "react";
+import { useRouter } from "expo-router";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { Ionicons } from "@expo/vector-icons";
 import { icons, images } from "../../constants";
 
 const { width, height } = Dimensions.get("window");
 
-// Updated menuItems with route information
 const menuItems = [
   {
     icon: icons.map,
@@ -26,38 +25,47 @@ const menuItems = [
   {
     icon: icons.schedule,
     title: "Train Schedule",
-    subtitle: "Track your live location",
+    subtitle: "View train schedules",
     route: "/(pages)/schedule",
   },
   {
     icon: icons.booking,
     title: "Ticket Booking",
-    subtitle: "Track your live location",
+    subtitle: "Book your tickets",
     route: "/(pages)/booking",
   },
   {
     icon: icons.lostAndFound,
-    title: "Lost and Found items",
-    subtitle: "Track your live location",
-    route: "/(pages)/lost-and-found",
+    title: "Lost and Found",
+    subtitle: "Report or find lost items",
+    isExpandable: true,
+    subItems: [
+      {
+        title: "Report Lost or Found Item",
+        subtitle: "Submit a new report",
+        route: "/(pages)/report-item",
+      },
+      {
+        title: "Lost and Found Items",
+        subtitle: "View all items",
+        route: "/(pages)/lost-and-found",
+      },
+    ],
   },
   {
     icon: icons.contact,
     title: "Contact Us",
-    subtitle: "Track your live location",
+    subtitle: "Get in touch with us",
     route: "/(pages)/contact-us",
   },
 ];
 
-// ... existing imports ...
-
-// Add offers data
 const offers = [
   {
     id: 1,
     title: "Special Discount",
     description: "Get 20% off on weekend tickets",
-    image: images.offer1, // Add these images to your constants
+    image: images.offer1,
     bgColor: "#FFE4E1",
   },
   {
@@ -78,6 +86,21 @@ const offers = [
 
 const Home = () => {
   const router = useRouter();
+  const [expandedItem, setExpandedItem] = useState(null);
+  const rotationAnimation = useRef(new Animated.Value(0)).current;
+
+  const handleItemPress = (item, index) => {
+    if (item.isExpandable) {
+      setExpandedItem(expandedItem === index ? null : index);
+      Animated.timing(rotationAnimation, {
+        toValue: expandedItem === index ? 0 : 1,
+        duration: 300,
+        useNativeDriver: true,
+      }).start();
+    } else {
+      router.push(item.route);
+    }
+  };
 
   const OfferCard = ({ offer }) => (
     <TouchableOpacity
@@ -92,17 +115,18 @@ const Home = () => {
         {offer.image && (
           <Image
             source={offer.image}
-            style={{
-              width: "100%",
-              height: 120,
-              borderRadius: 12,
-            }}
+            style={{ width: "100%", height: 120, borderRadius: 12 }}
             resizeMode="cover"
           />
         )}
       </View>
     </TouchableOpacity>
   );
+
+  const rotation = rotationAnimation.interpolate({
+    inputRange: [0, 1],
+    outputRange: ["0deg", "180deg"],
+  });
 
   return (
     <SafeAreaView className="flex-1 bg-[#ffffff]">
@@ -141,37 +165,66 @@ const Home = () => {
               Services
             </Text>
             {menuItems.map((item, index) => (
-              <TouchableOpacity
-                key={index}
-                className="bg-[#40A2B2] rounded-2xl p-4 mb-4 flex-row items-center"
-                onPress={() => router.push(item.route)}
-                style={{
-                  shadowColor: "#000",
-                  shadowOffset: {
-                    width: 0,
-                    height: 2,
-                  },
-                  shadowOpacity: 0.25,
-                  shadowRadius: 3.84,
-                  elevation: 5,
-                }}
-              >
-                <View className="bg-white w-12 h-12 rounded-full items-center justify-center mr-4">
-                  <Image
-                    source={item.icon}
-                    style={{ width: 24, height: 24 }}
-                    resizeMode="contain"
-                  />
-                </View>
-                <View>
-                  <Text className="font-bold text-white text-lg">
-                    {item.title}
-                  </Text>
-                  <Text className="text-xs text-white opacity-80">
-                    {item.subtitle}
-                  </Text>
-                </View>
-              </TouchableOpacity>
+              <View key={index}>
+                <TouchableOpacity
+                  className="bg-[#40A2B2] rounded-2xl p-4 mb-4 flex-row items-center justify-between"
+                  onPress={() => handleItemPress(item, index)}
+                  style={{
+                    shadowColor: "#000",
+                    shadowOffset: { width: 0, height: 2 },
+                    shadowOpacity: 0.25,
+                    shadowRadius: 3.84,
+                    elevation: 5,
+                  }}
+                >
+                  <View className="flex-row items-center flex-1">
+                    <View className="bg-white w-12 h-12 rounded-full items-center justify-center mr-4">
+                      <Image
+                        source={item.icon}
+                        style={{ width: 24, height: 24 }}
+                        resizeMode="contain"
+                      />
+                    </View>
+                    <View>
+                      <Text className="font-bold text-white text-lg">
+                        {item.title}
+                      </Text>
+                      <Text className="text-xs text-white opacity-80">
+                        {item.subtitle}
+                      </Text>
+                    </View>
+                  </View>
+                  {item.isExpandable && (
+                    <Animated.View
+                      style={{
+                        transform: [{ rotate: rotation }],
+                      }}
+                    >
+                      <Ionicons name="chevron-down" size={24} color="white" />
+                    </Animated.View>
+                  )}
+                </TouchableOpacity>
+
+                {/* Sub-items */}
+                {item.isExpandable && expandedItem === index && (
+                  <View className="mb-4">
+                    {item.subItems.map((subItem, subIndex) => (
+                      <TouchableOpacity
+                        key={subIndex}
+                        className="bg-white border border-[#40A2B2] rounded-xl p-4 mb-2 ml-6"
+                        onPress={() => router.push(subItem.route)}
+                      >
+                        <Text className="font-semibold text-[#40A2B2] text-lg">
+                          {subItem.title}
+                        </Text>
+                        <Text className="text-xs text-gray-500">
+                          {subItem.subtitle}
+                        </Text>
+                      </TouchableOpacity>
+                    ))}
+                  </View>
+                )}
+              </View>
             ))}
           </View>
         </View>
