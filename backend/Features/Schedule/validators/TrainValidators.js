@@ -17,7 +17,6 @@ const validateRequest = (req, res, next) => {
       message: "Validation errors",
       errors: formattedErrors, // Send field-specific error messages
     });
-  
   }
   next();
 };
@@ -32,11 +31,11 @@ const validateNewTrain = [
     .notEmpty()
     .withMessage("Name is required"),
 
-  body("TrainID")
-    .matches(/^[A-Z]\d{4}$/)
-    .withMessage("TrainID must be 1 letter followed by 4 digits")
-    .notEmpty()
-    .withMessage("TrainID is required"),
+  // body("TrainID")
+  //   .matches(/^[A-Z]\d{4}$/)
+  //   .withMessage("TrainID must be 1 letter followed by 4 digits")
+  //   .notEmpty()
+  //   .withMessage("TrainID is required"),
 
   body("StartStations")
     .isString()
@@ -105,13 +104,11 @@ const validateUpdateTrain = [
 
   body("EndStations").optional().isString().notEmpty(),
 
-  body("StartTime")
-    .optional(),
-    // .matches(/^([0-1][0-9]|2[0-3])$/),
+  body("StartTime").optional(),
+  // .matches(/^([0-1][0-9]|2[0-3])$/),
 
-  body("EndTime")
-    .optional(),
-    // .matches(/^([0-1][0-9]|2[0-3])$/),
+  body("EndTime").optional(),
+  // .matches(/^([0-1][0-9]|2[0-3])$/),
 
   body("stoppingPoints").optional().isArray(),
 ];
