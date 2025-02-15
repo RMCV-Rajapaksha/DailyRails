@@ -1,11 +1,10 @@
-import { View, Text, TouchableOpacity, StatusBar, Image } from 'react-native';
-import React from 'react';
-import { router } from 'expo-router';
-import { SafeAreaView } from 'react-native-safe-area-context';
-import { useState, useEffect } from 'react';
-import CustomSplash from '../components/CustomSplashScreen';
-import { LinearGradient } from 'expo-linear-gradient';
-import { images } from '../constants';
+import { View, Text, TouchableOpacity, StatusBar, Image } from "react-native";
+import React from "react";
+import { router } from "expo-router";
+import { useState, useEffect } from "react";
+import CustomSplash from "../components/CustomSplashScreen";
+import { LinearGradient } from "expo-linear-gradient";
+import { images } from "../constants";
 
 export default function App() {
   const [isLoading, setIsLoading] = useState(true);
@@ -17,15 +16,15 @@ export default function App() {
   }, []);
 
   const handleSignIn = () => {
-    router.push('/sign-in');
+    router.push("/sign-in");
   };
 
   const handleSignUp = () => {
-    router.push('/sign-up');
+    router.push("/sign-up");
   };
 
   const handleGoogleSignIn = () => {
-    console.log('Google sign in pressed');
+    console.log("Google sign in pressed");
   };
 
   if (isLoading) {
@@ -39,7 +38,7 @@ export default function App() {
         backgroundColor="transparent"
         barStyle="light-content"
       />
-      
+
       {/* Main container */}
       <View className="flex-1">
         {/* Image container */}
@@ -50,7 +49,7 @@ export default function App() {
             resizeMode="cover"
           />
           <LinearGradient
-            colors={['rgba(0,0,0,0.1)', 'rgba(0,0,0,0.3)']}
+            colors={["rgba(0,0,0,0.1)", "rgba(0,0,0,0.3)"]}
             className="absolute w-full h-full"
           />
         </View>

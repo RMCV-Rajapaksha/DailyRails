@@ -6,6 +6,7 @@ const {
   getStationById,
   updateStationById,
   deleteStationById,
+  getStationSchedule,
 } = require("../controller/StationController");
 const { validationResult } = require("express-validator");
 const stationValidators = require("../validators/StationValidators");
@@ -30,5 +31,6 @@ router.get("/", getAllStations);
 router.get("/:id", getStationById);
 router.patch("/:id", validate, updateStationById);
 router.delete("/:id", deleteStationById);
+router.get("/:stationId/schedule", getStationSchedule);
 
 module.exports = router;
