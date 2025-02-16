@@ -1,212 +1,88 @@
-import React, { useState } from "react";
-import {
-  FaInfoCircle,
-  FaPencilAlt,
-  FaTrash,
-  FaChevronLeft,
-  FaChevronRight,
-} from "react-icons/fa";
-import Sidebar from "../../components/SideBar";
+import { useState, useEffect } from "react";
+import { BrowserRouter as Router, Route, Routes, Link } from "react-router-dom";
+import { FiHome, FiBell, FiCalendar, FiSettings } from "react-icons/fi";
+import axios from "axios";
 
-const NotificationsPage = () => {
-  const [formData, setFormData] = useState({
-    id: null,
-    username: "",
-    title: "",
-    description: "",
-  });
+const Sidebar = () => {
+  return (
+    <div className="w-64 h-screen bg-gray-800 text-white p-4 flex flex-col">
+      <Link to="/" className="flex items-center p-2 hover:bg-gray-700 rounded">
+        <FiHome className="mr-2" /> Dashboard
+      </Link>
+      <Link to="/notifications" className="flex items-center p-2 hover:bg-gray-700 rounded">
+        <FiBell className="mr-2" /> Notifications
+      </Link>
+      <Link to="/schedule" className="flex items-center p-2 hover:bg-gray-700 rounded">
+        <FiCalendar className="mr-2" /> Train Schedule
+      </Link>
+      <Link to="/settings" className="flex items-center p-2 hover:bg-gray-700 rounded">
+        <FiSettings className="mr-2" /> Settings
+      </Link>
+    </div>
+  );
+};
 
-  const [notifications, setNotifications] = useState([
-    {
-      id: 1,
-      title: "Station Alert: Stay Informed on the Move!",
-      content: "Never miss an update with our real-time station notifications!",
-    },
-    {
-      id: 2,
-      title: "Train Delay: Expect Delays on Line 3",
-      content:
-        "Due to track maintenance, expect delays on Line 3 for the next two hours.",
-    },
-  ]);
+const Dashboard = () => {
+  const [reports, setReports] = useState([]);
+  const [trainUpdates, setTrainUpdates] = useState([]);
 
-  const handleChange = (e) => {
-    setFormData({ ...formData, [e.target.name]: e.target.value });
-  };
+  useEffect(() => {
+    axios.get("/api/reports")
+      .then((response) => setReports(response.data))
+      .catch((error) => console.error("Error fetching reports", error));
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    if (formData.id) {
-      setNotifications(
-        notifications.map((notification) =>
-          notification.id === formData.id
-            ? {
-                ...notification,
-                title: formData.title,
-                content: formData.description,
-              }
-            : notification
-        )
-      );
-    } else {
-      setNotifications([
-        ...notifications,
-        {
-          id: Date.now(),
-          title: formData.title,
-          content: formData.description,
-        },
-      ]);
-    }
-    setFormData({ id: null, username: "", title: "", description: "" });
-  };
-
-  const handleEdit = (notification) => {
-    setFormData({
-      id: notification.id,
-      username: "",
-      title: notification.title,
-      description: notification.content,
-    });
-  };
-
-  const handleDelete = (id) => {
-    setNotifications(
-      notifications.filter((notification) => notification.id !== id)
-    );
-  };
+    axios.get("/api/train-updates")
+      .then((response) => setTrainUpdates(response.data))
+      .catch((error) => console.error("Error fetching train updates", error));
+  }, []);
 
   return (
-    <div className="flex min-h-screen bg-gray-100">
-      <Sidebar />
-      <div className="flex-1 p-6">
-        <h1 className="mb-6 text-3xl font-bold text-primary">Notifications</h1>
-        <div className="flex flex-col md:flex-row gap-6">
-          {/* Form Section */}
-          <div className="w-full md:w-1/3">
-            <form
-              onSubmit={handleSubmit}
-              className="p-6 bg-white rounded-md shadow-md"
-            >
-              <h2 className="mb-4 text-xl font-bold text-gray-800">
-                {formData.id ? "Edit Notification" : "Create Notification"}
-              </h2>
-              <div className="mb-4">
-                <label
-                  className="block mb-2 text-sm font-semibold text-gray-700"
-                  htmlFor="username"
-                >
-                  To
-                </label>
-                <input
-                  className="w-full px-4 py-2 text-gray-700 border rounded-md focus:outline-none focus:ring-2 focus:ring-primary"
-                  id="username"
-                  type="text"
-                  placeholder="Username"
-                  name="username"
-                  value={formData.username}
-                  onChange={handleChange}
-                />
-              </div>
-              <div className="mb-4">
-                <label
-                  className="block mb-2 text-sm font-semibold text-gray-700"
-                  htmlFor="title"
-                >
-                  Title
-                </label>
-                <input
-                  className="w-full px-4 py-2 text-gray-700 border rounded-md focus:outline-none focus:ring-2 focus:ring-primary"
-                  id="title"
-                  type="text"
-                  placeholder="Title"
-                  name="title"
-                  value={formData.title}
-                  onChange={handleChange}
-                />
-              </div>
-              <div className="mb-6">
-                <label
-                  className="block mb-2 text-sm font-semibold text-gray-700"
-                  htmlFor="description"
-                >
-                  Description
-                </label>
-                <textarea
-                  className="w-full px-4 py-2 text-gray-700 border rounded-md focus:outline-none focus:ring-2 focus:ring-primary"
-                  id="description"
-                  placeholder="Description"
-                  name="description"
-                  value={formData.description}
-                  onChange={handleChange}
-                  rows="3"
-                ></textarea>
-              </div>
-              <button
-                className="w-full px-4 py-2 font-bold text-white bg-primary rounded-md hover:bg-tertiary focus:outline-none focus:ring-2 focus:ring-tertiary"
-                type="submit"
-              >
-                {formData.id ? "Update Notification" : "Submit Notification"}
-              </button>
-            </form>
-          </div>
-
-          {/* Notifications List Section */}
-          <div className="w-full md:w-2/3">
-            {notifications.length > 0 ? (
-              notifications.map((notification) => (
-                <div
-                  key={notification.id}
-                  className="p-6 mb-4 bg-white rounded-md shadow-md"
-                >
-                  <div className="flex items-start justify-between">
-                    <div>
-                      <h2 className="flex items-center mb-2 text-xl font-bold text-primary">
-                        <FaInfoCircle className="mr-2" />
-                        {notification.title}
-                      </h2>
-                      <p className="text-gray-700">{notification.content}</p>
-                    </div>
-                    <div className="flex space-x-2">
-                      <button
-                        className="text-primary hover:text-primary-dark"
-                        onClick={() => handleEdit(notification)}
-                      >
-                        <FaPencilAlt />
-                      </button>
-                      <button
-                        className="text-red-500 hover:text-red-700"
-                        onClick={() => handleDelete(notification.id)}
-                      >
-                        <FaTrash />
-                      </button>
-                    </div>
-                  </div>
-                </div>
-              ))
-            ) : (
-              <p className="text-gray-500">No notifications available.</p>
-            )}
-
-            {/* Pagination */}
-            <div className="flex justify-center mt-4">
-              <nav className="inline-flex shadow rounded-md">
-                <button className="px-4 py-2 text-sm font-medium text-gray-500 bg-white border border-gray-300 rounded-l-md hover:bg-gray-50">
-                  <FaChevronLeft />
-                </button>
-                <button className="px-4 py-2 text-sm font-medium bg-white border-t border-b border-gray-300 text-primary">
-                  1
-                </button>
-                <button className="px-4 py-2 text-sm font-medium text-gray-500 bg-white border border-gray-300 rounded-r-md hover:bg-gray-50">
-                  <FaChevronRight />
-                </button>
-              </nav>
-            </div>
-          </div>
-        </div>
+    <div className="p-6">
+      <h1 className="text-2xl font-bold">Dashboard</h1>
+      <div className="mt-4">
+        <h2 className="text-xl font-semibold">Report Blockages</h2>
+        <ul className="bg-gray-100 p-4 rounded-lg mt-2">
+          {reports.length > 0 ? (
+            reports.map((report, index) => (
+              <li key={index} className="p-2 border-b">{report.message}</li>
+            ))
+          ) : (
+            <p>No blockage reports</p>
+          )}
+        </ul>
+      </div>
+      <div className="mt-4">
+        <h2 className="text-xl font-semibold">Recent Train Schedule Updates</h2>
+        <ul className="bg-gray-100 p-4 rounded-lg mt-2">
+          {trainUpdates.length > 0 ? (
+            trainUpdates.map((update, index) => (
+              <li key={index} className="p-2 border-b">{update.details}</li>
+            ))
+          ) : (
+            <p>No updates available</p>
+          )}
+        </ul>
       </div>
     </div>
   );
 };
 
-export default NotificationsPage;
+const App = () => {
+  return (
+    <Router>
+      <div className="flex">
+        <Sidebar />
+        <div className="flex-1 p-4">
+          <Routes>
+            <Route path="/" element={<Dashboard />} />
+            <Route path="/notifications" element={<h1>Notifications Page</h1>} />
+            <Route path="/schedule" element={<h1>Train Schedule Page</h1>} />
+            <Route path="/settings" element={<h1>Settings Page</h1>} />
+          </Routes>
+        </div>
+      </div>
+    </Router>
+  );
+};
+
+export default App;
