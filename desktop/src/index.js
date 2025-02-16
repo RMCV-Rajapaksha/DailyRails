@@ -1,30 +1,13 @@
 import React from "react";
-<<<<<<< Updated upstream
-import ReactDOM from "react-dom/client";
-import "./index.css";
-import App from "./App";
-
-
-const root = ReactDOM.createRoot(document.getElementById("root"));
-root.render(
- 
-    <React.StrictMode>
-      <App />
-    </React.StrictMode>
-
-);
-=======
 import ReactDOM from "react-dom";
-import { BrowserRouter } from "react-router-dom"; // Add this
-import "./index.css";
-import App from "./App";
+import { BrowserRouter } from "react-router-dom"; // This is the only Router
+import App from "./App"; // Main app component
+import './index.css';  // Ensure this points to your global CSS file if you are using custom styles
+
 
 ReactDOM.render(
-  <React.StrictMode>
-    <BrowserRouter>  {/* Move BrowserRouter here */}
-      <App />
-    </BrowserRouter>
-  </React.StrictMode>,
+  <BrowserRouter>  {/* Wrap your entire app in a single Router */}
+    <App />
+  </BrowserRouter>,
   document.getElementById("root")
 );
->>>>>>> Stashed changes
