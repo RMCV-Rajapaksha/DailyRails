@@ -98,88 +98,89 @@ const TrainManagement = () => {
 
   const [inputs, setInputs] = useState(inputDataStructure);
 
-  const inputStoppingDataStructure = {
-    StationID: {
-      key: "StationID",
-      type: "text",
-      data: "",
-      placeholder: "Station ID",
-      validation: Joi.string()
-        .required()
-        .messages({
-          "string.empty": "Station ID should not be empty",
-          "any.required": "Station ID is required",
-        }),
-    },
-    ArrivalTime: {
-      key: "ArrivalTime",
-      type: "time",
-      data: "",
-      placeholder: "Arrival Time",
-      validation: Joi.string()
-        .required()
-        .messages({
-          "string.empty": "Arrival Time should not be empty",
-          "any.required": "Arrival Time is required",
-          "string.type": "Arrival Time should be a String",
-        }),
-    },
-    DepartureTime: {
-      key: "DepatureTime",
-      type: "time",
-      data: "",
-      placeholder: "Depature Time",
-      validation: Joi.string()
-        .required()
-        .messages({
-          "string.empty": "Arrival Time should not be empty",
-          "any.required": "Arrival Time is required",
-          "string.type": "Arrival Time should be a String",
-        }),
-    },
-  };
+  // Corrected Typo in inputStoppingDataStructure
+const inputStoppingDataStructure = {
+  StationID: {
+    key: "StationID",
+    type: "text",
+    data: "",
+    placeholder: "Station ID",
+    validation: Joi.string()
+      .required()
+      .messages({
+        "string.empty": "Station ID should not be empty",
+        "any.required": "Station ID is required",
+      }),
+  },
+  ArrivalTime: {
+    key: "ArrivalTime",
+    type: "time",
+    data: "",
+    placeholder: "Arrival Time",
+    validation: Joi.string()
+      .required()
+      .messages({
+        "string.empty": "Arrival Time should not be empty",
+        "any.required": "Arrival Time is required",
+        "string.type": "Arrival Time should be a String",
+      }),
+  },
+  DepartureTime: {  // Corrected Typo here
+    key: "DepartureTime",
+    type: "time",
+    data: "",
+    placeholder: "Departure Time",
+    validation: Joi.string()
+      .required()
+      .messages({
+        "string.empty": "Departure Time should not be empty",
+        "any.required": "Departure Time is required",
+        "string.type": "Departure Time should be a String",
+      }),
+  },
+};
 
   const [newStop, setNewStop] = useState(inputStoppingDataStructure);
 
-  const handleChange = (input) => {
-    let input_list = { ...inputs };
-    input_list[input.key] = input;
-    setInputs(input_list);
-  };
+  // Updated handleChange and handleStopChange Functions
+const handleChange = (input) => {
+  let input_list = { ...inputs };
+  input_list[input.key] = { ...input_list[input.key], data: input.data };
+  setInputs(input_list);
+};
 
-  // Handle stopping points change
-  const handleStopChange = (e) => {
-    let input_list = { ...newStop };
-    input_list[e.key] = e;
-    setNewStop(input_list);
-  };
+const handleStopChange = (input) => {
+  let input_list = { ...newStop };
+  input_list[input.key] = { ...input_list[input.key], data: input.data };
+  setNewStop(input_list);
+};
 
-  // Add a stopping point
-  const handleAddStop = () => {
-    setForm((prev) => ({
-      ...prev,
-      stoppingPoints: [
-        ...prev.stoppingPoints,
-        {
-          StationID: newStop.StationID.data,
-          ArrivalTime: newStop.ArrivalTime.data,
-          DepartureTime: newStop.DepartureTime.data,
-        },
-      ],
-    }));
-    setNewStop(inputStoppingDataStructure);
-  };
+// Updated handleAddStop Function
+const handleAddStop = () => {
+  setForm((prev) => ({
+    ...prev,
+    stoppingPoints: [
+      ...prev.stoppingPoints,
+      {
+        StationID: newStop.StationID.data,
+        ArrivalTime: newStop.ArrivalTime.data,
+        DepartureTime: newStop.DepartureTime.data,
+      },
+    ],
+  }));
+  setNewStop(inputStoppingDataStructure);
+};
 
   // Add or update train
   const handleSave = async () => {
     const updatedForm = {
       ...form,
-      Name: inputs.Name?.data || "",
-      TrainID: inputs.TrainID?.data || "",
-      StartStations: inputs.StartStations?.data || "",
-      EndStations: inputs.EndStations?.data || "",
-      StartTime: inputs.StartTime?.data || "",
-      EndTime: inputs.EndTime?.data || "",
+      Name: inputs.Name.data,
+      TrainID: inputs.TrainID.data,
+      StartStations: inputs.StartStations.data,
+      EndStations: inputs.EndStations.data,
+      StartTime: inputs.StartTime.data,
+      EndTime: inputs.EndTime.data,
     };
 
     console.log("Form to save:", updatedForm);
@@ -280,53 +281,57 @@ const TrainManagement = () => {
       <h1 className="text-2xl font-bold mb-4 text-primary">Manage Trains</h1>
 
       {/* Train List */}
-      <table className="w-full text-left bg-white rounded-lg shadow-md">
-        <thead className="bg-gray-200">
-          <tr>
-            <th className="py-2 px-4">Train Name</th>
-            <th className="py-2 px-4">Train ID</th>
-            <th className="py-2 px-4">Start Station</th>
-            <th className="py-2 px-4">End Station</th>
-            <th className="py-2 px-4">Start Time</th>
-            <th className="py-2 px-4">End Time</th>
-            <th className="py-2 px-4">Stopping Points</th>
-            <th className="py-2 px-4">Actions</th>
-          </tr>
-        </thead>
-        <tbody>
-          {trains.map((train, index) => (
-            <tr key={train.TrainID} className="border-b">
-              <td className="py-2 px-4">{train.Name}</td>
-              <td className="py-2 px-4">{train.TrainID}</td>
-              <td className="py-2 px-4">{train.StartStations}</td>
-              <td className="py-2 px-4">{train.EndStations}</td>
-              <td className="py-2 px-4">{train.StartTime}</td>
-              <td className="py-2 px-4">{train.EndTime}</td>
-              <td className="py-2 px-4">
-                {train.stoppingPoints.map((stop, i) => (
-                  <div key={i}>
-                    {stop.StationID} ({stop.ArrivalTime} - {stop.DepartureTime})
-                  </div>
-                ))}
-              </td>
-              <td className="py-2 px-4 space-x-2">
-                <button
-                  onClick={() => handleEdit(train)}
-                  className="px-4 py-1 bg-blue-500 text-white rounded hover:bg-blue-600"
-                >
-                  Edit
-                </button>
-                <button
-                  onClick={() => handleRemove(train.TrainID)}
-                  className="px-4 py-1 bg-red-500 text-white rounded hover:bg-red-600"
-                >
-                  Remove
-                </button>
-              </td>
+      <div className="overflow-y-auto max-h-80">
+        <table className="w-full text-left bg-white rounded-lg shadow-md">
+          <thead className="bg-gray-200 sticky top-0">
+            <tr>
+              <th className="py-2 px-4">Train Name</th>
+              <th className="py-2 px-4">Train ID</th>
+              <th className="py-2 px-4">Start Station</th>
+              <th className="py-2 px-4">End Station</th>
+              <th className="py-2 px-4">Start Time</th>
+              <th className="py-2 px-4">End Time</th>
+              <th className="py-2 px-4">Stopping Points</th>
+              <th className="py-2 px-4">Actions</th>
             </tr>
-          ))}
-        </tbody>
-      </table>
+          </thead>
+          <tbody>
+            {trains.map((train, index) => (
+              <tr key={train.TrainID} className="border-b">
+                <td className="py-2 px-4">{train.Name}</td>
+                <td className="py-2 px-4">{train.TrainID}</td>
+                <td className="py-2 px-4">{train.StartStations}</td>
+                <td className="py-2 px-4">{train.EndStations}</td>
+                <td className="py-2 px-4">{train.StartTime}</td>
+                <td className="py-2 px-4">{train.EndTime}</td>
+                <td className="py-2 px-4">
+                  <div className="overflow-y-auto max-h-20">
+                    {train.stoppingPoints.map((stop, i) => (
+                      <div key={i}>
+                        {stop.StationID} ({stop.ArrivalTime} - {stop.DepartureTime})
+                      </div>
+                    ))}
+                  </div>
+                </td>
+                <td className="py-2 px-4 space-x-2">
+                  <button
+                    onClick={() => handleEdit(train)}
+                    className="px-4 py-1 bg-blue-500 text-white rounded hover:bg-blue-600"
+                  >
+                    Edit
+                  </button>
+                  <button
+                    onClick={() => handleRemove(train.TrainID)}
+                    className="px-4 py-1 bg-red-500 text-white rounded hover:bg-red-600"
+                  >
+                    Remove
+                  </button>
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
 
       {/* Form */}
       <div className="mt-6 bg-white p-6 rounded-lg shadow-md">
@@ -345,19 +350,21 @@ const TrainManagement = () => {
         {/* Stopping Points */}
         <div className="mt-4">
           <h3 className="text-lg font-semibold mb-2">Stopping Points</h3>
-          {form.stoppingPoints.map((stop, index) => (
-            <div key={index} className="flex items-center space-x-4 mb-2">
-              <span>
-                {stop.StationID} ({stop.ArrivalTime} - {stop.DepartureTime})
-              </span>
-              <button
-                onClick={() => handleRemoveStop(index)}
-                className="px-2 py-1 bg-red-500 text-white rounded hover:bg-red-600"
-              >
-                Remove
-              </button>
-            </div>
-          ))}
+          <div className="overflow-y-auto max-h-20">
+            {form.stoppingPoints.map((stop, index) => (
+              <div key={index} className="flex items-center space-x-4 mb-2">
+                <span>
+                  {stop.StationID} ({stop.ArrivalTime} - {stop.DepartureTime})
+                </span>
+                <button
+                  onClick={() => handleRemoveStop(index)}
+                  className="px-2 py-1 bg-red-500 text-white rounded hover:bg-red-600"
+                >
+                  Remove
+                </button>
+              </div>
+            ))}
+          </div>
           <div className="grid grid-cols-3 gap-4 mt-4">
             <Input input={newStop.StationID || ""} handleChange={handleStopChange} labelClassName={newStop.StationID} />
             <Input input={newStop.ArrivalTime || ""} handleChange={handleStopChange} labelClassName={newStop.ArrivalTime} />
