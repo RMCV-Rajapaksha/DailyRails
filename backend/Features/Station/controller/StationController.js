@@ -208,6 +208,7 @@ const getStationSchedule = async (req, res) => {
       ],
     });
 
+    
     // Format the response
     const schedule = {
       stationName: station.StationName,
