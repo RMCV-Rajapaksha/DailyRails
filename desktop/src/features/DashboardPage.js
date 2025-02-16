@@ -1,12 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { Link, Outlet } from "react-router-dom";
 import {
-<<<<<<< Updated upstream
-  FaArrowLeft,
-  FaArrowRight,
-} from "react-icons/fa";
-import SideBar from "./MainAdmin/components/SideBar";
-=======
   Calendar,
   Route as RouteIcon,
   Ticket,
@@ -16,36 +10,114 @@ import SideBar from "./MainAdmin/components/SideBar";
   LogOut,
   ChevronLeft,
   ChevronRight,
-  CheckCircle
+  Train,
+  Search,
+  Package,
+  Menu
 } from "lucide-react";
->>>>>>> Stashed changes
 
+// Sidebar Component
+const SideBar = ({ section, isExpanded, setSection }) => {
+  const menuItems = [
+    {
+      title: 'Dashboard',
+      icon: <BarChart className="h-5 w-5" />,
+      path: '/dashboard',
+    },
+    {
+      title: 'Train Schedule',
+      icon: <Calendar className="h-5 w-5" />,
+      path: '/dashboard/train-schedule',
+    },
+    {
+      title: 'Train Management',
+      icon: <Train className="h-5 w-5" />,
+      path: '/dashboard/train-management',
+    },
+    {
+      title: 'Tickets',
+      icon: <Ticket className="h-5 w-5" />,
+      path: '/dashboard/tickets',
+    },
+    {
+      title: 'Lost Items',
+      icon: <Search className="h-5 w-5" />,
+      path: '/dashboard/lost',
+    },
+    {
+      title: 'Found Items',
+      icon: <Package className="h-5 w-5" />,
+      path: '/dashboard/found',
+    },
+    {
+      title: 'Role Registration',
+      icon: <Shield className="h-5 w-5" />,
+      path: '/dashboard/role-registration',
+    },
+    {
+      title: 'Notifications',
+      icon: <Bell className="h-5 w-5" />,
+      path: '/dashboard/notifications',
+    },
+  ];
 
-// import LoginPage from "./features/Authentication/pages/LoginPage";
-// import SignUpPage from "./features/Authentication/pages/SignUpPage";
-import Tickets from "../features/MainAdmin/tickets/Tickets.js";
-import RoleRegistration from "../features/Account/Register/RoleRegistration.js";
-// import AccountReviewPage from "./features/Authentication/pages/AccountReviewPage";
-// import ReportHistory from "./features/Authentication/pages/Report_history";
-// import ReportBlockage from "./features/Authentication/pages/Report_blockage";
-import NotificationPage from "../features/MainAdmin/Notification/pages/NotificationPage";
-// import TrainManagement from "./features/MainAdmin/trains/Train_management.js";
-import TrainSchedule from "./MainAdmin/trains/Train_schedule.js";
-import TrainManagement from "./MainAdmin/trains/Train_management.js";
-import Home from "./Pages/Home";
-import Lost from "./Items/Lost.js";
-import Found from "./Items/Found.js";
+  return (
+    <div className="flex flex-col gap-2">
+      {menuItems.map((item) => (
+        <Link
+          key={item.path}
+          to={item.path}
+          className={`group flex items-center rounded-lg px-3 py-2 transition-all duration-200
+            ${section === item.title.toLowerCase() 
+              ? 'bg-blue-700 text-white' 
+              : 'text-blue-100 hover:bg-blue-800'}`}
+          onClick={() => setSection(item.title.toLowerCase())}
+        >
+          <div className="flex items-center gap-3">
+            <div className={`flex h-8 w-8 items-center justify-center rounded-lg 
+              ${section === item.title.toLowerCase()
+                ? 'bg-blue-800'
+                : 'bg-blue-900 group-hover:bg-blue-700'}`}
+            >
+              {item.icon}
+            </div>
+            
+            <span className={`whitespace-nowrap text-sm font-medium
+              transition-all duration-200 ${!isExpanded && 'hidden'}`}
+            >
+              {item.title}
+            </span>
+          </div>
+        </Link>
+      ))}
 
+      {/* Logout Button */}
+      <Link
+        to="/logout"
+        className="mt-auto flex items-center rounded-lg px-3 py-2 text-blue-100 hover:bg-blue-800 transition-all duration-200"
+      >
+        <div className="flex items-center gap-3">
+          <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-blue-900 group-hover:bg-blue-700">
+            <LogOut className="h-5 w-5" />
+          </div>
+          <span className={`whitespace-nowrap text-sm font-medium
+            transition-all duration-200 ${!isExpanded && 'hidden'}`}
+          >
+            Logout
+          </span>
+        </div>
+      </Link>
+    </div>
+  );
+};
 
-
-const DashboardPage = ({ section}) => {
+// Main Dashboard Component
+const DashboardPage = ({ section }) => {
   const [isExpanded, setIsExpanded] = useState(true);
-<<<<<<< Updated upstream
-  const [section1, setSection] = useState("admins");
-=======
   const [recentActivities, setRecentActivities] = useState([]);
   const [notifications, setNotifications] = useState([]);
   const [stats, setStats] = useState([]);
+  const [currentSection, setSection] = useState(section);
 
   useEffect(() => {
     fetchData();
@@ -56,12 +128,11 @@ const DashboardPage = ({ section}) => {
       const activitiesResponse = await fetch("/api/recent-activities");
       const notificationsResponse = await fetch("/api/notifications");
       const statsResponse = await fetch("/api/stats");
->>>>>>> Stashed changes
-
+      
       const activitiesData = await activitiesResponse.json();
       const notificationsData = await notificationsResponse.json();
       const statsData = await statsResponse.json();
-
+      
       setRecentActivities(activitiesData);
       setNotifications(notificationsData);
       setStats(statsData);
@@ -73,90 +144,58 @@ const DashboardPage = ({ section}) => {
   const toggleSidebar = () => setIsExpanded(!isExpanded);
 
   return (
-    <div className={`flex h-screen ${isExpanded ? "expanded" : "collapsed"}`}>
+    <div className="flex h-screen bg-gray-50">
       {/* Sidebar */}
-<<<<<<< Updated upstream
-      <div
-        className={`flex flex-col items-center bg-blue-900 text-white transition-all duration-300 ${
-          isExpanded ? "w-64" : "w-16"
+      <aside
+        className={`relative flex flex-col bg-gradient-to-b from-blue-900 to-blue-800 text-white shadow-xl transition-all duration-300 ease-in-out ${
+          isExpanded ? "w-64" : "w-20"
         }`}
       >
-        <div
-          className="cursor-pointer p-3 text-2xl"
+        {/* Toggle Button */}
+        <button
+          className="absolute -right-4 top-6 z-50 flex h-8 w-8 items-center justify-center rounded-full bg-white text-blue-900 shadow-md hover:bg-gray-100 transition-colors duration-200"
           onClick={toggleSidebar}
         >
-          {isExpanded ? <FaArrowLeft /> : <FaArrowRight />}
+          {isExpanded ? (
+            <ChevronLeft className="h-4 w-4" />
+          ) : (
+            <ChevronRight className="h-4 w-4" />
+          )}
+        </button>
+
+        {/* Logo */}
+        <div className="flex items-center justify-center p-6">
+          <div className={`overflow-hidden rounded-xl bg-white p-2 shadow-inner transition-all duration-300 ${
+            isExpanded ? "w-40" : "w-12"
+          }`}>
+            <img
+              src={`${process.env.PUBLIC_URL}/logo.png`}
+              alt="Logo"
+              className="h-auto w-full object-contain"
+            />
+          </div>
         </div>
-        <div
-          className={`bg-white rounded-lg p-3 my-5 transition-all duration-300 ${
-            isExpanded ? "w-4/5" : "w-10"
-          }`}
-        >
-          <img
-            src={`${process.env.PUBLIC_URL}/logo.png`}
-            alt="Logo"
-            className="w-full h-auto"
+
+        {/* Sidebar Content */}
+        <div className="flex-1 overflow-y-auto px-3">
+          <SideBar
+            section={currentSection}
+            isExpanded={isExpanded}
+            setSection={setSection}
           />
         </div>
-        <SideBar section={section1} isExpanded={isExpanded}
-        setSection={setSection} />
-
-      </div>
-      
-      <div className="w-full ">
-                    {section === "home" && <Home />}
-                    {section === "schedules" && <TrainSchedule />}
-                    {section === "trains" && <TrainManagement />}
-                    {/* {section === "routes" && < />} */}
-                    {section === "tickets" && <Tickets />} 
-                    {section === "admins" && <RoleRegistration />} 
-                     {/* {section === "statistics" && < />} */}
-                     {section === "notifications" && <NotificationPage />} 
-                      {section === "losts" && < Lost/>}
-                      {section === "founds" && < Found/>}
-                     {/* {section === "logout" && <LoginPage />} */}
-                  
-      </div>
-
-=======
-      <div className={`transition-all duration-300 ${isExpanded ? "w-64" : "w-20"} bg-blue-900 text-white`}>
-        <button onClick={toggleSidebar} className="p-4 hover:bg-blue-700 transition-colors">
-          {isExpanded ? <ChevronLeft /> : <ChevronRight />}
-        </button>
-        <nav className="mt-6">
-          {menuItems.map(({ icon: Icon, label, path }) => (
-            <Link to={path} key={label} className="flex items-center px-4 py-3 hover:bg-blue-700">
-              <Icon className="w-5 h-5" />
-              {isExpanded && <span className="ml-3">{label}</span>}
-            </Link>
-          ))}
-        </nav>
-      </div>
+      </aside>
 
       {/* Main Content */}
-      <div className="flex-1 p-8">
-        <h1 className="text-3xl font-bold">Dashboard</h1>
-
-        {/* Render dynamic components here */}
-        <Outlet />
-      </div>
->>>>>>> Stashed changes
+      <main className="flex-1 overflow-hidden">
+        <div className="h-full overflow-y-auto bg-gray-50 px-6 py-8">
+          <div className="h-full rounded-lg bg-white p-6 shadow-sm">
+            <Outlet />
+          </div>
+        </div>
+      </main>
     </div>
-    
   );
 };
 
-<<<<<<< Updated upstream
-=======
-const menuItems = [
-  { icon: Calendar, label: "Schedules", path: "/dashboard/schedules" },
-  { icon: RouteIcon, label: "Routes", path: "/dashboard/routes" },
-  { icon: Ticket, label: "Tickets", path: "/dashboard/tickets" },
-  { icon: Shield, label: "Manage Admins", path: "/dashboard/admins" },
-  { icon: BarChart, label: "Statistics", path: "/dashboard/statistics" },
-  { icon: Bell, label: "Notifications", path: "/dashboard/notifications" },
-  { icon: LogOut, label: "Logout", path: "/dashboard/logout" }
-];
-
->>>>>>> Stashed changes
 export default DashboardPage;
