@@ -1,110 +1,107 @@
 import React from "react";
-
 import ListItem from "./listItem";
-
 import {
-    FaCalendarAlt,
-    FaRoute,
-    FaTicketAlt,
-    FaUserShield,
-    FaChartBar,
-    FaBell,
-    FaSignOutAlt,
-
-    FaHome,
-  } from "react-icons/fa";
-
+  FaCalendarAlt,
+  FaRoute,
+  FaTicketAlt,
+  FaUserShield,
+  FaChartBar,
+  FaBell,
+  FaSignOutAlt,
+  FaHome,
+} from "react-icons/fa";
 
 const SideBar = ({ section, isExpanded, setSection }) => {
-   
-    const navList = [
-      {
-        title: "Home",
-        url: "/",
-        icon: <FaHome />,
-        selected: section === "home",
-      },
-      {
-        title: "Schedules",
-        url: "/train-schedule",
-        icon: <FaCalendarAlt />,
-        selected: section === "schedules",
-      },{
-        title: "Train Management",
-        url: "/train-management",
-        icon: <FaCalendarAlt />,
-        selected: section === "train-management",
-      },
-      {
-        title: "Routes",
-        url: "/routes",
-        icon: <FaRoute />,
-        selected: section === "routes",
-      },
-      {
-        title: "Tickets",
-        url: "/tickets",
-        icon: <FaTicketAlt />,
-        selected: section === "tickets",
-      },
-      {
-        title: "Admins",
-        url: "/register",
-        icon: <FaUserShield />,
-        selected: section === "admins",
-      },
-      {
-        title: "Statistics",
-        url: "/statistics",
-        icon: <FaChartBar />,
-        selected: section === "statistics",
-      },
-      {
-        title: "Notification Management",
-        url: "/notification",
-        icon: <FaBell />,
-        selected: section === "notifications",
-      },
-      {
-        title: "Lost",
-        url: "/lost",
-        icon: <FaBell />,
-        selected: section === "losts",
-      },{
-        title: "Found",
-        url: "/found",
-        icon: <FaBell />,
-        selected: section === "founds",
-      },
-      {
-        title: "Logout",
-        url: "/logout",
-        icon: <FaSignOutAlt />,
-        selected: section === "logout",
-      },
-    ];
+  const navList = [
+    {
+      title: "Home",
+      url: "/",
+      icon: <FaHome className="h-5 w-5" />,
+      value: "home",
+    },
+    {
+      title: "Schedules",
+      url: "/train-schedule",
+      icon: <FaCalendarAlt className="h-5 w-5" />,
+      value: "schedules",
+    },
+    {
+      title: "Train Management",
+      url: "/train-management",
+      icon: <FaCalendarAlt className="h-5 w-5" />,
+      value: "train-management",
+    },
+    {
+      title: "Routes",
+      url: "/routes",
+      icon: <FaRoute className="h-5 w-5" />,
+      value: "routes",
+    },
+    {
+      title: "Tickets",
+      url: "/tickets",
+      icon: <FaTicketAlt className="h-5 w-5" />,
+      value: "tickets",
+    },
+    {
+      title: "Admins",
+      url: "/register",
+      icon: <FaUserShield className="h-5 w-5" />,
+      value: "admins",
+    },
+    {
+      title: "Statistics",
+      url: "/statistics",
+      icon: <FaChartBar className="h-5 w-5" />,
+      value: "statistics",
+    },
+    {
+      title: "Notification Management",
+      url: "/notification",
+      icon: <FaBell className="h-5 w-5" />,
+      value: "notifications",
+    },
+    {
+      title: "Lost",
+      url: "/lost",
+      icon: <FaBell className="h-5 w-5" />,
+      value: "losts",
+    },
+    {
+      title: "Found",
+      url: "/found",
+      icon: <FaBell className="h-5 w-5" />,
+      value: "founds",
+    },
+    {
+      title: "Logout",
+      url: "/logout",
+      icon: <FaSignOutAlt className="h-5 w-5" />,
+      value: "logout",
+    },
+  ];
 
-    return (
-      <div
-className={`flex flex-col items-center bg-blue-900 text-white transition-all duration-300 ${
-  isExpanded ? "w-64" : "w-16"
-}`}
->
-<nav className="w-full">
-    <ul className="space-y-4 mb-12 mt-20 w-full">
-            {navList.map((item) => (
-                <ListItem key={item.url} item={item}   className={`flex items-center px-4 py-2 w-full cursor-pointer hover:bg-blue-700 transition ${section === item.value ? "bg-blue-700" : ""}`}
-                onClick={() => setSection(item.value)}/>
-
-            ))}
+  return (
+    <div
+      className={`flex flex-col items-center bg-blue-900 text-white transition-all duration-300 ${
+        isExpanded ? "w-55" : "w-10"
+      }`}
+    >
+      <nav className="w-full">
+        <ul className="space-y-4 mb-12 mt-20 w-full">
+          {navList.map((item) => (
+            <ListItem
+              key={item.url}
+              item={item}
+              isExpanded={isExpanded}
+              isSelected={section === item.value}
+              onClick={() => setSection(item.value)}
+            />
+          ))}
         </ul>
-</nav>
-</div> 
-
-
-
-    );
+      </nav>
+    </div>
+  );
 };
-export default SideBar;
 
- 
+export default SideBar;
