@@ -2,12 +2,6 @@ const { body, param } = require("express-validator");
 
 // Validation rules for creating a new report
 const validateNewReport = [
-  body("ReportID")
-    .notEmpty()
-    .withMessage("ReportID is required")
-    .matches(/^RPT\d{7}$/)
-    .withMessage("Invalid ReportID format"),
-
   body("Name")
     .notEmpty()
     .withMessage("Name is required")
