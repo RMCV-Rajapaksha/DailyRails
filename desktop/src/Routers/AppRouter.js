@@ -1,47 +1,37 @@
 import React from "react";
-import { createBrowserRouter, RouterProvider } from "react-router-dom";
-import MainAdminLayOut from "../LayOut/MainLayOut";
-import Home from "../features/Pages/Home";
-import Dashboard from "../features/DashboardPage";
+import { Routes, Route } from "react-router-dom";
+import LoginPage from "../features/Authentication/pages/LoginPage";
+import SignUpPage from "../features/Authentication/pages/SignUpPage";
+import Tickets from "../features/MainAdmin/tickets/Tickets.js";
+import RoleRegistration from "../features/Account/Register/RoleRegistration.js";
+import AccountReviewPage from "../features/Authentication/pages/AccountReviewPage";
+import DashboardPage from "../features/DashboardPage";
+import ReportHistory from "../features/Authentication/pages/Report_history";
+import ReportBlockage from "../features/Authentication/pages/Report_blockage";
+import NotificationPage from "../features/MainAdmin/Notification/pages/NotificationPage";
+import TrainManagement from "../features/MainAdmin/trains/Train_management.js";
+import TrainSchedule from "../features/MainAdmin/trains/Train_schedule.js";
 
-const router1 = createBrowserRouter([
-  {
-    path: "/",
-    element: <MainAdminLayOut />,
-    children: [
-      {
-        index: true,
-        element: <Home />,
-      },{
-        path: "dashboard",
-        children: [
-          { index: true, element: <Dashboard section="home" /> },
-          { path: "train-schedule", element: <Dashboard section="schedules" /> },
-          {path: "routes", element: <Dashboard section="routes" />},
-          {path: "train-management", element: <Dashboard section="trains" />},
-          {path: "tickets", element: <Dashboard section="tickets" />},
-          {path: "register", element: <Dashboard section="admins" />},
-          {path: "notifications", element: <Dashboard section="notifications" />},
-          {path: "lost", element: <Dashboard section="losts" />},
-          {path: "found", element: <Dashboard section="founds" />},
-          {path: "logout", element: <Dashboard section="logout" />},
+function AppRouter() {
+  return (
+    <Routes>
+      <Route path="/login" element={<LoginPage />} />
+      <Route path="/signup" element={<SignUpPage />} />
+      <Route path="/account-review" element={<AccountReviewPage />} />
 
-        ],
-      }
-     
-    ],
-  },{
-    path: "/announcements",
-    children: [
-      {
-        index: true,
-        element: <Home />,
-      },]}
-      
-]);
-
-const AppRouter = () => {
-  return <RouterProvider router={router1} />;
-};
+      {/* Add /dashboard route here and use nested routes */}
+      <Route path="/dashboard" element={<DashboardPage />}>
+        <Route path="tickets" element={<Tickets />} />
+        <Route path="admins" element={<RoleRegistration />} />
+        <Route path="notifications" element={<NotificationPage />} />
+        <Route path="train-schedule" element={<TrainSchedule />} />
+        <Route path="train-management" element={<TrainManagement />} />
+        <Route path="report-history" element={<ReportHistory />} />
+        <Route path="report-blockage" element={<ReportBlockage />} />
+        {/* Add other nested routes as needed */}
+      </Route>
+    </Routes>
+  );
+}
 
 export default AppRouter;
