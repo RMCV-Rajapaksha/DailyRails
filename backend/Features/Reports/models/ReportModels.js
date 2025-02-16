@@ -7,6 +7,8 @@ module.exports = (sequelize) => {
       ReportID: {
         type: DataTypes.STRING(20),
         primaryKey: true,
+        allowNull: false,
+        unique: true,
       },
       Name: {
         type: DataTypes.STRING(20),

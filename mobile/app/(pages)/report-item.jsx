@@ -1,107 +1,249 @@
-import React, { useState } from 'react';
-import { View, Text, TextInput, TouchableOpacity, ScrollView } from 'react-native';
-import { SafeAreaView } from 'react-native-safe-area-context';
+import React, { useState } from "react";
+import {
+  View,
+  Text,
+  TextInput,
+  TouchableOpacity,
+  ScrollView,
+  Alert,
+} from "react-native";
+import { SafeAreaView } from "react-native-safe-area-context";
+import { Ionicons } from "@expo/vector-icons";
+import axios from "axios";
+import { API_URL } from "@env";
+import { useRouter } from "expo-router";
 
-const LostAndFound = () => {
+const ReportItem = () => {
+  const router = useRouter();
   const [formData, setFormData] = useState({
-    name: '',
-    type: 'lost', // or 'found'
-    title: '',
-    description: '',
-    contactNumber: '',
+    Title: "",
+    Description: "",
+    ItemType: "Lost", // or 'Found'
+    ContactNo: "",
+    ReporterName: "",
+    Location: "",
   });
+  const [loading, setLoading] = useState(false);
+  const [errors, setErrors] = useState({});
 
-  const handleSubmit = () => {
-    console.log('Form submitted:', formData);
-    // Add your submission logic here
+  const validateForm = () => {
+    const newErrors = {};
+
+    // Name validation
+    if (!formData.ReporterName.trim()) {
+      newErrors.ReporterName = "Name is required";
+    } else if (formData.ReporterName.length > 20) {
+      newErrors.ReporterName = "Name should be less than 20 characters";
+    }
+
+    // Other validations
+    if (!formData.Title.trim()) newErrors.Title = "Title is required";
+    if (!formData.Description.trim())
+      newErrors.Description = "Description is required";
+    if (!formData.ContactNo.trim())
+      newErrors.ContactNo = "Contact number is required";
+
+    setErrors(newErrors);
+    return Object.keys(newErrors).length === 0;
+  };
+
+  const handleSubmit = async () => {
+    if (loading) return; // Prevent multiple submissions
+
+    if (!validateForm()) {
+      Alert.alert("Error", "Please fill in all required fields correctly.");
+      return;
+    }
+
+    setLoading(true);
+    try {
+      const formattedData = {
+        Name: formData.ReporterName.trim(),
+        ItemType: formData.ItemType,
+        Title: formData.Title.trim(),
+        Description: formData.Description.trim(),
+        ContactNo: formData.ContactNo.trim(),
+      };
+
+      const response = await axios.post(`${API_URL}/items`, formattedData);
+
+      if (response.data.success) {
+        Alert.alert(
+          "Thank You! 🎉",
+          "Your report has been submitted successfully. We'll review it shortly.",
+          [
+            {
+              text: "OK",
+              onPress: () => router.back(),
+              style: "default",
+            },
+          ],
+          { cancelable: false }
+        );
+      } else {
+        throw new Error(response.data.message || "Failed to submit report");
+      }
+    } catch (error) {
+      console.error("Submission error:", error);
+      Alert.alert(
+        "Error",
+        error.response?.data?.message ||
+          "Failed to submit report. Please try again.",
+        [{ text: "OK" }]
+      );
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
     <SafeAreaView className="flex-1 bg-white">
-      <ScrollView className="p-6">
-        <Text className="mb-6 text-2xl font-semibold text-slate-700">
-          Add lost or found items
-        </Text>
+      <ScrollView className="flex-1">
+        <View className="p-6">
+          {/* Header with Back Button */}
+          <View className="flex-row items-center mb-6">
+            <TouchableOpacity
+              onPress={() => router.back()}
+              className="p-2 -ml-2"
+            >
+              <Ionicons name="chevron-back" size={24} color="#111B47" />
+            </TouchableOpacity>
+            <Text className="text-xl font-bold text-[#111B47] ml-2">
+              Report Lost or Found Item
+            </Text>
+          </View>
 
-        {/* Name Input */}
-        <Text className="mb-2 text-slate-600">Name</Text>
-        <TextInput
-          className="p-3 mb-4 text-gray-700 border border-gray-300 rounded-md"
-          value={formData.name}
-          onChangeText={(text) => setFormData({ ...formData, name: text })}
-          placeholder="John Doe"
-        />
-
-        {/* Lost/Found Radio Buttons */}
-        <View className="flex-row mb-4">
-          <TouchableOpacity
-            className="flex-row items-center mr-6"
-            onPress={() => setFormData({ ...formData, type: 'lost' })}
-          >
-            <View className={`h-5 w-5 rounded-full border border-gray-300 mr-2 items-center justify-center
-              ${formData.type === 'lost' ? 'bg-blue-500 border-blue-500' : 'bg-white'}`}>
-              {formData.type === 'lost' && (
-                <View className="w-3 h-3 bg-white rounded-full" />
+          {/* Form Fields */}
+          <View className="space-y-5">
+            {/* Reporter Name */}
+            <View>
+              <Text className="mb-1 text-gray-600">Your Name *</Text>
+              <TextInput
+                className={`p-3 border rounded-lg ${
+                  errors.ReporterName ? "border-red-500" : "border-gray-300"
+                }`}
+                value={formData.ReporterName}
+                onChangeText={(text) =>
+                  setFormData({ ...formData, ReporterName: text })
+                }
+                placeholder="Enter your name"
+              />
+              {errors.ReporterName && (
+                <Text className="text-red-500 text-sm mt-1">
+                  {errors.ReporterName}
+                </Text>
               )}
             </View>
-            <Text className="text-gray-700">Lost</Text>
-          </TouchableOpacity>
 
-          <TouchableOpacity
-            className="flex-row items-center"
-            onPress={() => setFormData({ ...formData, type: 'found' })}
-          >
-            <View className={`h-5 w-5 rounded-full border border-gray-300 mr-2 items-center justify-center
-              ${formData.type === 'found' ? 'bg-blue-500 border-blue-500' : 'bg-white'}`}>
-              {formData.type === 'found' && (
-                <View className="w-3 h-3 bg-white rounded-full" />
+            {/* Item Type Selection */}
+            <View>
+              <Text className="mb-2 text-gray-600">Item Type *</Text>
+              <View className="flex-row space-x-4">
+                {["Lost", "Found"].map((type) => (
+                  <TouchableOpacity
+                    key={type}
+                    onPress={() => setFormData({ ...formData, ItemType: type })}
+                    className={`flex-row items-center px-4 py-2 rounded-xl border ${
+                      formData.ItemType === type
+                        ? "bg-[#40A2B2] border-[#40A2B2]"
+                        : "border-gray-300"
+                    }`}
+                  >
+                    <Text
+                      className={`${
+                        formData.ItemType === type
+                          ? "text-white"
+                          : "text-gray-700"
+                      }`}
+                    >
+                      {type}
+                    </Text>
+                  </TouchableOpacity>
+                ))}
+              </View>
+            </View>
+
+            {/* Title */}
+            <View>
+              <Text className="mb-1 text-gray-600">Title *</Text>
+              <TextInput
+                className={`p-3 border rounded-lg ${
+                  errors.Title ? "border-red-500" : "border-gray-300"
+                }`}
+                value={formData.Title}
+                onChangeText={(text) =>
+                  setFormData({ ...formData, Title: text })
+                }
+                placeholder="Brief title describing the item"
+              />
+              {errors.Title && (
+                <Text className="text-red-500 text-sm mt-1">
+                  {errors.Title}
+                </Text>
               )}
             </View>
-            <Text className="text-gray-700">Found</Text>
-          </TouchableOpacity>
+
+            {/* Description */}
+            <View>
+              <Text className="mb-1 text-gray-600">Description *</Text>
+              <TextInput
+                className={`p-4 border rounded-lg ${
+                  errors.Description ? "border-red-500" : "border-gray-300"
+                } min-h-[160px]`} // Increased padding and minimum height
+                value={formData.Description}
+                onChangeText={(text) =>
+                  setFormData({ ...formData, Description: text })
+                }
+                placeholder="Detailed description of the item"
+                multiline
+                numberOfLines={6} // Increased number of lines
+                textAlignVertical="top"
+              />
+              {errors.Description && (
+                <Text className="text-red-500 text-sm mt-1">
+                  {errors.Description}
+                </Text>
+              )}
+            </View>
+
+            {/* Contact Number */}
+            <View>
+              <Text className="mb-1 text-gray-600">Contact Number *</Text>
+              <TextInput
+                className={`p-3 border rounded-lg ${
+                  errors.ContactNo ? "border-red-500" : "border-gray-300"
+                }`}
+                value={formData.ContactNo}
+                onChangeText={(text) =>
+                  setFormData({ ...formData, ContactNo: text })
+                }
+                placeholder="Your contact number"
+                keyboardType="phone-pad"
+              />
+              {errors.ContactNo && (
+                <Text className="text-red-500 text-sm mt-1">
+                  {errors.ContactNo}
+                </Text>
+              )}
+            </View>
+
+            {/* Submit Button */}
+            <TouchableOpacity
+              onPress={handleSubmit}
+              disabled={loading}
+              className={`py-3 rounded-lg ${
+                loading ? "bg-gray-400" : "bg-[#40A2B2]"
+              }`}
+            >
+              <Text className="text-white text-center font-semibold">
+                {loading ? "Submitting..." : "Submit Report"}
+              </Text>
+            </TouchableOpacity>
+          </View>
         </View>
-
-        {/* Title Input */}
-        <Text className="mb-2 text-slate-600">Title</Text>
-        <TextInput
-          className="p-3 mb-4 text-gray-700 border border-gray-300 rounded-md"
-          value={formData.title}
-          onChangeText={(text) => setFormData({ ...formData, title: text })}
-          placeholder="Lost Item: Black Laptop Bag on Ruhuna Train"
-        />
-
-        {/* Description Input */}
-        <Text className="mb-2 text-slate-600">Description</Text>
-        <TextInput
-          className="p-3 mb-4 text-gray-700 border border-gray-300 rounded-md"
-          value={formData.description}
-          onChangeText={(text) => setFormData({ ...formData, description: text })}
-          placeholder="Describe the item and any relevant details"
-          multiline
-          numberOfLines={4}
-          textAlignVertical="top"
-        />
-
-        {/* Contact Number Input */}
-        <Text className="mb-2 text-slate-600">Contact Number</Text>
-        <TextInput
-          className="p-3 mb-6 text-gray-700 border border-gray-300 rounded-md"
-          value={formData.contactNumber}
-          onChangeText={(text) => setFormData({ ...formData, contactNumber: text })}
-          placeholder="0552224104"
-          keyboardType="phone-pad"
-        />
-
-        {/* Submit Button */}
-        <TouchableOpacity
-          className="items-center p-4 bg-blue-500 rounded-md"
-          onPress={handleSubmit}
-        >
-          <Text className="font-semibold text-white">Submit</Text>
-        </TouchableOpacity>
       </ScrollView>
     </SafeAreaView>
   );
 };
 
-export default LostAndFound;
+export default ReportItem;

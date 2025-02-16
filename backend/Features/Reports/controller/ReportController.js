@@ -27,13 +27,21 @@ const getReport = async (req, res) => {
   }
 };
 
-// POST a new report
+// Add this function after the getReport function
 
-// Modified postReport function
+// Create new report
 const postReport = async (req, res) => {
   try {
+    // Generate a unique report ID with timestamp and random number
+    const timestamp = new Date().getTime();
+    const random = Math.floor(Math.random() * 1000)
+      .toString()
+      .padStart(3, "0");
+    const reportId = `RPT${timestamp}${random}`;
+
+    // Create new report with generated ID and request body data
     const newReport = await Report.create({
-      ReportID: req.body.ReportID,
+      ReportID: reportId,
       Name: req.body.Name,
       NIC: req.body.NIC,
       Type: req.body.Type,
@@ -41,51 +49,26 @@ const postReport = async (req, res) => {
       ClosestStation: req.body.ClosestStation,
     });
 
-    // WebSocket broadcast
-    try {
-      const ws = new WebSocket("ws://localhost:3000");
-      ws.on("open", () => {
-        ws.send(
-          JSON.stringify({
-            type: "NEW_REPORT",
-            data: newReport,
-          })
-        );
-        ws.close();
-      });
-    } catch (wsError) {
-      console.error("WebSocket error:", wsError);
-      // Don't fail the request if WebSocket fails
-    }
-
-    return res.status(201).json(newReport);
+    // Send success response
+    res.status(201).json({
+      message: "Report created successfully",
+      report: newReport,
+    });
   } catch (error) {
-    console.error("Report creation error:", error);
-    if (error.name === "SequelizeValidationError") {
-      return res.status(400).json({
-        error: "Validation error",
-        errors: error.errors.reduce(
-          (acc, err) => ({
-            ...acc,
-            [err.path]: err.message,
-          }),
-          {}
-        ),
-      });
-    }
-    return res.status(500).json({
+    console.error("Error creating report:", error);
+    res.status(500).json({
       error: "Failed to create report",
       details: error.message,
     });
   }
 };
 
-// DELETE a report by ID
+// Fix delete function
 const deleteReport = async (req, res) => {
   const id = req.params.id;
   try {
     const rowsDeleted = await Report.destroy({
-      where: { ID: id },
+      where: { ReportID: id }, // Changed from ID to ReportID
     });
     if (rowsDeleted > 0) {
       res.json({ message: "Report deleted successfully" });
@@ -97,13 +80,15 @@ const deleteReport = async (req, res) => {
   }
 };
 
-// PUT (update) a report by ID
+// Fix update function
 const putReport = async (req, res) => {
   const id = req.params.id;
   const updatedData = req.body;
 
   try {
-    const report = await Report.findByPk(id);
+    const report = await Report.findOne({
+      where: { ReportID: id }, // Changed from findByPk to findOne with ReportID
+    });
     if (report) {
       await report.update(updatedData);
       res.json({ message: "Report updated successfully", report });
