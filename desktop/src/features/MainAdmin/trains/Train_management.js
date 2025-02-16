@@ -53,7 +53,7 @@ const TrainManagement = () => {
         type: "text",
         data: "",
         type: "text",
-        placeholderholder: "Name",
+        placeholder: "Name",
         validation: Joi.string()
          .required()
          .messages({
@@ -68,7 +68,7 @@ const TrainManagement = () => {
         type: "text",
         data: "",
         type: "text",
-        placeholderholder: "Train ID",
+        placeholder: "Train ID",
         validation: Joi.string()
          .required()
         //  .pattern(/^[A-Z]\d{4}$/)
@@ -83,7 +83,7 @@ const TrainManagement = () => {
         type: "text",
         data: "",
         type: "text",
-        placeholderholder: "Start Station",
+        placeholder: "Start Station",
         validation: Joi.string()
          .required()
          .messages({
@@ -96,7 +96,7 @@ const TrainManagement = () => {
         type: "text",
         data: "",
         type: "text",
-        placeholderholder: "End Station",
+        placeholder: "End Station",
         validation: Joi.string()
          .required()
          .messages({
@@ -123,7 +123,7 @@ const TrainManagement = () => {
         key: "EndTime",
         type: "time",
         data: "",
-        placeholderholder: "End Time",
+        placeholder: "End Time",
         validation: Joi.string()
         // .pattern(/^([01]\d|2[0-3]):([0-5]\d))$/)
          .required()
@@ -139,25 +139,24 @@ const TrainManagement = () => {
     const [inputs, setInputs] = useState(inputDataStructure);
 
     const inputStoppingDataStructure = {
-      StationName:{
-        key: "StationName",
+      StationID:{
+        key: "StationID",
         type: "text",
         data: "",
         type: "text",
-        placeholderholder: "Station Name",
+        placeholder: "Station ID",
         validation: Joi.string()
         .required()
         .messages({
-          "string.empty": "Station Name should not be empty",
-          "any.required": "Station Name is required",
+          "string.empty": "Station ID should not be empty",
+          "any.required": "Station ID is required",
         })
       },
       ArrivalTime:{
         key: "ArrivalTime",
         type: "time",
         data: "",
-   
-        placeholderholder: "Arrival Time",
+        placeholder: "Arrival Time",
         validation: Joi.string()
         // .pattern(/^([01]\d|2[0-3]):([0-5]\d))$/)
         .required()
@@ -172,7 +171,7 @@ const TrainManagement = () => {
         key: "DepatureTime",
         type: "time",
         data: "",
-        placeholderholder: "Arrival Time",
+        placeholder: "Depature Time",
         validation: Joi.string()
         // .pattern(/^([01]\d|2[0-3]):([0-5]\d))$/)
         .required()
@@ -217,7 +216,7 @@ const TrainManagement = () => {
       stoppingPoints: [
         ...prev.stoppingPoints,
         {
-          StationName: newStop.StationName.data,
+          StationID: newStop.StationID.data,
           ArrivalTime: newStop.ArrivalTime.data,
           DepartureTime: newStop.DepartureTime.data,
         },
@@ -256,11 +255,11 @@ const TrainManagement = () => {
     if (editTrain) {
       setTrains((prev) =>
         prev.map((train) =>
-          train.ID === editTrain.ID ? { ...editTrain, ...updatedForm } : train
+          train.TrainID === editTrain.TrainID ? { ...editTrain, ...updatedForm } : train
         )
       );
       try {
-        await apiService.put(`/api/trains/${editTrain.ID}`, updatedForm);
+        await apiService.put(`/api/trains/${editTrain.TrainID}`, updatedForm);
         console.log("Train updated successfully!");
         toast.success("Train updated successfully!");
       } catch (error) {
@@ -268,10 +267,11 @@ const TrainManagement = () => {
         toast.error("Failed to update train. Please try again.");
       }
     } else {
-      setTrains((prev) => [...prev, { id: Date.now(), ...updatedForm }]);
+      setTrains((prev) => [...prev, { TrainId: Date.now(), ...updatedForm }]);
       console.log("4",updatedForm);
       try {
         await apiService.post("/api/trains/", updatedForm);
+
         console.log("Train added successfully!");
         toast.success("Train added successfully!");
       } catch (error) {
@@ -290,6 +290,7 @@ const TrainManagement = () => {
       EndTime: "",
       stoppingPoints: [],
     });
+    setInputs(inputDataStructure);
     setEditTrain(null);
   };
 
@@ -307,13 +308,24 @@ const TrainManagement = () => {
     }
   };
   useEffect(() => {
-    console.log(fetchTrains());
+    fetchTrains()
   }, []);
   
   // Edit train
   const handleEdit = (train) => {
     setEditTrain(train);
     setForm(train);
+
+    const updatedInputs = {
+      Name: { ...inputs.Name, data: train.Name },
+      TrainID: { ...inputs.TrainID, data: train.TrainID },
+      StartStations: { ...inputs.StartStations, data: train.StartStations },
+      EndStations: { ...inputs.EndStations, data: train.EndStations },
+      StartTime: { ...inputs.StartTime, data: train.StartTime },
+      EndTime: { ...inputs.EndTime, data: train.EndTime },
+    };
+
+    setInputs(updatedInputs);
   };
 
   // Remove train
@@ -325,7 +337,7 @@ const TrainManagement = () => {
       toast.success("Train removed successfully!");
       //need fetch code after delete
       
-      setTrains((prevTrains) => prevTrains.filter((train) => train.id !== id));
+      setTrains((prevTrains) => prevTrains.filter((train) => train.TrainID !== id));
      await fetchTrains();
     } catch (error) {
       console.error("Failed to remove train. Please try again.");
@@ -348,7 +360,6 @@ const TrainManagement = () => {
       <table className="w-full text-left bg-white rounded-lg shadow-md">
         <thead className="bg-gray-200">
           <tr>
-            <th className="py-2 px-4">#</th>
             <th className="py-2 px-4">Train Name</th>
             <th className="py-2 px-4">Train ID</th>
             <th className="py-2 px-4">Start Station</th>
@@ -361,8 +372,7 @@ const TrainManagement = () => {
         </thead>
         <tbody>
           {trains.map((train, index) => (
-            <tr key={train.id} className="border-b">
-              <td className="py-2 px-4">{index + 1}</td>
+            <tr key={train.TrainID} className="border-b">
               <td className="py-2 px-4">{train.Name}</td>
               <td className="py-2 px-4">{train.TrainID}</td>
               <td className="py-2 px-4">{train.StartStations}</td>
@@ -372,7 +382,7 @@ const TrainManagement = () => {
               <td className="py-2 px-4">
                 {train.stoppingPoints.map((stop, i) => (
                   <div key={i}>
-                    {stop.StationName} ({stop.ArrivalTime} - {stop.DepartureTime})
+                    {stop.StationID} ({stop.ArrivalTime} - {stop.DepartureTime})
                   </div>
                 ))}
               </td>
@@ -384,7 +394,7 @@ const TrainManagement = () => {
                   Edit
                 </button>
                 <button
-                  onClick={() => handleRemove(train.ID)}
+                  onClick={() => handleRemove(train.TrainID)}
                   className="px-4 py-1 bg-red-500 text-white rounded hover:bg-red-600"
                 >
                   Remove
@@ -402,7 +412,7 @@ const TrainManagement = () => {
         </h2>
          <div className="grid grid-cols-2 gap-4">
 
-                    <Input input={inputs.Name || ""} handleChange={handleChange} labelClassName={inputs.Name}/>
+                    <Input input={inputs.Name || ""} handleChange={handleChange} labelClassName={inputs.Name} />
                     <Input input={inputs.TrainID || ""} handleChange={handleChange} labelClassName={inputs.TrainID} />
                     <Input input={inputs.StartStations || ""} handleChange={handleChange} labelClassName={inputs.StartStations} />
                     <Input input={inputs.EndStations || ""} handleChange={handleChange} labelClassName={inputs.EndStations} />
@@ -415,7 +425,7 @@ const TrainManagement = () => {
           {form.stoppingPoints.map((stop, index) => (
             <div key={index} className="flex items-center space-x-4 mb-2">
               <span>
-                {stop.StationName} ({stop.ArrivalTime} - {stop.DepartureTime})
+                {stop.StationID} ({stop.ArrivalTime} - {stop.DepartureTime})
               </span>
               <button
                 onClick={() => handleRemoveStop(index)}
@@ -427,10 +437,9 @@ const TrainManagement = () => {
           ))}
           <div className="grid grid-cols-3 gap-4 mt-4">
         
-        <Input input={newStop.StationName || ""} handleChange={handleStopChange} labelClassName={newStop.StationName} />
+        <Input input={newStop.StationID || ""} handleChange={handleStopChange} labelClassName={newStop.StationID} />
         <Input input={newStop.ArrivalTime || ""} handleChange={handleStopChange} labelClassName={newStop.ArrivalTime} /> 
         <Input input={newStop.DepartureTime || ""} handleChange={handleStopChange} labelClassName={newStop.DepartureTime} />
-      
       
           <button
             onClick={handleAddStop}

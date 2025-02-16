@@ -58,8 +58,6 @@ const DashboardPage = ({ section}) => {
         </div>
         <SideBar section={section1} isExpanded={isExpanded}
         setSection={setSection} />
-        {/* <SideBar section={section1} isExpanded={isExpanded}
-        setSection={setSection} /> */}
 
       </div>
       
