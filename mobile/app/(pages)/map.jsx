@@ -1,111 +1,189 @@
-import React, { useState, useEffect } from 'react';
-import { View, TouchableOpacity, Platform, Alert, TextInput } from 'react-native';
-import MapView, { Marker, PROVIDER_DEFAULT, PROVIDER_GOOGLE } from 'react-native-maps';
-import * as Location from 'expo-location';
-import { Ionicons } from '@expo/vector-icons';
-import { styled } from 'nativewind';
-import { getDatabase, ref, onValue, off } from 'firebase/database';
+import React, { useState, useEffect } from "react";
+import {
+  View,
+  Text,
+  TouchableOpacity,
+  Platform,
+  Alert,
+  TextInput,
+  Animated,
+  FlatList,
+  Dimensions,
+  PanResponder,
+} from "react-native";
+import MapView, {
+  Marker,
+  PROVIDER_DEFAULT,
+  PROVIDER_GOOGLE,
+} from "react-native-maps";
+import * as Location from "expo-location";
+import { Ionicons } from "@expo/vector-icons";
+import { styled } from "nativewind";
+import { database, ref, onValue, off } from "../../config/firebase";
+import { API_URL } from "@env";
 
 const StyledMapView = styled(MapView);
+const screenHeight = Dimensions.get("window").height;
 
-// Previous map styles remain the same...
 const androidMapStyle = [
-  // ... (keeping the existing style)
+  {
+    featureType: "all",
+    elementType: "geometry",
+    stylers: [{ color: "#f5f5f5" }],
+  },
+  {
+    featureType: "road",
+    elementType: "geometry",
+    stylers: [{ color: "#ffffff" }],
+  },
+  {
+    featureType: "water",
+    elementType: "geometry",
+    stylers: [{ color: "#e9e9e9" }],
+  },
 ];
 
 const Map = () => {
   const [location, setLocation] = useState(null);
   const [mapRef, setMapRef] = useState(null);
-  const [searchTrain, setSearchTrain] = useState('');
+  const [searchTrain, setSearchTrain] = useState("");
   const [trainLocation, setTrainLocation] = useState(null);
   const [isTracking, setIsTracking] = useState(false);
-  const [unsubscribe, setUnsubscribe] = useState(null); // For handling the unsubscribe function
+  const [unsubscribe, setUnsubscribe] = useState(null);
+  const [trains, setTrains] = useState([]);
+  const [showDropdown, setShowDropdown] = useState(false);
+  const [selectedTrain, setSelectedTrain] = useState(null);
+  const [cardHeight] = useState(new Animated.Value(0));
 
   const initialRegion = {
     latitude: 6.0794,
-    longitude: 80.1920,
+    longitude: 80.192,
     latitudeDelta: 0.0922,
     longitudeDelta: 0.0421,
   };
 
-  // Function to start tracking a specific train
+  const panResponder = PanResponder.create({
+    onStartShouldSetPanResponder: () => true,
+    onPanResponderMove: (_, gestureState) => {
+      if (gestureState.dy > 0) {
+        cardHeight.setValue(-gestureState.dy);
+      }
+    },
+    onPanResponderRelease: (_, gestureState) => {
+      if (gestureState.dy > 50) {
+        Animated.spring(cardHeight, {
+          toValue: 0,
+          useNativeDriver: false,
+        }).start();
+      } else {
+        Animated.spring(cardHeight, {
+          toValue: selectedTrain ? 300 : 0,
+          useNativeDriver: false,
+        }).start();
+      }
+    },
+  });
+
+  const clearSearch = () => {
+    setSearchTrain("");
+    setSelectedTrain(null);
+    stopTrackingTrain();
+    setShowDropdown(false);
+  };
+
+  const fetchTrains = async () => {
+    try {
+      const response = await fetch(`${API_URL}/trains`);
+      const data = await response.json();
+      if (data.success) {
+        setTrains(data.data);
+      }
+    } catch (error) {
+      console.error("Error fetching trains:", error);
+      Alert.alert("Error", "Failed to fetch train list");
+    }
+  };
+
   const startTrackingTrain = (trainId) => {
     if (!trainId.trim()) {
-      Alert.alert('Error', 'Please enter a valid train ID');
+      Alert.alert("Error", "Please enter a valid train ID");
       return;
     }
 
-    const db = getDatabase();
-    const trainRef = ref(db, `/${trainId}`);
-    setIsTracking(true);
+    try {
+      const trainRef = ref(database, `/trains/${trainId}/location`);
+      setIsTracking(true);
 
-    // Listen for real-time updates
-    const unsubscribeFromTrain = onValue(trainRef, (snapshot) => {
-      const data = snapshot.val();
-      if (data) {
-        const newTrainLocation = {
-          latitude: data.latitude,
-          longitude: data.longitude,
-          timestamp: data.timestamp,
-        };
-        setTrainLocation(newTrainLocation);
+      const unsubscribeFromTrain = onValue(
+        trainRef,
+        (snapshot) => {
+          const data = snapshot.val();
+          if (data && data.latitude && data.longitude) {
+            const newTrainLocation = {
+              latitude: parseFloat(data.latitude),
+              longitude: parseFloat(data.longitude),
+              timestamp: data.timestamp || Date.now(),
+            };
+            setTrainLocation(newTrainLocation);
 
-        // Animate map to new train location
-        if (mapRef) {
-          mapRef.animateToRegion({
-            latitude: data.latitude,
-            longitude: data.longitude,
-            latitudeDelta: 0.0122,
-            longitudeDelta: 0.0121,
-          }, 1000);
+            if (mapRef) {
+              mapRef.animateToRegion(
+                {
+                  latitude: newTrainLocation.latitude,
+                  longitude: newTrainLocation.longitude,
+                  latitudeDelta: 0.0122,
+                  longitudeDelta: 0.0121,
+                },
+                1000
+              );
+            }
+          } else {
+            console.error("No location data available for train:", trainId);
+            Alert.alert("Error", "No location data available for this train");
+          }
+        },
+        (error) => {
+          console.error("Firebase error:", error);
+          Alert.alert("Error", "Failed to track train location");
+          setIsTracking(false);
         }
-      } else {
-        Alert.alert('Error', 'Invalid Train Name');
-        setIsTracking(false);
-      }
-    }, (error) => {
-      console.error('Error tracking train:', error);
-      Alert.alert('Error', 'Failed to track train location');
-      setIsTracking(false);
-    });
+      );
 
-    // Set the unsubscribe function
-    setUnsubscribe(() => unsubscribeFromTrain);
-  };
-
-  // Function to stop tracking the train
-  const stopTrackingTrain = () => {
-    if (unsubscribe) {
-      unsubscribe(); // Unsubscribe from train updates
-      setUnsubscribe(null);
+      setUnsubscribe(() => unsubscribeFromTrain);
+    } catch (error) {
+      console.error("Error starting train tracking:", error);
+      Alert.alert("Error", "Failed to start train tracking");
       setIsTracking(false);
-      setTrainLocation(null); // Optionally reset the train location
-      Alert.alert('Tracking Stopped', 'You have stopped tracking the train.');
     }
   };
 
-  // Request location permission and get current location
+  const stopTrackingTrain = () => {
+    if (unsubscribe) {
+      unsubscribe();
+      setUnsubscribe(null);
+      setIsTracking(false);
+      setTrainLocation(null);
+      setSelectedTrain(null);
+      Animated.spring(cardHeight, {
+        toValue: 0,
+        useNativeDriver: false,
+      }).start();
+    }
+  };
+
   const requestLocationPermission = async () => {
     try {
       const { status } = await Location.requestForegroundPermissionsAsync();
-      
-      if (status !== 'granted') {
+      if (status !== "granted") {
         Alert.alert(
           "Permission Denied",
-          "Please enable location services to see nearby train tracks.",
-          [{ text: "OK" }]
+          "Please enable location services to see nearby train tracks."
         );
         return;
       }
-
       getCurrentLocation();
-    } catch (err) {
-      Alert.alert(
-        "Error",
-        "Failed to get location permissions",
-        [{ text: "OK" }]
-      );
-      console.warn(err);
+    } catch (error) {
+      Alert.alert("Error", "Failed to get location permissions");
     }
   };
 
@@ -113,11 +191,9 @@ const Map = () => {
     try {
       const location = await Location.getCurrentPositionAsync({
         accuracy: Location.Accuracy.High,
-        timeInterval: 5000,
       });
-      
+
       const { latitude, longitude } = location.coords;
-      
       const newRegion = {
         latitude,
         longitude,
@@ -126,69 +202,119 @@ const Map = () => {
       };
 
       setLocation(newRegion);
-      mapRef?.animateToRegion(newRegion, Platform.OS === 'ios' ? 500 : 1000);
+      mapRef?.animateToRegion(newRegion, 1000);
     } catch (error) {
       Alert.alert(
         "Location Error",
-        "Unable to fetch your location. Please check your settings.",
-        [{ text: "OK" }]
+        "Unable to fetch your location. Please check your settings."
       );
-      console.warn('Error getting location:', error);
     }
   };
 
   useEffect(() => {
     requestLocationPermission();
+    return () => {
+      if (unsubscribe) {
+        unsubscribe();
+      }
+    };
   }, []);
 
   return (
     <View className="flex-1">
-      {/* Search Bar */}
-      <View className="absolute top-10 left-4 right-4 z-10 flex-row items-center bg-white rounded-lg shadow-lg p-2">
-        <TextInput
-          className="flex-1 px-4 py-2 text-gray-800"
-          placeholder="Enter Train ID to track"
-          value={searchTrain}
-          onChangeText={setSearchTrain}
-        />
-        <TouchableOpacity 
-          className="ml-2 bg-blue-500 p-2 rounded-lg"
-          onPress={() => startTrackingTrain(searchTrain)}
-        >
-          <Ionicons 
-            name={isTracking ? "stop-circle" : "search"} 
-            size={24} 
-            color="white" 
+      <View className="absolute top-10 left-4 right-4 z-10">
+        <View className="flex-row items-center bg-white rounded-lg shadow-lg p-2">
+          <TextInput
+            className="flex-1 px-4 py-2 text-gray-800"
+            placeholder="Search trains..."
+            value={searchTrain}
+            onChangeText={setSearchTrain}
+            onFocus={() => {
+              fetchTrains();
+              setShowDropdown(true);
+            }}
           />
-        </TouchableOpacity>
+          {searchTrain ? (
+            <TouchableOpacity className="ml-2 p-2" onPress={clearSearch}>
+              <Ionicons name="close-circle" size={24} color="#9CA3AF" />
+            </TouchableOpacity>
+          ) : null}
+          {isTracking ? (
+            <TouchableOpacity
+              className="ml-2 bg-red-500 p-2 rounded-lg"
+              onPress={stopTrackingTrain}
+            >
+              <Ionicons name="stop-circle" size={24} color="white" />
+            </TouchableOpacity>
+          ) : (
+            <TouchableOpacity
+              className="ml-2 bg-blue-500 p-2 rounded-lg"
+              onPress={() => setShowDropdown(true)}
+            >
+              <Ionicons name="search" size={24} color="white" />
+            </TouchableOpacity>
+          )}
+        </View>
+
+        {showDropdown && (
+          <View className="mt-2 bg-white rounded-lg shadow-lg max-h-60">
+            <FlatList
+              data={trains.filter(
+                (train) =>
+                  train.Name.toLowerCase().includes(
+                    searchTrain.toLowerCase()
+                  ) ||
+                  train.TrainID.toLowerCase().includes(
+                    searchTrain.toLowerCase()
+                  )
+              )}
+              keyExtractor={(item) => item.TrainID}
+              renderItem={({ item }) => (
+                <TouchableOpacity
+                  className="p-4 border-b border-gray-200"
+                  onPress={() => {
+                    setSelectedTrain(item);
+                    setSearchTrain(item.Name);
+                    setShowDropdown(false);
+                    startTrackingTrain(item.TrainID);
+                    Animated.spring(cardHeight, {
+                      toValue: 300,
+                      useNativeDriver: false,
+                    }).start();
+                  }}
+                >
+                  <Text className="text-gray-800 font-medium">{item.Name}</Text>
+                  <Text className="text-gray-600 text-sm">
+                    ID: {item.TrainID}
+                  </Text>
+                </TouchableOpacity>
+              )}
+            />
+          </View>
+        )}
       </View>
 
-      {/* Map View */}
       <StyledMapView
         ref={(ref) => setMapRef(ref)}
-        className="w-full h-full"
+        className="flex-1"
         initialRegion={initialRegion}
-        showsUserLocation={false}  
-        showsMyLocationButton={false}
-        showsCompass={true}
-        rotateEnabled={true}
-        provider={Platform.OS === 'ios' ? PROVIDER_DEFAULT : PROVIDER_GOOGLE}
-        customMapStyle={Platform.OS === 'android' ? androidMapStyle : null}
-        mapType={Platform.OS === 'ios' ? 'mutedStandard' : 'standard'}
-        showsTraffic={false}
-        showsBuildings={true}
-        showsPointsOfInterest={true}
-        showsIndoors={true}
+        showsUserLocation
+        showsMyLocationButton
+        showsCompass
+        rotateEnabled
+        provider={Platform.OS === "ios" ? PROVIDER_DEFAULT : PROVIDER_GOOGLE}
+        customMapStyle={Platform.OS === "android" ? androidMapStyle : null}
       >
-        {/* Train Marker */}
         {trainLocation && (
           <Marker
             coordinate={{
               latitude: trainLocation.latitude,
               longitude: trainLocation.longitude,
             }}
-            title={`Train ${searchTrain}`}
-            description={`Last updated: ${new Date(trainLocation.timestamp).toLocaleTimeString()}`}
+            title={selectedTrain?.Name || `Train ${searchTrain}`}
+            description={`Last updated: ${new Date(
+              trainLocation.timestamp
+            ).toLocaleTimeString()}`}
           >
             <View className="bg-blue-500 p-2 rounded-lg">
               <Ionicons name="train" size={24} color="white" />
@@ -196,20 +322,45 @@ const Map = () => {
           </Marker>
         )}
       </StyledMapView>
-      
-      {/* Stop Tracking Button */}
-      {isTracking && (
-        <TouchableOpacity
-          className="absolute right-4 bottom-20 bg-red-500 p-3 rounded-full"
-          onPress={stopTrackingTrain}
-          activeOpacity={0.7}
+
+      {selectedTrain && (
+        <Animated.View
+          {...panResponder.panHandlers}
+          style={{
+            position: "absolute",
+            bottom: 0,
+            left: 0,
+            right: 0,
+            height: cardHeight,
+            backgroundColor: "white",
+            borderTopLeftRadius: 20,
+            borderTopRightRadius: 20,
+            padding: 20,
+            shadowColor: "#000",
+            shadowOffset: { width: 0, height: -2 },
+            shadowOpacity: 0.25,
+            shadowRadius: 3.84,
+            elevation: 5,
+          }}
         >
-          <Ionicons 
-            name="stop-circle" 
-            size={24} 
-            color="white" 
-          />
-        </TouchableOpacity>
+          <View className="w-12 h-1 bg-gray-300 rounded-full self-center mb-4" />
+          <Text className="text-xl font-bold mb-2">{selectedTrain.Name}</Text>
+          <Text className="text-gray-600 mb-2">
+            Train ID: {selectedTrain.TrainID}
+          </Text>
+          <Text className="text-gray-600 mb-2">
+            Route: {selectedTrain.StartStations} → {selectedTrain.EndStations}
+          </Text>
+          <Text className="text-gray-600 mb-2">
+            Time: {selectedTrain.StartTime} - {selectedTrain.EndTime}
+          </Text>
+          {trainLocation && (
+            <Text className="text-gray-600">
+              Last Updated:{" "}
+              {new Date(trainLocation.timestamp).toLocaleTimeString()}
+            </Text>
+          )}
+        </Animated.View>
       )}
     </View>
   );
