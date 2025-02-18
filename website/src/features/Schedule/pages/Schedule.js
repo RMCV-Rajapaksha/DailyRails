@@ -1,10 +1,10 @@
 import React, { useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
 import { MapPin, Train, ChevronDown, ChevronUp } from "lucide-react";
 import { motion } from "framer-motion";
-import axios from "axios";
 import Button from "../../../components/Button";
-import InputField from "../../../components/InputField";
 import Spinner from "../../../components/Loader"; // Assume you have a Spinner component
+import { fetchTrainSchedule } from "../../../store/actions/trainSchedleActions";
 
 const stations = [
   "Colombo Fort",
@@ -67,9 +67,10 @@ const TrainSchedule = () => {
     endLocation: "",
   });
 
-  const [scheduleData, setScheduleData] = useState([]);
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState("");
+  const dispatch = useDispatch();
+  const { scheduleData, isLoading, error } = useSelector(
+    (state) => state.trainSchedule
+  );
   const [expandedTrain, setExpandedTrain] = useState(null);
 
   const handleInputChange = (e) => {
@@ -80,32 +81,8 @@ const TrainSchedule = () => {
     }));
   };
 
-  const handleSearch = async () => {
-    setLoading(true);
-    setError("");
-    try {
-      const response = await axios.post(
-        "http://localhost:4000/api/trains/search",
-        JSON.stringify({
-          Location_1: formData.startLocation,
-          Location_2: formData.endLocation,
-        }),
-        {
-          headers: {
-            "Content-Type": "application/json",
-          },
-        }
-      );
-      if (response.data.success) {
-        setScheduleData(response.data.data);
-      } else {
-        setError("Error fetching train data: " + response.data.message);
-      }
-    } catch (error) {
-      setError("Error fetching train data: " + error.message);
-    } finally {
-      setLoading(false);
-    }
+  const handleSearch = () => {
+    dispatch(fetchTrainSchedule(formData.startLocation, formData.endLocation));
   };
 
   const toggleTrainDetails = (trainID) => {
@@ -235,7 +212,6 @@ const TrainSchedule = () => {
           </motion.div>
 
           {/* Search Button */}
-
           <Button
             onClick={handleSearch}
             className="text-white rounded-sm hover:bg-secondary"
@@ -246,7 +222,7 @@ const TrainSchedule = () => {
       </motion.div>
 
       {/* Loading Spinner */}
-      {loading && (
+      {isLoading && (
         <div className="flex justify-center my-4">
           <Spinner />
         </div>
@@ -256,7 +232,7 @@ const TrainSchedule = () => {
       {error && <div className="my-4 text-center text-red-500">{error}</div>}
 
       {/* Results Table */}
-      {!loading && scheduleData.length > 0 && (
+      {!isLoading && scheduleData.length > 0 && (
         <motion.div
           variants={tableVariants}
           className="overflow-x-auto bg-white rounded-lg shadow-sm"

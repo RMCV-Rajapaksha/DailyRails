@@ -1,4 +1,4 @@
-import axios from "axios";
+import axiosInstance from "../../utils/axiosInstance";
 
 export const FETCH_ANNOUNCEMENTS_REQUEST = "FETCH_ANNOUNCEMENTS_REQUEST";
 export const FETCH_ANNOUNCEMENTS_SUCCESS = "FETCH_ANNOUNCEMENTS_SUCCESS";
@@ -23,8 +23,8 @@ export const fetchAnnouncements =
   async (dispatch) => {
     dispatch(fetchAnnouncementsRequest());
     try {
-      const response = await axios.get(
-        `http://localhost:4000/api/announcements?page=${page}&limit=${limit}`
+      const response = await axiosInstance.get(
+        `/announcements?page=${page}&limit=${limit}`
       );
       dispatch(
         fetchAnnouncementsSuccess(
