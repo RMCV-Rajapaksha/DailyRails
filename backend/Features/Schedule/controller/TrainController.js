@@ -2,6 +2,7 @@ const { Sequelize, DataTypes, Op } = require("sequelize");
 const db = require("../../../models");
 const StoppingPoint = db.StoppingPoint;
 const Train = db.Train;
+const Station = db.Station;
 
 // Modified createTrain function
 const createTrain = async (req, res) => {
@@ -252,104 +253,93 @@ const editTrain = async (req, res) => {
     });
   }
 };
-
-const getStoppingPointsByLocations = async (req, res) => {
+const getTrainsBetweenStations = async (req, res) => {
   const { Location_1, Location_2 } = req.body;
 
   try {
-    const stoppingPoints = await StoppingPoint.findAll({
-      where: {
-        StationID: {
-          [Op.or]: [Location_1, Location_2],
-        },
-      },
-      include: [
-        {
-          model: db.Station,
-          as: "station",
-        },
-      ],
+    // Check if the stations are available in the Station table
+    const station1 = await Station.findOne({
+      where: { StationName: Location_1 },
+    });
+    const station2 = await Station.findOne({
+      where: { StationName: Location_2 },
     });
 
-    res.status(200).json(stoppingPoints);
-  } catch (error) {
-    res.status(500).json({ error: error.message });
-  }
-};
+    if (!station1 || !station2) {
+      return res
+        .status(404)
+        .json({ message: "One or both stations not found" });
+    }
 
-// Update the getTrainDetailsByLocations function
-const getTrainDetailsByLocations = async (req, res) => {
-  const { Location_1, Location_2 } = req.body;
+    // Get the StationID for both stations
+    const station1ID = station1.StationID;
+    const station2ID = station2.StationID;
 
-  try {
-    // First check direct trains
-    const directTrains = await Train.findAll({
-      where: {
-        [Op.or]: [
-          {
-            StartStations: Location_1,
-            EndStations: Location_2,
-          },
-          // Also check for trains where these stations are stopping points
-          {
-            "$stoppingPoints.StationID$": {
-              [Op.in]: [Location_1, Location_2],
-            },
-          },
-        ],
-      },
+    // Search the StoppingPoint table for entries with the same TrainID that match the StationID of both stations
+    const stoppingPoints1 = await StoppingPoint.findAll({
+      where: { StationID: station1ID },
+    });
+    const stoppingPoints2 = await StoppingPoint.findAll({
+      where: { StationID: station2ID },
+    });
+
+    const trainIDs1 = stoppingPoints1.map((sp) => sp.TrainID);
+    const trainIDs2 = stoppingPoints2.map((sp) => sp.TrainID);
+
+    const commonTrainIDs = trainIDs1.filter((trainID) =>
+      trainIDs2.includes(trainID)
+    );
+
+    if (commonTrainIDs.length === 0) {
+      return res
+        .status(404)
+        .json({ message: "No trains found between the specified stations" });
+    }
+
+    // Retrieve the train details from the Train table using the TrainID, including stopping points
+    const trains = await Train.findAll({
+      where: { TrainID: commonTrainIDs },
       include: [
         {
           model: StoppingPoint,
           as: "stoppingPoints",
           include: [
             {
-              model: db.Station,
+              model: Station,
               as: "station",
-              attributes: ["StationID", "StationName"],
+              attributes: ["StationName"],
             },
           ],
         },
       ],
     });
 
-    if (directTrains.length > 0) {
-      // Filter trains to ensure they have both stations in their route
-      const validTrains = directTrains.filter((train) => {
-        const stationIds = train.stoppingPoints.map((stop) => stop.StationID);
-        return (
-          stationIds.includes(Location_1) && stationIds.includes(Location_2)
-        );
-      });
+    // Add start and end station names to the train details
+    const trainsWithStationNames = trains.map((train) => ({
+      ...train.toJSON(),
+      StartStationName: station1.StationName,
+      EndStationName: station2.StationName,
+      stoppingPoints: train.stoppingPoints.map((sp) => ({
+        ...sp.toJSON(),
+        StationName: sp.station.StationName,
+      })),
+    }));
 
-      if (validTrains.length > 0) {
-        return res.status(200).json({
-          success: true,
-          data: validTrains,
-        });
-      }
-    }
-
-    return res.status(404).json({
-      success: false,
-      message: "No trains found with the given locations",
+    return res.status(200).json({
+      success: true,
+      data: trainsWithStationNames,
     });
   } catch (error) {
-    console.error("Error in getTrainDetailsByLocations:", error);
-    return res.status(500).json({
-      success: false,
-      message: "Error fetching train details",
-      error: error.message,
-    });
+    return res.status(500).json({ message: "An error occurred", error });
   }
 };
-// Add searchTrainsByLocation to module exports
+
 module.exports = {
-  createTrain,
-  getAllTrains,
-  getTrainById,
-  deleteTrain,
-  editTrain,
-  getStoppingPointsByLocations, // Add this line
-  getTrainDetailsByLocations,
+  createTrain, //
+  getAllTrains, //
+  getTrainById, //
+  deleteTrain, //
+  editTrain, //
+
+  getTrainsBetweenStations,
 };

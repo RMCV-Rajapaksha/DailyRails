@@ -1,7 +1,7 @@
 {
   "development": {
     "username": "root",
-    "password": "Admin",
+    "password": "Chamar@12",
     "database": "DailyRails",
     "host": "localhost",
     "dialect": "mysql"
