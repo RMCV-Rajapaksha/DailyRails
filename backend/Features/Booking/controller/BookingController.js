@@ -1,6 +1,8 @@
 const db = require("../../../models");
 const { Op } = require("sequelize");
+const { sendBookingEmail } = require("../../../Services/EmailService");
 
+// Helper function to generate next booking ID
 // Helper function to generate next booking ID
 const generateNextBookingId = async () => {
   try {
@@ -31,6 +33,7 @@ const createBooking = async (req, res) => {
       classType,
       noOfSeats,
       passengerNic,
+      email,
       date,
       time,
       seatNumbers,
@@ -139,6 +142,22 @@ const createBooking = async (req, res) => {
           attributes: ["PaymentID", "Amount", "Status"],
         },
       ],
+    });
+
+    // Send booking confirmation email
+    await sendBookingEmail({
+      amount,
+      trainDetails: {
+        trainName: train.Name,
+        class: classType,
+        date,
+        time, // Include the time field here
+      },
+      seats: seatNumbers,
+      user: {
+        Name: passengerNic,
+        Email: email,
+      },
     });
 
     res.status(201).json({
