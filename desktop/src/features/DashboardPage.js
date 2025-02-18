@@ -6,7 +6,7 @@ import {
 import SideBar from "./MainAdmin/components/SideBar";
 import Booking from "./MainAdmin/tickets/BookingPage.js";
 import RoleRegistration from "../features/Account/Register/RoleRegistration.js";
-import NotificationPage from "../features/MainAdmin/Notification/pages/NotificationPage";
+import Notification from "../features/MainAdmin/Notification/Notification.js";
 import TrainSchedule from "./MainAdmin/trains/Train_schedule.js";
 import TrainManagement from "./MainAdmin/trains/Train_management.js";
 import Home from "./Pages/Home";
@@ -71,7 +71,7 @@ const DashboardPage = ({ section }) => {
             {section === "trains" && <TrainManagement />}
             {section === "tickets" && <Booking />}
             {section === "admins" && <RoleRegistration />}
-            {section === "notifications" && <NotificationPage />}
+            {section === "notifications" && <Notification />}
             {section === "losts" && <Lost />}
             {section === "founds" && <Found />}
           </div>

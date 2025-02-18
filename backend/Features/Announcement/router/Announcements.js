@@ -27,6 +27,7 @@ const validate = (req, res, next) => {
   }
   next();
 };
+
 // validateNewAnnouncement, validate,
 // Define routes
 router.get("/", getAnnouncement);

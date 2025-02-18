@@ -14,6 +14,7 @@ const generateNextBookingId = async () => {
       return "BK000001";
     }
 
+
     const lastNumber = parseInt(lastBooking.BookingID.replace("BK", ""));
     const nextNumber = (lastNumber + 1).toString().padStart(4, "0");
     return `BK${nextNumber}`;
@@ -99,6 +100,7 @@ const createBooking = async (req, res) => {
         );
       })
     );
+
 
     // Create payment record
     const payment = await db.Payment.create(
