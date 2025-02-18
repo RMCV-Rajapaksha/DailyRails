@@ -4,26 +4,16 @@ import {
   FaArrowRight,
 } from "react-icons/fa";
 import SideBar from "./MainAdmin/components/SideBar";
-
-
-// import LoginPage from "./features/Authentication/pages/LoginPage";
-// import SignUpPage from "./features/Authentication/pages/SignUpPage";
 import Tickets from "../features/MainAdmin/tickets/Tickets.js";
 import RoleRegistration from "../features/Account/Register/RoleRegistration.js";
-// import AccountReviewPage from "./features/Authentication/pages/AccountReviewPage";
-// import ReportHistory from "./features/Authentication/pages/Report_history";
-// import ReportBlockage from "./features/Authentication/pages/Report_blockage";
 import NotificationPage from "../features/MainAdmin/Notification/pages/NotificationPage";
-// import TrainManagement from "./features/MainAdmin/trains/Train_management.js";
 import TrainSchedule from "./MainAdmin/trains/Train_schedule.js";
 import TrainManagement from "./MainAdmin/trains/Train_management.js";
 import Home from "./Pages/Home";
 import Lost from "./Items/Lost.js";
 import Found from "./Items/Found.js";
 
-
-
-const DashboardPage = ({ section}) => {
+const DashboardPage = ({ section }) => {
   const [isExpanded, setIsExpanded] = useState(true);
   const [section1, setSection] = useState("admins");
 
@@ -32,54 +22,64 @@ const DashboardPage = ({ section}) => {
   };
 
   return (
-    <div className={`flex h-screen ${isExpanded ? "expanded" : "collapsed"}`}>
+    <div className="flex h-screen bg-gray-50">
       {/* Sidebar */}
-      <div
-        className={`flex flex-col items-center bg-blue-900 text-white transition-all duration-300 ${
-          isExpanded ? "w-64" : "w-16"
+      <aside
+        className={`relative flex flex-col bg-gradient-to-b from-blue-900 to-blue-800 text-white shadow-xl transition-all duration-300 ease-in-out ${
+          isExpanded ? "w-64" : "w-20"
         }`}
       >
-        <div
-          className="cursor-pointer p-3 text-2xl"
+        {/* Toggle Button */}
+        <button
+          className="absolute -right-4 top-6 z-50 flex h-8 w-8 items-center justify-center rounded-full bg-white text-blue-900 shadow-md hover:bg-gray-100 transition-colors duration-200"
           onClick={toggleSidebar}
         >
-          {isExpanded ? <FaArrowLeft /> : <FaArrowRight />}
+          {isExpanded ? (
+            <FaArrowLeft className="h-4 w-4" />
+          ) : (
+            <FaArrowRight className="h-4 w-4" />
+          )}
+        </button>
+
+        {/* Logo */}
+        <div className="flex items-center justify-center p-6">
+          <div className={`overflow-hidden rounded-xl bg-white p-2 shadow-inner transition-all duration-300 ${
+            isExpanded ? "w-40" : "w-12"
+          }`}>
+            <img
+              src={`${process.env.PUBLIC_URL}/logo.png`}
+              alt="Logo"
+              className="h-auto w-full object-contain"
+            />
+          </div>
         </div>
-        <div
-          className={`bg-white rounded-lg p-3 my-5 transition-all duration-300 ${
-            isExpanded ? "w-4/5" : "w-10"
-          }`}
-        >
-          <img
-            src={`${process.env.PUBLIC_URL}/logo.png`}
-            alt="Logo"
-            className="w-full h-auto"
+
+        {/* Sidebar Content */}
+        <div className="flex-1 overflow-y-auto px-3">
+          <SideBar
+            section={section1}
+            isExpanded={isExpanded}
+            setSection={setSection}
           />
         </div>
-        <SideBar section={section1} isExpanded={isExpanded}
-        setSection={setSection} />
-        {/* <SideBar section={section1} isExpanded={isExpanded}
-        setSection={setSection} /> */}
+      </aside>
 
-      </div>
-      
-      <div className="w-full ">
-                    {section === "home" && <Home />}
-                    {section === "schedules" && <TrainSchedule />}
-                    {section === "trains" && <TrainManagement />}
-                    {/* {section === "routes" && < />} */}
-                    {section === "tickets" && <Tickets />} 
-                    {section === "admins" && <RoleRegistration />} 
-                     {/* {section === "statistics" && < />} */}
-                     {section === "notifications" && <NotificationPage />} 
-                      {section === "losts" && < Lost/>}
-                      {section === "founds" && < Found/>}
-                     {/* {section === "logout" && <LoginPage />} */}
-                  
-      </div>
-
+      {/* Main Content */}
+      <main className="flex-1 overflow-hidden">
+        <div className="h-full overflow-y-auto bg-gray-50 px-6 py-8">
+          <div className="h-full rounded-lg bg-white p-6 shadow-sm">
+            {section === "home" && <Home />}
+            {section === "schedules" && <TrainSchedule />}
+            {section === "trains" && <TrainManagement />}
+            {section === "tickets" && <Tickets />}
+            {section === "admins" && <RoleRegistration />}
+            {section === "notifications" && <NotificationPage />}
+            {section === "losts" && <Lost />}
+            {section === "founds" && <Found />}
+          </div>
+        </div>
+      </main>
     </div>
-    
   );
 };
 

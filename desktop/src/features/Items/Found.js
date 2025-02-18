@@ -13,7 +13,7 @@ const Found = () => {
   const fetchItems = async () => {
     setIsLoading(true);
     try {
-      const response = await apiService.get("/api/items/found", {
+      const response = await apiService.get("/api/items/notapproved/found", {
         params: {
           page: currentPage,
           limit: itemsPerPage,

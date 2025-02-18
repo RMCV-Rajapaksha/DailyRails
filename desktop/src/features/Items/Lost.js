@@ -22,7 +22,7 @@ const Lost = () => {
 
       //Get lost form the backend
  
-          const response = await apiService.get("/api/items/notapprove", {
+          const response = await apiService.get("/api/items/notapproved/lost", {
             params: {
               page: currentPage,
               limit: itemsPerPage,

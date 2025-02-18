@@ -2,6 +2,8 @@ const express = require("express");
 const {
   getItemApproved,
   getItemNotApproved,
+  getItemNotApprovedLost,
+  getItemNotApprovedFound,
   getLostItems,
   getFoundItems,
   postItem,
@@ -37,6 +39,8 @@ const validate = (req, res, next) => {
 // Define routes
 router.get("/", getItemApproved);
 router.get("/notapprove", getItemNotApproved);
+router.get("/notapproved/lost", getItemNotApprovedLost);
+router.get("/notapproved/found", getItemNotApprovedFound);
 router.get("/lost", getLostItems);
 router.get("/found", getFoundItems);
 router.post("/", validateNewItem, validate, postItem);

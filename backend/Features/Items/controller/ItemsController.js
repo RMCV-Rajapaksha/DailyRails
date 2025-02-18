@@ -87,6 +87,30 @@ const getItemNotApproved = async (req, res) => {
   }
 };
 
+const getItemNotApprovedLost = async (req, res) => {
+  try {
+    await fetchItems(req, res, "Not Approved", "Lost");
+  } catch (error) {
+    return res.status(500).json({
+      success: false,
+      message: "Failed to fetch approved lost items",
+      error: error.message,
+    });
+  }
+};
+
+const getItemNotApprovedFound = async (req, res) => {
+  try {
+    await fetchItems(req, res, "Not Approved", "Found");
+  } catch (error) {
+    return res.status(500).json({
+      success: false,
+      message: "Failed to fetch approved found items",
+      error: error.message,
+    });
+  }
+};
+
 // GET all lost items
 const getLostItems = async (req, res) => {
   try {
@@ -221,6 +245,8 @@ const patchItem = async (req, res) => {
 module.exports = {
   getItemApproved,
   getItemNotApproved,
+  getItemNotApprovedLost,
+  getItemNotApprovedFound,
   getLostItems,
   getFoundItems,
   postItem,

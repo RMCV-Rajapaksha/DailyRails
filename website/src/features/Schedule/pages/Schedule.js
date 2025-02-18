@@ -1,14 +1,15 @@
 import React, { useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
 import { MapPin, Train, ChevronDown, ChevronUp } from "lucide-react";
 import { motion } from "framer-motion";
-import axios from "axios";
 import Button from "../../../components/Button";
-import InputField from "../../../components/InputField";
 import Spinner from "../../../components/Loader"; // Assume you have a Spinner component
+import { fetchTrainSchedule } from "../../../store/actions/trainSchedleActions";
 
 const stations = [
   "Colombo Fort",
   "Maradana",
+  "Anuradhapura",
   "Kelaniya",
   "Ragama",
   "Gampaha",
@@ -66,9 +67,10 @@ const TrainSchedule = () => {
     endLocation: "",
   });
 
-  const [scheduleData, setScheduleData] = useState([]);
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState("");
+  const dispatch = useDispatch();
+  const { scheduleData, isLoading, error } = useSelector(
+    (state) => state.trainSchedule
+  );
   const [expandedTrain, setExpandedTrain] = useState(null);
 
   const handleInputChange = (e) => {
@@ -79,32 +81,8 @@ const TrainSchedule = () => {
     }));
   };
 
-  const handleSearch = async () => {
-    setLoading(true);
-    setError("");
-    try {
-      const response = await axios.post(
-        "http://localhost:4000/api/trains/search",
-        JSON.stringify({
-          Location_1: formData.startLocation,
-          Location_2: formData.endLocation,
-        }),
-        {
-          headers: {
-            "Content-Type": "application/json",
-          },
-        }
-      );
-      if (response.data.success) {
-        setScheduleData(response.data.data);
-      } else {
-        setError("Error fetching train data: " + response.data.message);
-      }
-    } catch (error) {
-      setError("Error fetching train data: " + error.message);
-    } finally {
-      setLoading(false);
-    }
+  const handleSearch = () => {
+    dispatch(fetchTrainSchedule(formData.startLocation, formData.endLocation));
   };
 
   const toggleTrainDetails = (trainID) => {
@@ -234,7 +212,6 @@ const TrainSchedule = () => {
           </motion.div>
 
           {/* Search Button */}
-
           <Button
             onClick={handleSearch}
             className="text-white rounded-sm hover:bg-secondary"
@@ -245,7 +222,7 @@ const TrainSchedule = () => {
       </motion.div>
 
       {/* Loading Spinner */}
-      {loading && (
+      {isLoading && (
         <div className="flex justify-center my-4">
           <Spinner />
         </div>
@@ -255,7 +232,7 @@ const TrainSchedule = () => {
       {error && <div className="my-4 text-center text-red-500">{error}</div>}
 
       {/* Results Table */}
-      {!loading && scheduleData.length > 0 && (
+      {!isLoading && scheduleData.length > 0 && (
         <motion.div
           variants={tableVariants}
           className="overflow-x-auto bg-white rounded-lg shadow-sm"
@@ -265,6 +242,8 @@ const TrainSchedule = () => {
               <motion.tr variants={rowVariants} className="bg-[#E5F0F0]">
                 <th className="p-4 text-left text-primary">#</th>
                 <th className="p-4 text-left text-primary">TRAIN NAME</th>
+                <th className="p-4 text-left text-primary">START STATION</th>
+                <th className="p-4 text-left text-primary">END STATION</th>
                 <th className="p-4 text-left text-primary">DEPARTS</th>
                 <th className="p-4 text-left text-primary">ARRIVES</th>
                 <th className="p-4 text-left text-primary">DETAILS</th>
@@ -272,7 +251,7 @@ const TrainSchedule = () => {
             </thead>
             <tbody>
               {scheduleData.map((train, index) => (
-                <React.Fragment key={train.ID}>
+                <React.Fragment key={train.TrainID}>
                   <motion.tr
                     variants={rowVariants}
                     initial="hidden"
@@ -281,16 +260,22 @@ const TrainSchedule = () => {
                     className="border-b hover:bg-gray-50"
                     whileHover={{ scale: 1.005, backgroundColor: "#F8FAFC" }}
                   >
-                    <td className="p-4 text-secondary-1">{train.ID}</td>
+                    <td className="p-4 text-secondary-1">{train.TrainID}</td>
                     <td className="p-4 text-secondary-1">{train.Name}</td>
+                    <td className="p-4 text-secondary-1">
+                      {train.StartStationName}
+                    </td>
+                    <td className="p-4 text-secondary-1">
+                      {train.EndStationName}
+                    </td>
                     <td className="p-4 text-secondary-1">{train.StartTime}</td>
                     <td className="p-4 text-secondary-1">{train.EndTime}</td>
                     <td className="p-4 text-secondary-1">
                       <button
-                        onClick={() => toggleTrainDetails(train.ID)}
+                        onClick={() => toggleTrainDetails(train.TrainID)}
                         className="flex items-center text-primary"
                       >
-                        {expandedTrain === train.ID ? (
+                        {expandedTrain === train.TrainID ? (
                           <ChevronUp size={20} />
                         ) : (
                           <ChevronDown size={20} />
@@ -298,7 +283,7 @@ const TrainSchedule = () => {
                       </button>
                     </td>
                   </motion.tr>
-                  {expandedTrain === train.ID && (
+                  {expandedTrain === train.TrainID && (
                     <motion.tr
                       variants={rowVariants}
                       initial="hidden"
@@ -306,7 +291,7 @@ const TrainSchedule = () => {
                       transition={{ delay: index * 0.1 }}
                       className="bg-gray-50"
                     >
-                      <td colSpan="5" className="p-4">
+                      <td colSpan="7" className="p-4">
                         <div className="p-4 bg-white rounded-lg shadow-inner">
                           <h3 className="mb-2 text-lg font-bold text-primary">
                             Stopping Points
@@ -327,7 +312,7 @@ const TrainSchedule = () => {
                             </thead>
                             <tbody>
                               {train.stoppingPoints.map((point) => (
-                                <tr key={point.ID} className="border-b">
+                                <tr key={point.PointID} className="border-b">
                                   <td className="p-2 text-secondary-1">
                                     {point.StationName}
                                   </td>
