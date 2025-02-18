@@ -253,7 +253,6 @@ const editTrain = async (req, res) => {
     });
   }
 };
-
 const getTrainsBetweenStations = async (req, res) => {
   const { Location_1, Location_2 } = req.body;
 
@@ -304,17 +303,37 @@ const getTrainsBetweenStations = async (req, res) => {
         {
           model: StoppingPoint,
           as: "stoppingPoints",
+          include: [
+            {
+              model: Station,
+              as: "station",
+              attributes: ["StationName"],
+            },
+          ],
         },
       ],
     });
 
-    return res.status(200).json(trains);
+    // Add start and end station names to the train details
+    const trainsWithStationNames = trains.map((train) => ({
+      ...train.toJSON(),
+      StartStationName: station1.StationName,
+      EndStationName: station2.StationName,
+      stoppingPoints: train.stoppingPoints.map((sp) => ({
+        ...sp.toJSON(),
+        StationName: sp.station.StationName,
+      })),
+    }));
+
+    return res.status(200).json({
+      success: true,
+      data: trainsWithStationNames,
+    });
   } catch (error) {
     return res.status(500).json({ message: "An error occurred", error });
   }
 };
 
-// Add searchTrainsByLocation to module exports
 module.exports = {
   createTrain, //
   getAllTrains, //
