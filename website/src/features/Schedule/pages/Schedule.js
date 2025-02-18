@@ -272,7 +272,7 @@ const TrainSchedule = () => {
             </thead>
             <tbody>
               {scheduleData.map((train, index) => (
-                <React.Fragment key={train.ID}>
+                <React.Fragment key={train.TrainID}>
                   <motion.tr
                     variants={rowVariants}
                     initial="hidden"
@@ -281,16 +281,16 @@ const TrainSchedule = () => {
                     className="border-b hover:bg-gray-50"
                     whileHover={{ scale: 1.005, backgroundColor: "#F8FAFC" }}
                   >
-                    <td className="p-4 text-secondary-1">{train.ID}</td>
+                    <td className="p-4 text-secondary-1">{train.TrainID}</td>
                     <td className="p-4 text-secondary-1">{train.Name}</td>
                     <td className="p-4 text-secondary-1">{train.StartTime}</td>
                     <td className="p-4 text-secondary-1">{train.EndTime}</td>
                     <td className="p-4 text-secondary-1">
                       <button
-                        onClick={() => toggleTrainDetails(train.ID)}
+                        onClick={() => toggleTrainDetails(train.TrainID)}
                         className="flex items-center text-primary"
                       >
-                        {expandedTrain === train.ID ? (
+                        {expandedTrain === train.TrainID ? (
                           <ChevronUp size={20} />
                         ) : (
                           <ChevronDown size={20} />
@@ -298,7 +298,7 @@ const TrainSchedule = () => {
                       </button>
                     </td>
                   </motion.tr>
-                  {expandedTrain === train.ID && (
+                  {expandedTrain === train.TrainID && (
                     <motion.tr
                       variants={rowVariants}
                       initial="hidden"
@@ -327,9 +327,9 @@ const TrainSchedule = () => {
                             </thead>
                             <tbody>
                               {train.stoppingPoints.map((point) => (
-                                <tr key={point.ID} className="border-b">
+                                <tr key={point.PointID} className="border-b">
                                   <td className="p-2 text-secondary-1">
-                                    {point.StationName}
+                                    {point.StationID}
                                   </td>
                                   <td className="p-2 text-secondary-1">
                                     {point.ArrivalTime}
