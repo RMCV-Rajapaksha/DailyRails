@@ -1,0 +1,71 @@
+{
+  "expo": {
+    "name": "train-app",
+    "slug": "train-app",
+    "version": "1.0.0",
+    "web": {
+      "favicon": "./assets/favicon.png"
+    },
+    "experiments": {
+      "tsconfigPaths": true
+    },
+    "plugins": [
+      [
+        "expo-location",
+        {
+          "locationAlwaysAndWhenInUsePermission": "Allow train location tracking in background",
+          "locationAlwaysPermission": "Allow train location tracking when app is closed",
+          "isIosBackgroundLocationEnabled": true,
+          "isAndroidBackgroundLocationEnabled": true
+        }
+      ]
+    ],
+    "newArchEnabled": true,
+    "orientation": "portrait",
+    "icon": "./assets/icon.png",
+    "userInterfaceStyle": "light",
+    "splash": {
+      "image": "./assets/splash.png",
+      "resizeMode": "contain",
+      "backgroundColor": "#ffffff"
+    },
+    "assetBundlePatterns": ["**/*"],
+    "ios": {
+      "supportsTablet": true,
+      "bundleIdentifier": "com.yourcompany.trainapp",
+      "infoPlist": {
+        "UIBackgroundModes": ["location", "fetch"],
+        "NSLocationWhenInUseUsageDescription": "This app needs access to location when open to track train positions.",
+        "NSLocationAlwaysAndWhenInUseUsageDescription": "This app needs access to location when in background to continue tracking train positions.",
+        "NSLocationAlwaysUsageDescription": "This app needs access to location when in background to continue tracking train positions."
+      }
+    },
+    "android": {
+      "package": "com.yourcompany.trainapp",
+      "adaptiveIcon": {
+        "foregroundImage": "./assets/adaptive-icon.png",
+        "backgroundColor": "#ffffff"
+      },
+      "permissions": [
+        "ACCESS_COARSE_LOCATION",
+        "ACCESS_FINE_LOCATION",
+        "ACCESS_BACKGROUND_LOCATION",
+        "FOREGROUND_SERVICE",
+        "WAKE_LOCK",
+        "FOREGROUND_SERVICE_LOCATION",
+        "android.permission.ACCESS_COARSE_LOCATION",
+        "android.permission.ACCESS_FINE_LOCATION",
+        "android.permission.ACCESS_BACKGROUND_LOCATION",
+        "android.permission.FOREGROUND_SERVICE",
+        "android.permission.FOREGROUND_SERVICE_LOCATION"
+      ],
+      "allowBackgroundLocationUpdates": true,
+      "useNextNotificationsApi": true
+    },
+    "extra": {
+      "eas": {
+        "projectId": "f8842f12-4c24-4a4f-b9bc-cc4118adfec6"
+      }
+    }
+  }
+}
