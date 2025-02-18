@@ -2,11 +2,10 @@ import React, { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { MapPin, Train, ChevronDown, ChevronUp } from "lucide-react";
 import { motion } from "framer-motion";
-import axios from "axios";
 import Button from "../../../components/Button";
-import InputField from "../../../components/InputField";
 import Spinner from "../../../components/Loader"; // Assume you have a Spinner component
 import { fetchTrainSchedule } from "../../../store/actions/trainSchedleActions";
+
 const stations = [
   "Colombo Fort",
   "Maradana",
