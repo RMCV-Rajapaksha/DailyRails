@@ -23,7 +23,9 @@ const generateNextBookingId = async () => {
 
 // Create a new booking
 const createBooking = async (req, res) => {
+  
   const transaction = await db.sequelize.transaction();
+
   try {
     const {
       trainId,

@@ -2,7 +2,6 @@ import React from "react";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import LoginPage from "./features/Authentication/pages/LoginPage";
 import SignUpPage from "./features/Authentication/pages/SignUpPage";
-import Tickets from "./features/MainAdmin/tickets/Tickets.js";
 import RoleRegistration from "./features/Account/Register/RoleRegistration.js";
 import AccountReviewPage from "./features/Authentication/pages/AccountReviewPage";
 import DashboardPage from "./features/DashboardPage";
@@ -16,10 +15,11 @@ import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import AppRouter from "./Routers/AppRouter";
 
+export const Context = React.createContext();
 
 function App() {
   return (
-    <>
+    <Context.Provider>
     <ToastContainer />
     <AppRouter />
 {/* 
@@ -42,7 +42,8 @@ function App() {
         </Routes>{" "}
       </div>{" "}
     </Router> */}
-    </>
+    
+    </Context.Provider>
   );
 }
 
