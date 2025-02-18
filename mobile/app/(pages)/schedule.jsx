@@ -3,7 +3,6 @@ import {
   View,
   Text,
   TouchableOpacity,
-  ScrollView,
   ActivityIndicator,
   TextInput,
   FlatList,
@@ -34,7 +33,9 @@ const Schedule = () => {
   const fetchStations = async () => {
     try {
       const response = await axios.get(`${API_URL}/stations`);
-      setStations(response.data.stations);
+      if (response.data && response.data.stations) {
+        setStations(response.data.stations);
+      }
     } catch (error) {
       console.error("Error fetching stations:", error);
     }
@@ -45,33 +46,18 @@ const Schedule = () => {
 
     setLoading(true);
     try {
-      console.log("Searching trains between:", {
-        from: fromStation.StationName,
-        fromId: fromStation.StationID,
-        to: toStation.StationName,
-        toId: toStation.StationID,
-      });
-
       const response = await axios.post(`${API_URL}/trains/search`, {
-        Location_1: fromStation.StationID,
-        Location_2: toStation.StationID,
+        Location_1: fromStation.StationName,
+        Location_2: toStation.StationName,
       });
 
-      if (response.data.success && response.data.data.length > 0) {
+      if (response.data.success) {
         setSchedules(response.data.data);
       } else {
-        console.log("No trains found between stations:", {
-          from: fromStation.StationName,
-          to: toStation.StationName,
-        });
         setSchedules([]);
       }
     } catch (error) {
-      console.error("Error fetching schedules:", {
-        error: error?.response?.data || error.message,
-        from: fromStation.StationName,
-        to: toStation.StationName,
-      });
+      console.error("Error fetching schedules:", error);
       setSchedules([]);
     } finally {
       setLoading(false);
@@ -93,12 +79,23 @@ const Schedule = () => {
   };
 
   const formatTime = (time) => {
+    if (!time) return "";
     return new Date(`2000-01-01T${time}`).toLocaleTimeString("en-US", {
       hour: "2-digit",
       minute: "2-digit",
       hour12: true,
     });
   };
+
+  const renderStationDropdown = ({ item, onSelect }) => (
+    <TouchableOpacity
+      className="p-4 border-b border-gray-200"
+      onPress={() => onSelect(item)}
+    >
+      <Text className="text-gray-800 font-medium">{item.StationName}</Text>
+      <Text className="text-gray-600 text-sm">ID: {item.StationID}</Text>
+    </TouchableOpacity>
+  );
 
   const renderStationSearch = (
     value,
@@ -111,26 +108,35 @@ const Schedule = () => {
     placeholder
   ) => (
     <View className="relative mb-4">
-      <View className="flex-row items-center bg-white rounded-lg shadow-lg p-2">
+      <TouchableOpacity
+        className="flex-row items-center bg-white rounded-lg shadow-lg p-2"
+        onPress={() => {
+          fetchStations();
+          setShowDropdown(!showDropdown);
+        }}
+      >
         <TextInput
           className="flex-1 px-4 py-2 text-gray-800"
           placeholder={placeholder}
           value={searchValue}
           onChangeText={setSearchValue}
-          onFocus={() => {
-            fetchStations();
-            setShowDropdown(true);
-          }}
+          editable={false}
         />
         {searchValue ? (
           <TouchableOpacity className="ml-2 p-2" onPress={clearSearch}>
             <Ionicons name="close-circle" size={24} color="#9CA3AF" />
           </TouchableOpacity>
-        ) : null}
-      </View>
+        ) : (
+          <Ionicons
+            name={showDropdown ? "chevron-up" : "chevron-down"}
+            size={24}
+            color="#9CA3AF"
+          />
+        )}
+      </TouchableOpacity>
 
       {showDropdown && (
-        <View className="mt-2 bg-white rounded-lg shadow-lg max-h-60">
+        <View className="absolute top-full left-0 right-0 mt-2 bg-white rounded-lg shadow-lg max-h-60 z-50">
           <FlatList
             data={stations.filter((station) =>
               station.StationName.toLowerCase().includes(
@@ -138,23 +144,16 @@ const Schedule = () => {
               )
             )}
             keyExtractor={(item) => item.StationID}
-            renderItem={({ item }) => (
-              <TouchableOpacity
-                className="p-4 border-b border-gray-200"
-                onPress={() => {
-                  setValue(item);
-                  setSearchValue(item.StationName);
+            renderItem={({ item }) =>
+              renderStationDropdown({
+                item,
+                onSelect: (station) => {
+                  setValue(station);
+                  setSearchValue(station.StationName);
                   setShowDropdown(false);
-                }}
-              >
-                <Text className="text-gray-800 font-medium">
-                  {item.StationName}
-                </Text>
-                <Text className="text-gray-600 text-sm">
-                  ID: {item.StationID}
-                </Text>
-              </TouchableOpacity>
-            )}
+                },
+              })
+            }
           />
         </View>
       )}
@@ -176,35 +175,31 @@ const Schedule = () => {
       <View className="flex-row justify-between mt-2">
         <View>
           <Text className="text-gray-500">Departure</Text>
-          <Text className="text-[#40A2B2]">
-            {formatTime(train.departureTime)}
-          </Text>
+          <Text className="text-[#40A2B2]">{formatTime(train.StartTime)}</Text>
         </View>
         <View className="items-end">
           <Text className="text-gray-500">Arrival</Text>
-          <Text className="text-[#40A2B2]">
-            {formatTime(train.arrivalTime)}
-          </Text>
+          <Text className="text-[#40A2B2]">{formatTime(train.EndTime)}</Text>
         </View>
       </View>
 
-      {selectedTrain?.TrainID === train.TrainID && train.stops && (
+      {selectedTrain?.TrainID === train.TrainID && train.stoppingPoints && (
         <View className="mt-4 border-t border-gray-200 pt-4">
           <Text className="text-md font-semibold text-[#111B47] mb-2">
             Stops Along The Way
           </Text>
-          {train.stops.map((stop, index) => (
+          {train.stoppingPoints.map((stop, index) => (
             <View
               key={index}
               className="flex-row justify-between py-2 border-b border-gray-100"
             >
-              <Text className="text-gray-600">{stop.stationName}</Text>
+              <Text className="text-gray-600">{stop.station.StationName}</Text>
               <View className="flex-row">
                 <Text className="text-[#40A2B2] mr-4">
-                  {formatTime(stop.arrivalTime)}
+                  {formatTime(stop.ArrivalTime)}
                 </Text>
                 <Text className="text-[#40A2B2]">
-                  {formatTime(stop.departureTime)}
+                  {formatTime(stop.DepartureTime)}
                 </Text>
               </View>
             </View>
@@ -279,7 +274,7 @@ const Schedule = () => {
             <View className="flex-1 justify-center items-center p-4">
               <Ionicons name="train-outline" size={64} color="#9CA3AF" />
               <Text className="text-xl font-semibold text-[#111B47] mt-4">
-                No trains available from
+                No trains available
               </Text>
               <Text className="text-lg font-medium text-[#40A2B2] text-center mt-1">
                 {fromStation.StationName} → {toStation.StationName}
