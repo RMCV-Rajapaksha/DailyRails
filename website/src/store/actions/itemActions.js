@@ -1,4 +1,4 @@
-import axios from "axios";
+import axiosInstance from "../../utils/axiosInstance";
 
 export const FETCH_ITEMS_REQUEST = "FETCH_ITEMS_REQUEST";
 export const FETCH_ITEMS_SUCCESS = "FETCH_ITEMS_SUCCESS";
@@ -22,10 +22,9 @@ export const fetchItems =
   (itemType, currentPage, itemsPerPage) => async (dispatch) => {
     dispatch(fetchItemsRequest());
     try {
-      const res = await axios.get(
-        `http://localhost:4000/api/items/${itemType}?page=${currentPage}&limit=${itemsPerPage}`
+      const res = await axiosInstance.get(
+        `/items/${itemType}?page=${currentPage}&limit=${itemsPerPage}`
       );
-      // Update this to match the backend response structure
       dispatch(fetchItemsSuccess(res.data.data.items, res.data.data.total));
     } catch (error) {
       dispatch(
