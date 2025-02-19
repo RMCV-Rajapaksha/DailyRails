@@ -5,25 +5,63 @@ import "react-toastify/dist/ReactToastify.css";
 import Button from "../../../components/Button";
 
 function Contact() {
-  const [name, setName] = useState("");
-  const [nicNo, setNicNo] = useState("");
-  const [incidentType, setIncidentType] = useState("");
-  const [problemDescription, setProblemDescription] = useState("");
-  const [nearestStation, setNearestStation] = useState("");
+  const [formData, setFormData] = useState({
+    Name: "",
+    NIC: "",
+    Type: "",
+    Description: "",
+    ClosestStation: "",
+  });
   const [errors, setErrors] = useState({});
 
   const validateForm = () => {
     const newErrors = {};
-    if (!name) newErrors.name = "Name is required";
-    if (!nicNo) newErrors.nicNo = "NIC No is required";
-    if (!incidentType) newErrors.incidentType = "Incident type is required";
-    if (!problemDescription)
-      newErrors.problemDescription = "Description is required";
-    if (!nearestStation)
-      newErrors.nearestStation = "Nearest station is required";
+
+    // Name validation
+    if (!formData.Name) {
+      newErrors.Name = "Name is required";
+    } else if (formData.Name.length > 20) {
+      newErrors.Name = "Name must not exceed 20 characters";
+    }
+
+    // NIC validation
+    if (!formData.NIC) {
+      newErrors.NIC = "NIC No is required";
+    } else if (formData.NIC.length > 20) {
+      newErrors.NIC = "NIC must not exceed 20 characters";
+    }
+
+    // Type validation
+    if (!formData.Type) {
+      newErrors.Type = "Incident type is required";
+    } else if (formData.Type.length > 50) {
+      newErrors.Type = "Type must not exceed 50 characters";
+    }
+
+    // Description validation
+    if (!formData.Description) {
+      newErrors.Description = "Description is required";
+    } else if (formData.Description.length > 1000) {
+      newErrors.Description = "Description must not exceed 1000 characters";
+    }
+
+    // Station validation
+    if (!formData.ClosestStation) {
+      newErrors.ClosestStation = "Nearest station is required";
+    } else if (formData.ClosestStation.length > 50) {
+      newErrors.ClosestStation = "Station name must not exceed 50 characters";
+    }
 
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
+  };
+
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    setFormData((prev) => ({
+      ...prev,
+      [name]: value,
+    }));
   };
 
   const handleSubmit = async (e) => {
@@ -31,19 +69,10 @@ function Contact() {
 
     if (!validateForm()) return;
 
-    const reportData = {
-      // ReportID: `RPT${Date.now()}`,
-      Name: name,
-      NIC: nicNo,
-      Type: incidentType,
-      Description: problemDescription,
-      ClosestStation: nearestStation,
-    };
-
     try {
       const response = await axios.post(
         "http://localhost:4000/api/reports",
-        reportData,
+        formData,
         {
           headers: {
             "Content-Type": "application/json",
@@ -57,19 +86,23 @@ function Contact() {
       }
     } catch (error) {
       console.error("Error details:", error.response?.data);
-      toast.error(
-        error.response?.data?.message ||
-          "Failed to submit report. Please try again."
-      );
+      if (error.response?.data?.errors) {
+        setErrors(error.response.data.errors);
+        toast.error("Please check the form for errors");
+      } else {
+        toast.error(error.response?.data?.message || "Failed to submit report");
+      }
     }
   };
 
   const handleReset = () => {
-    setName("");
-    setNicNo("");
-    setIncidentType("");
-    setProblemDescription("");
-    setNearestStation("");
+    setFormData({
+      Name: "",
+      NIC: "",
+      Type: "",
+      Description: "",
+      ClosestStation: "",
+    });
     setErrors({});
   };
 
@@ -79,96 +112,104 @@ function Contact() {
       <form className="max-w-sm mx-auto" onSubmit={handleSubmit}>
         <div className="mb-5">
           <label
-            htmlFor="name"
+            htmlFor="Name"
             className="block mb-2 text-sm text-primary font-body"
           >
             Name
           </label>
           <input
-            onChange={(e) => setName(e.target.value)}
-            value={name}
+            name="Name"
+            onChange={handleChange}
+            value={formData.Name}
             type="text"
-            id="name"
+            id="Name"
+            maxLength={20}
             className="shadow-sm bg-gray-50 border border-secondary-1 text-tertiary text-sm rounded-sm focus:border-primary block w-full p-2.5"
             placeholder="John Doe"
           />
-          {errors.name && (
-            <p className="mt-1 text-xs text-red-500">{errors.name}</p>
+          {errors.Name && (
+            <p className="mt-1 text-xs text-red-500">{errors.Name}</p>
           )}
         </div>
 
         <div className="mb-5">
           <label
-            htmlFor="nicNo"
+            htmlFor="NIC"
             className="block mb-2 text-sm text-primary font-body"
           >
             NIC No
           </label>
           <input
-            onChange={(e) => setNicNo(e.target.value)}
-            value={nicNo}
+            name="NIC"
+            onChange={handleChange}
+            value={formData.NIC}
             type="text"
-            id="nicNo"
+            id="NIC"
+            maxLength={20}
             className="shadow-sm bg-gray-50 border border-secondary-1 text-tertiary text-sm rounded-sm focus:border-primary block w-full p-2.5"
           />
-          {errors.nicNo && (
-            <p className="mt-1 text-xs text-red-500">{errors.nicNo}</p>
+          {errors.NIC && (
+            <p className="mt-1 text-xs text-red-500">{errors.NIC}</p>
           )}
         </div>
 
         <div className="mb-5">
           <label
-            htmlFor="incidentType"
+            htmlFor="Type"
             className="block mb-2 text-sm text-primary font-body"
           >
             Type of Incident Reported
           </label>
           <textarea
-            onChange={(e) => setIncidentType(e.target.value)}
-            value={incidentType}
-            id="incidentType"
+            name="Type"
+            onChange={handleChange}
+            value={formData.Type}
+            id="Type"
+            maxLength={50}
             className="shadow-sm bg-gray-50 border border-secondary-1 text-tertiary text-sm rounded-sm focus:border-primary block w-full p-2.5 h-24"
           />
-          {errors.incidentType && (
-            <p className="mt-1 text-xs text-red-500">{errors.incidentType}</p>
+          {errors.Type && (
+            <p className="mt-1 text-xs text-red-500">{errors.Type}</p>
           )}
         </div>
 
         <div className="mb-5">
           <label
-            htmlFor="problemDescription"
+            htmlFor="Description"
             className="block mb-2 text-sm text-primary font-body"
           >
             Problem Description
           </label>
           <textarea
-            onChange={(e) => setProblemDescription(e.target.value)}
-            value={problemDescription}
-            id="problemDescription"
+            name="Description"
+            onChange={handleChange}
+            value={formData.Description}
+            id="Description"
+            maxLength={1000}
             className="shadow-sm bg-gray-50 border border-secondary-1 text-tertiary text-sm rounded-sm focus:border-primary block w-full p-2.5 h-24"
           />
-          {errors.problemDescription && (
-            <p className="mt-1 text-xs text-red-500">
-              {errors.problemDescription}
-            </p>
+          {errors.Description && (
+            <p className="mt-1 text-xs text-red-500">{errors.Description}</p>
           )}
         </div>
 
         <div className="mb-5">
           <label
-            htmlFor="nearestStation"
+            htmlFor="ClosestStation"
             className="block mb-2 text-sm text-primary font-body"
           >
             Nearest Railway Station
           </label>
           <input
-            onChange={(e) => setNearestStation(e.target.value)}
-            value={nearestStation}
-            id="nearestStation"
+            name="ClosestStation"
+            onChange={handleChange}
+            value={formData.ClosestStation}
+            id="ClosestStation"
+            maxLength={50}
             className="shadow-sm bg-gray-50 border border-secondary-1 text-tertiary text-sm rounded-sm focus:border-primary block w-full p-2.5"
           />
-          {errors.nearestStation && (
-            <p className="mt-1 text-xs text-red-500">{errors.nearestStation}</p>
+          {errors.ClosestStation && (
+            <p className="mt-1 text-xs text-red-500">{errors.ClosestStation}</p>
           )}
         </div>
 
