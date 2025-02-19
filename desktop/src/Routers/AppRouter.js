@@ -3,15 +3,19 @@ import { createBrowserRouter, RouterProvider } from "react-router-dom";
 import MainAdminLayOut from "../LayOut/MainLayOut";
 import Home from "../features/Pages/Home";
 import Dashboard from "../features/DashboardPage";
+
 import LoginPage from "../features/Authentication/pages/LoginPage";
+
+import ProtectedRouter from "./ProtectedRouter";
 
 const router1 = createBrowserRouter([
   {
     path: "/",
-    element: <MainAdminLayOut />,
+    element: <ProtectedRouter><MainAdminLayOut /></ProtectedRouter>,
     children: [
       {
         index: true,
+
         element:  <LoginPage />,
       },{
         path: "dashboard",
@@ -33,12 +37,12 @@ const router1 = createBrowserRouter([
     ],
   },{
     path: "/announcements",
-    children: [
-      {
-        index: true,
-        element: <Home />,
-      },]}
-      
+    element: <ProtectedRouter><Home /></ProtectedRouter>,
+  },
+  {
+    path: "/login",
+    element: <Login />,
+  },
 ]);
 
 const AppRouter = () => {

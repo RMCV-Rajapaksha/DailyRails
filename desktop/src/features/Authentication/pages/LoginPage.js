@@ -1,13 +1,23 @@
 import React, { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import logo from "../../../assets/images/Logo-3.png";
 
 function LoginPage() {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
+  const navigate = useNavigate();
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    // Handle login logic here
+    const sampleUsername = "admin";
+    const samplePassword = "password123";
+
+    if (username === sampleUsername && password === samplePassword) {
+      localStorage.setItem("user", JSON.stringify({ username }));
+      navigate("/");
+    } else {
+      alert("Invalid username or password");
+    }
   };
 
   return (
@@ -94,13 +104,12 @@ function LoginPage() {
         </div>
 
         <div className="mt-6">
-        <button
-  type="submit"
-        className="flex justify-center w-full px-4 py-2 text-sm font-medium text-white bg-primary border border-transparent rounded-md shadow-sm hover:bg-blue-900 focus:outline-none focus:ring-2 focus:ring-offset-2"
->
-        Signup
-      </button>
-
+          <button
+            type="submit"
+            className="flex justify-center w-full px-4 py-2 text-sm font-medium text-white bg-primary border border-transparent rounded-md shadow-sm hover:bg-blue-900 focus:outline-none focus:ring-2 focus:ring-offset-2"
+          >
+            Signup
+          </button>
         </div>
       </div>
     </div>
