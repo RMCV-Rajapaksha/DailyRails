@@ -4,6 +4,6 @@
 # dependencies
 /node_modules
 /.env
-/config
+/config/config.json
 
 
