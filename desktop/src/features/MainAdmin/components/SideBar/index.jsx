@@ -57,7 +57,7 @@ const SideBar = ({ section, isExpanded, setSection }) => {
     },
     {
       title: "Notification Management",
-      url: "/notification",
+      url: "/notifications",
       icon: <FaBell className="h-5 w-5" />,
       value: "notifications",
     },
