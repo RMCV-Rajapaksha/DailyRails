@@ -32,7 +32,10 @@ const Found = () => {
   };
 
   useEffect(() => {
-    fetchItems();
+    return () =>{
+      fetchItems();
+    }
+  
   }, [currentPage]);
 
   const handleApprove = async (id) => {

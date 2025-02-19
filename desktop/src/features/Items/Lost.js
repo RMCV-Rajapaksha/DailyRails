@@ -42,7 +42,10 @@ const Lost = () => {
   };
 
   useEffect(() => {
-    fetchItems();
+    return ()=>{
+      fetchItems();
+    }
+    
   }, [currentPage]);
 
   const handleApprove = async (id) => {

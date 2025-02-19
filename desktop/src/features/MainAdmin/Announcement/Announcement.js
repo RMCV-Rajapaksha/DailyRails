@@ -125,7 +125,7 @@ const Announcement = () => {
   return (
     <div className="flex min-h-screen bg-gray-100">
       <div className="flex-1 p-6">
-        <h1 className="mb-6 text-3xl font-bold text-primary">Notifications</h1>
+        <h1 className="mb-6 text-3xl font-bold text-primary">Announcement</h1>
         <div className="flex flex-col md:flex-row gap-6">
           {/* Form Section */}
           <div className="w-full md:w-1/3">
@@ -134,7 +134,7 @@ const Announcement = () => {
               className="p-6 bg-white rounded-md shadow-md"
             >
               <h2 className="mb-4 text-xl font-bold text-gray-800">
-                {formData.announcementTo ? "Edit Notification" : "Create Notification"}
+                {formData.announcementTo ? "Edit Announcement" : "Create Announcement"}
               </h2>
               <div className="mb-4">
                 <label
@@ -240,7 +240,7 @@ const Announcement = () => {
                 </div>
               ))
             ) : (
-              <p className="text-gray-500">No notifications available.</p>
+              <p className="text-gray-500">No Announcement available.</p>
             )}
 
             {/* Pagination */}
