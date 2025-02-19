@@ -10,7 +10,7 @@ import {
 import apiService from "../../../http";
 import { toast } from "react-toastify";
 
-const Notifications = () => {
+const Announcement = () => {
   const [edit, setEdit] = useState(false);
   const [formData, setFormData] = useState({
     announcementID: null,
@@ -264,4 +264,4 @@ const Notifications = () => {
   );
 };
 
-export default Notifications;
+export default Announcement;

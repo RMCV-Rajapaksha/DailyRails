@@ -16,6 +16,7 @@ const TrainManagement = () => {
     EndTime: "",
     stoppingPoints: [],
   });
+  
 
   const inputDataStructure = {
     Name: {
@@ -181,6 +182,7 @@ const handleAddStop = () => {
       EndStations: inputs.EndStations.data,
       StartTime: inputs.StartTime.data,
       EndTime: inputs.EndTime.data,
+      stoppingPoints: form.stoppingPoints,
     };
 
     console.log("Form to save:", updatedForm);
@@ -235,7 +237,10 @@ const handleAddStop = () => {
   };
 
   useEffect(() => {
-    fetchTrains();
+    return () => {
+      fetchTrains();
+    }
+    
   }, []);
 
   // Edit train
