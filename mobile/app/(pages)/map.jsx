@@ -22,6 +22,8 @@ import { Ionicons } from "@expo/vector-icons";
 import { styled } from "nativewind";
 import { database, ref, onValue, off } from "../../config/firebase";
 import { API_URL } from "@env";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import { useRouter } from "expo-router";
 
 const StyledMapView = styled(MapView);
 const screenHeight = Dimensions.get("window").height;
@@ -42,9 +44,15 @@ const androidMapStyle = [
     elementType: "geometry",
     stylers: [{ color: "#e9e9e9" }],
   },
+  {
+    featureType: "transit",
+    elementType: "geometry",
+    stylers: [{ color: "#40A2B2" }],
+  },
 ];
 
 const Map = () => {
+  const router = useRouter();
   const [location, setLocation] = useState(null);
   const [mapRef, setMapRef] = useState(null);
   const [searchTrain, setSearchTrain] = useState("");
@@ -55,30 +63,31 @@ const Map = () => {
   const [showDropdown, setShowDropdown] = useState(false);
   const [selectedTrain, setSelectedTrain] = useState(null);
   const [cardHeight] = useState(new Animated.Value(0));
+  const [isBookmarked, setIsBookmarked] = useState(false);
 
   const initialRegion = {
-    latitude: 6.0794,
-    longitude: 80.192,
-    latitudeDelta: 0.0922,
-    longitudeDelta: 0.0421,
+    latitude: 6.9271,
+    longitude: 79.8612,
+    latitudeDelta: 1.5,
+    longitudeDelta: 1.5,
   };
 
   const panResponder = PanResponder.create({
     onStartShouldSetPanResponder: () => true,
     onPanResponderMove: (_, gestureState) => {
       if (gestureState.dy > 0) {
-        cardHeight.setValue(-gestureState.dy);
+        cardHeight.setValue(300 - gestureState.dy);
       }
     },
     onPanResponderRelease: (_, gestureState) => {
-      if (gestureState.dy > 50) {
+      if (gestureState.dy > 150) {
         Animated.spring(cardHeight, {
           toValue: 0,
           useNativeDriver: false,
-        }).start();
+        }).start(() => setSelectedTrain(null));
       } else {
         Animated.spring(cardHeight, {
-          toValue: selectedTrain ? 300 : 0,
+          toValue: 300,
           useNativeDriver: false,
         }).start();
       }
@@ -105,68 +114,45 @@ const Map = () => {
     }
   };
 
-  const startTrackingTrain = (trainId) => {
-    if (!trainId.trim()) {
-      Alert.alert("Error", "Please enter a valid train ID");
-      return;
-    }
+  const startTrackingTrain = async (trainId) => {
+    if (!trainId.trim()) return;
 
     try {
       const trainRef = ref(database, `/trains/${trainId}/location`);
       setIsTracking(true);
 
-      const unsubscribeFromTrain = onValue(
-        trainRef,
-        (snapshot) => {
-          const data = snapshot.val();
-          if (data && data.latitude && data.longitude) {
-            const newTrainLocation = {
-              latitude: parseFloat(data.latitude),
-              longitude: parseFloat(data.longitude),
-              timestamp: data.timestamp || Date.now(),
-            };
-            setTrainLocation(newTrainLocation);
-
-            if (mapRef) {
-              mapRef.animateToRegion(
-                {
-                  latitude: newTrainLocation.latitude,
-                  longitude: newTrainLocation.longitude,
-                  latitudeDelta: 0.0122,
-                  longitudeDelta: 0.0121,
-                },
-                1000
-              );
-            }
-          } else {
-            // Handle no location data case
-            setTrainLocation(null);
-            setIsTracking(false);
-            // Show status in the card instead of an alert
-            setSelectedTrain((prev) => ({
-              ...prev,
-              status: "offline",
-            }));
-          }
-        },
-        (error) => {
-          console.error("Firebase error:", error);
-          setIsTracking(false);
-          setSelectedTrain((prev) => ({
-            ...prev,
-            status: "error",
-          }));
+      const unsubscribeFromTrain = onValue(trainRef, (snapshot) => {
+        const data = snapshot.val();
+        if (data?.latitude && data?.longitude) {
+          const newLocation = {
+            latitude: parseFloat(data.latitude),
+            longitude: parseFloat(data.longitude),
+            timestamp: data.timestamp || Date.now(),
+          };
+          setTrainLocation(newLocation);
+          mapRef?.animateToRegion(
+            {
+              ...newLocation,
+              latitudeDelta: 0.02,
+              longitudeDelta: 0.02,
+            },
+            1000
+          );
+        } else {
+          setTrainLocation(null);
+          setSelectedTrain((prev) => ({ ...prev, status: "offline" }));
         }
-      );
+      });
 
       setUnsubscribe(() => unsubscribeFromTrain);
+
+      // Check bookmark status
+      const bookmarks = await AsyncStorage.getItem("trainBookmarks");
+      const bookmarksList = bookmarks ? JSON.parse(bookmarks) : [];
+      setIsBookmarked(bookmarksList.some((b) => b.TrainID === trainId));
     } catch (error) {
-      console.error("Error starting train tracking:", error);
-      setIsTracking(false);
-      setSelectedTrain((prev) => ({
-        ...prev,
-        status: "error",
-      }));
+      console.error("Error tracking train:", error);
+      setSelectedTrain((prev) => ({ ...prev, status: "error" }));
     }
   };
 
@@ -177,6 +163,7 @@ const Map = () => {
       setIsTracking(false);
       setTrainLocation(null);
       setSelectedTrain(null);
+      setIsBookmarked(false);
       Animated.spring(cardHeight, {
         toValue: 0,
         useNativeDriver: false,
@@ -184,57 +171,83 @@ const Map = () => {
     }
   };
 
-  const requestLocationPermission = async () => {
+  const toggleBookmark = async () => {
     try {
-      const { status } = await Location.requestForegroundPermissionsAsync();
-      if (status !== "granted") {
-        Alert.alert(
-          "Permission Denied",
-          "Please enable location services to see nearby train tracks."
+      const bookmarks = await AsyncStorage.getItem("trainBookmarks");
+      let bookmarksList = bookmarks ? JSON.parse(bookmarks) : [];
+
+      if (isBookmarked) {
+        bookmarksList = bookmarksList.filter(
+          (b) => b.TrainID !== selectedTrain.TrainID
         );
-        return;
+      } else {
+        bookmarksList.push(selectedTrain);
       }
-      getCurrentLocation();
-    } catch (error) {
-      Alert.alert("Error", "Failed to get location permissions");
-    }
-  };
 
-  const getCurrentLocation = async () => {
-    try {
-      const location = await Location.getCurrentPositionAsync({
-        accuracy: Location.Accuracy.High,
-      });
-
-      const { latitude, longitude } = location.coords;
-      const newRegion = {
-        latitude,
-        longitude,
-        latitudeDelta: 0.0922,
-        longitudeDelta: 0.0421,
-      };
-
-      setLocation(newRegion);
-      mapRef?.animateToRegion(newRegion, 1000);
-    } catch (error) {
-      Alert.alert(
-        "Location Error",
-        "Unable to fetch your location. Please check your settings."
+      await AsyncStorage.setItem(
+        "trainBookmarks",
+        JSON.stringify(bookmarksList)
       );
+      setIsBookmarked(!isBookmarked);
+
+      Alert.alert(
+        isBookmarked ? "Removed from Bookmarks" : "Added to Bookmarks",
+        isBookmarked
+          ? "Train removed from your bookmarks"
+          : "Train added to your bookmarks"
+      );
+    } catch (error) {
+      console.error("Bookmark error:", error);
+      Alert.alert("Error", "Failed to update bookmarks");
     }
   };
 
   useEffect(() => {
-    requestLocationPermission();
-    return () => {
-      if (unsubscribe) {
-        unsubscribe();
+    fetchTrains();
+    Location.requestForegroundPermissionsAsync().then(({ status }) => {
+      if (status === "granted") {
+        Location.getCurrentPositionAsync({}).then((location) => {
+          const { latitude, longitude } = location.coords;
+          mapRef?.animateToRegion({
+            latitude,
+            longitude,
+            latitudeDelta: 0.5,
+            longitudeDelta: 0.5,
+          });
+        });
       }
-    };
-  }, []);
+    });
+
+    if (router.params?.trainId) {
+      loadBookmarkedTrain(router.params.trainId);
+    }
+
+    return () => unsubscribe?.();
+  }, [router.params?.trainId]);
+
+  const loadBookmarkedTrain = async (trainId) => {
+    try {
+      const bookmarks = await AsyncStorage.getItem("trainBookmarks");
+      if (bookmarks) {
+        const train = JSON.parse(bookmarks).find((b) => b.TrainID === trainId);
+        if (train) {
+          setSelectedTrain(train);
+          setSearchTrain(train.Name);
+          startTrackingTrain(train.TrainID);
+          Animated.spring(cardHeight, {
+            toValue: 300,
+            useNativeDriver: false,
+          }).start();
+        }
+      }
+    } catch (error) {
+      console.error("Error loading bookmark:", error);
+    }
+  };
 
   return (
     <View className="flex-1">
+      {/* Search Bar */}
       <View className="absolute top-10 left-4 right-4 z-10">
         <View className="flex-row items-center bg-white rounded-lg shadow-lg p-2">
           <TextInput
@@ -270,6 +283,7 @@ const Map = () => {
           )}
         </View>
 
+        {/* Search Dropdown */}
         {showDropdown && (
           <View className="mt-2 bg-white rounded-lg shadow-lg max-h-60">
             <FlatList
@@ -310,6 +324,7 @@ const Map = () => {
         )}
       </View>
 
+      {/* Map View */}
       <StyledMapView
         ref={(ref) => setMapRef(ref)}
         className="flex-1"
@@ -332,13 +347,14 @@ const Map = () => {
               trainLocation.timestamp
             ).toLocaleTimeString()}`}
           >
-            <View className="bg-[#40A2B2] p-2 rounded-lg">
+            <View className="bg-[#40A2B2] p-2 rounded-lg shadow-lg">
               <Ionicons name="train" size={24} color="white" />
             </View>
           </Marker>
         )}
       </StyledMapView>
 
+      {/* Train Info Card */}
       {selectedTrain && (
         <Animated.View
           {...panResponder.panHandlers}
@@ -360,9 +376,19 @@ const Map = () => {
           }}
         >
           <View className="w-12 h-1 bg-gray-300 rounded-full self-center mb-4" />
-          <Text className="text-xl font-bold mb-2 text-[#111B47]">
-            {selectedTrain.Name}
-          </Text>
+          <View className="flex-row justify-between items-center mb-4">
+            <Text className="text-xl font-bold text-[#111B47]">
+              {selectedTrain.Name}
+            </Text>
+            <TouchableOpacity onPress={toggleBookmark} className="p-2">
+              <Ionicons
+                name={isBookmarked ? "bookmark" : "bookmark-outline"}
+                size={24}
+                color="#40A2B2"
+              />
+            </TouchableOpacity>
+          </View>
+
           <Text className="text-[#40A2B2] mb-2">
             Train ID: {selectedTrain.TrainID}
           </Text>
@@ -375,6 +401,7 @@ const Map = () => {
             {selectedTrain.StartTime} - {selectedTrain.EndTime}
           </Text>
 
+          {/* Status Messages */}
           {selectedTrain.status === "offline" ? (
             <View className="flex-row items-center justify-center mt-2 p-3 bg-gray-50 rounded-lg">
               <Ionicons name="alert-circle" size={24} color="#40A2B2" />
