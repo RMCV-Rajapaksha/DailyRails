@@ -429,6 +429,97 @@ const deleteBooking = async (req, res) => {
     });
   }
 };
+const findBookedSeats = async (req, res) => {
+  try {
+    const { startStationName, endStationName } = req.query;
+
+    // Step 1: Find the station IDs using the station names
+    const startStation = await db.Station.findOne({
+      where: { Name: startStationName },
+    });
+
+    const endStation = await db.Station.findOne({
+      where: { Name: endStationName },
+    });
+
+    if (!startStation || !endStation) {
+      return res.status(404).json({
+        success: false,
+        message: "Start or End station not found",
+      });
+    }
+
+    const startStationId = startStation.StationID;
+    const endStationId = endStation.StationID;
+
+    // Step 2: Find the journey ID using the start and end station IDs
+    const journey = await db.Journey.findOne({
+      where: {
+        StartPoint: startStationId,
+        EndPoint: endStationId,
+      },
+    });
+
+    if (!journey) {
+      return res.status(404).json({
+        success: false,
+        message: "Journey not found",
+      });
+    }
+
+    const journeyId = journey.JourneyID;
+
+    // Step 3: Find the train ID using the journey ID
+    const train = await db.Train.findOne({
+      include: [
+        {
+          model: db.Journey,
+          as: "journeys",
+          where: { JourneyID: journeyId },
+        },
+      ],
+    });
+
+    if (!train) {
+      return res.status(404).json({
+        success: false,
+        message: "Train not found",
+      });
+    }
+
+    const trainId = train.TrainID;
+
+    // Step 4: Find booked seats and all seats in the train using the train ID
+    const bookedSeats = await db.BookingSeats.findAll({
+      include: [
+        {
+          model: db.Booking,
+          as: "booking",
+          where: { TrainID: trainId },
+        },
+      ],
+    });
+
+    const allSeats = await db.Seat.findAll({
+      where: { TrainID: trainId },
+    });
+
+    res.status(200).json({
+      success: true,
+      data: {
+        bookedSeats,
+        allSeats,
+      },
+    });
+  } catch (error) {
+    console.error("Error finding booked seats:", error);
+    res.status(500).json({
+      success: false,
+      message: "Failed to find booked seats",
+      error: error.message,
+    });
+  }
+};
 
 module.exports = {
   createBooking,
@@ -436,4 +527,5 @@ module.exports = {
   getBookingById,
   updateBooking,
   deleteBooking,
+  findBookedSeats,
 };
