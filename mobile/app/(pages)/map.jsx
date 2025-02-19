@@ -238,8 +238,9 @@ const Map = () => {
       <View className="absolute top-10 left-4 right-4 z-10">
         <View className="flex-row items-center bg-white rounded-lg shadow-lg p-2">
           <TextInput
-            className="flex-1 px-4 py-2 text-gray-800"
+            className="flex-1 px-4 py-2 text-[#111B47]"
             placeholder="Search trains..."
+            placeholderTextColor="#9CA3AF"
             value={searchTrain}
             onChangeText={setSearchTrain}
             onFocus={() => {
@@ -261,7 +262,7 @@ const Map = () => {
             </TouchableOpacity>
           ) : (
             <TouchableOpacity
-              className="ml-2 bg-blue-300 p-2 rounded-lg"
+              className="ml-2 bg-[#40A2B2] p-2 rounded-lg"
               onPress={() => setShowDropdown(true)}
             >
               <Ionicons name="search" size={24} color="white" />
@@ -284,7 +285,7 @@ const Map = () => {
               keyExtractor={(item) => item.TrainID}
               renderItem={({ item }) => (
                 <TouchableOpacity
-                  className="p-4 border-b border-gray-200"
+                  className="p-4 border-b border-gray-100 active:bg-gray-50"
                   onPress={() => {
                     setSelectedTrain(item);
                     setSearchTrain(item.Name);
@@ -296,8 +297,10 @@ const Map = () => {
                     }).start();
                   }}
                 >
-                  <Text className="text-gray-800 font-medium">{item.Name}</Text>
-                  <Text className="text-gray-600 text-sm">
+                  <Text className="text-[#111B47] font-medium">
+                    {item.Name}
+                  </Text>
+                  <Text className="text-[#40A2B2] text-sm">
                     ID: {item.TrainID}
                   </Text>
                 </TouchableOpacity>
@@ -357,21 +360,25 @@ const Map = () => {
           }}
         >
           <View className="w-12 h-1 bg-gray-300 rounded-full self-center mb-4" />
-          <Text className="text-xl font-bold mb-2">{selectedTrain.Name}</Text>
-          <Text className="text-gray-600 mb-2">
+          <Text className="text-xl font-bold mb-2 text-[#111B47]">
+            {selectedTrain.Name}
+          </Text>
+          <Text className="text-[#40A2B2] mb-2">
             Train ID: {selectedTrain.TrainID}
           </Text>
           <Text className="text-gray-600 mb-2">
-            Route: {selectedTrain.StartStations} → {selectedTrain.EndStations}
+            <Text className="font-medium">Route: </Text>
+            {selectedTrain.StartStations} → {selectedTrain.EndStations}
           </Text>
           <Text className="text-gray-600 mb-2">
-            Time: {selectedTrain.StartTime} - {selectedTrain.EndTime}
+            <Text className="font-medium">Time: </Text>
+            {selectedTrain.StartTime} - {selectedTrain.EndTime}
           </Text>
 
           {selectedTrain.status === "offline" ? (
-            <View className="flex-row items-center justify-center mt-2 p-3 bg-gray-100 rounded-lg">
-              <Ionicons name="alert-circle" size={24} color="#9CA3AF" />
-              <Text className="text-gray-600 ml-2">
+            <View className="flex-row items-center justify-center mt-2 p-3 bg-gray-50 rounded-lg">
+              <Ionicons name="alert-circle" size={24} color="#40A2B2" />
+              <Text className="text-[#111B47] ml-2">
                 This train is currently not sharing location data.
               </Text>
             </View>
@@ -383,14 +390,19 @@ const Map = () => {
               </Text>
             </View>
           ) : trainLocation ? (
-            <Text className="text-gray-600">
-              Last Updated:{" "}
-              {new Date(trainLocation.timestamp).toLocaleTimeString()}
-            </Text>
+            <View className="flex-row items-center justify-center mt-2 p-3 bg-[#40A2B2]/10 rounded-lg">
+              <Ionicons name="time-outline" size={24} color="#40A2B2" />
+              <Text className="text-[#111B47] ml-2">
+                Last Updated:{" "}
+                <Text className="text-[#40A2B2]">
+                  {new Date(trainLocation.timestamp).toLocaleTimeString()}
+                </Text>
+              </Text>
+            </View>
           ) : (
-            <View className="flex-row items-center justify-center mt-2">
+            <View className="flex-row items-center justify-center mt-2 p-3 bg-[#40A2B2]/10 rounded-lg">
               <ActivityIndicator color="#40A2B2" />
-              <Text className="text-gray-600 ml-2">
+              <Text className="text-[#111B47] ml-2">
                 Connecting to train location...
               </Text>
             </View>
