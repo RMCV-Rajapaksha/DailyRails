@@ -248,7 +248,7 @@ const Map = () => {
   return (
     <View className="flex-1">
       {/* Search Bar */}
-      <View className="absolute top-10 left-4 right-4 z-10">
+      <View className="absolute top-14 left-4 right-4 z-10">
         <View className="flex-row items-center bg-white rounded-lg shadow-lg p-2">
           <TextInput
             className="flex-1 px-4 py-2 text-[#111B47]"
