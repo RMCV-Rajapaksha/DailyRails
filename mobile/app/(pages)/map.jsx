@@ -10,6 +10,7 @@ import {
   FlatList,
   Dimensions,
   PanResponder,
+  ActivityIndicator,
 } from "react-native";
 import MapView, {
   Marker,
@@ -138,22 +139,34 @@ const Map = () => {
               );
             }
           } else {
-            console.error("No location data available for train:", trainId);
-            Alert.alert("Error", "No location data available for this train");
+            // Handle no location data case
+            setTrainLocation(null);
+            setIsTracking(false);
+            // Show status in the card instead of an alert
+            setSelectedTrain((prev) => ({
+              ...prev,
+              status: "offline",
+            }));
           }
         },
         (error) => {
           console.error("Firebase error:", error);
-          Alert.alert("Error", "Failed to track train location");
           setIsTracking(false);
+          setSelectedTrain((prev) => ({
+            ...prev,
+            status: "error",
+          }));
         }
       );
 
       setUnsubscribe(() => unsubscribeFromTrain);
     } catch (error) {
       console.error("Error starting train tracking:", error);
-      Alert.alert("Error", "Failed to start train tracking");
       setIsTracking(false);
+      setSelectedTrain((prev) => ({
+        ...prev,
+        status: "error",
+      }));
     }
   };
 
@@ -248,7 +261,7 @@ const Map = () => {
             </TouchableOpacity>
           ) : (
             <TouchableOpacity
-              className="ml-2 bg-blue-500 p-2 rounded-lg"
+              className="ml-2 bg-blue-300 p-2 rounded-lg"
               onPress={() => setShowDropdown(true)}
             >
               <Ionicons name="search" size={24} color="white" />
@@ -316,7 +329,7 @@ const Map = () => {
               trainLocation.timestamp
             ).toLocaleTimeString()}`}
           >
-            <View className="bg-blue-500 p-2 rounded-lg">
+            <View className="bg-[#40A2B2] p-2 rounded-lg">
               <Ionicons name="train" size={24} color="white" />
             </View>
           </Marker>
@@ -354,11 +367,33 @@ const Map = () => {
           <Text className="text-gray-600 mb-2">
             Time: {selectedTrain.StartTime} - {selectedTrain.EndTime}
           </Text>
-          {trainLocation && (
+
+          {selectedTrain.status === "offline" ? (
+            <View className="flex-row items-center justify-center mt-2 p-3 bg-gray-100 rounded-lg">
+              <Ionicons name="alert-circle" size={24} color="#9CA3AF" />
+              <Text className="text-gray-600 ml-2">
+                This train is currently not sharing location data.
+              </Text>
+            </View>
+          ) : selectedTrain.status === "error" ? (
+            <View className="flex-row items-center justify-center mt-2 p-3 bg-red-50 rounded-lg">
+              <Ionicons name="warning" size={24} color="#EF4444" />
+              <Text className="text-red-500 ml-2">
+                Unable to track train location. Please try again later.
+              </Text>
+            </View>
+          ) : trainLocation ? (
             <Text className="text-gray-600">
               Last Updated:{" "}
               {new Date(trainLocation.timestamp).toLocaleTimeString()}
             </Text>
+          ) : (
+            <View className="flex-row items-center justify-center mt-2">
+              <ActivityIndicator color="#40A2B2" />
+              <Text className="text-gray-600 ml-2">
+                Connecting to train location...
+              </Text>
+            </View>
           )}
         </Animated.View>
       )}

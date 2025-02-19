@@ -51,14 +51,14 @@ const Schedule = () => {
         Location_2: toStation.StationName,
       });
 
-      if (response.data.success) {
-        setSchedules(response.data.data);
+      setSchedules(response.data.data);
+    } catch (error) {
+      if (error.response?.status === 404) {
+        setSchedules([]);
       } else {
+        console.error("Error fetching schedules:", error);
         setSchedules([]);
       }
-    } catch (error) {
-      console.error("Error fetching schedules:", error);
-      setSchedules([]);
     } finally {
       setLoading(false);
     }
@@ -108,32 +108,42 @@ const Schedule = () => {
     placeholder
   ) => (
     <View className="relative mb-4">
-      <TouchableOpacity
-        className="flex-row items-center bg-white rounded-lg shadow-lg p-2"
-        onPress={() => {
-          fetchStations();
-          setShowDropdown(!showDropdown);
-        }}
-      >
+      <View className="flex-row items-center bg-white rounded-lg shadow-lg p-2">
         <TextInput
           className="flex-1 px-4 py-2 text-gray-800"
           placeholder={placeholder}
           value={searchValue}
-          onChangeText={setSearchValue}
-          editable={false}
+          onChangeText={(text) => {
+            setSearchValue(text);
+            if (!showDropdown) {
+              setShowDropdown(true);
+            }
+          }}
+          onFocus={() => {
+            fetchStations();
+            setShowDropdown(true);
+          }}
         />
         {searchValue ? (
           <TouchableOpacity className="ml-2 p-2" onPress={clearSearch}>
             <Ionicons name="close-circle" size={24} color="#9CA3AF" />
           </TouchableOpacity>
         ) : (
-          <Ionicons
-            name={showDropdown ? "chevron-up" : "chevron-down"}
-            size={24}
-            color="#9CA3AF"
-          />
+          <TouchableOpacity
+            className="ml-2 p-2"
+            onPress={() => {
+              fetchStations();
+              setShowDropdown(!showDropdown);
+            }}
+          >
+            <Ionicons
+              name={showDropdown ? "chevron-up" : "chevron-down"}
+              size={24}
+              color="#9CA3AF"
+            />
+          </TouchableOpacity>
         )}
-      </TouchableOpacity>
+      </View>
 
       {showDropdown && (
         <View className="absolute top-full left-0 right-0 mt-2 bg-white rounded-lg shadow-lg max-h-60 z-50">
@@ -144,16 +154,23 @@ const Schedule = () => {
               )
             )}
             keyExtractor={(item) => item.StationID}
-            renderItem={({ item }) =>
-              renderStationDropdown({
-                item,
-                onSelect: (station) => {
-                  setValue(station);
-                  setSearchValue(station.StationName);
+            renderItem={({ item }) => (
+              <TouchableOpacity
+                className="p-4 border-b border-gray-200"
+                onPress={() => {
+                  setValue(item);
+                  setSearchValue(item.StationName);
                   setShowDropdown(false);
-                },
-              })
-            }
+                }}
+              >
+                <Text className="text-gray-800 font-medium">
+                  {item.StationName}
+                </Text>
+                <Text className="text-gray-600 text-sm">
+                  ID: {item.StationID}
+                </Text>
+              </TouchableOpacity>
+            )}
           />
         </View>
       )}
