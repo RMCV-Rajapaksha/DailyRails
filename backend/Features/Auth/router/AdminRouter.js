@@ -23,7 +23,7 @@ const validate = (req, res, next) => {
 };
 
 // Route for creating a new user
-router.post("/register", validateNewAdmin, validate, postAdmin);
+router.post("/register", postAdmin);
 router.post("/login", validateLogin, validate, adminLogin);
 router.post("/logout", adminLogout);
 router.put("/:id", validate, adminUpdate);
