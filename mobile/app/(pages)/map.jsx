@@ -26,7 +26,6 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useRouter } from "expo-router";
 
 const StyledMapView = styled(MapView);
-const screenHeight = Dimensions.get("window").height;
 
 const androidMapStyle = [
   {
@@ -247,8 +246,15 @@ const Map = () => {
 
   return (
     <View className="flex-1">
+      {/* Back Button */}
+      <TouchableOpacity
+        className="absolute top-8 left-2 z-20"
+        onPress={() => router.back()}
+      >
+        <Ionicons name="chevron-back" size={28} color="" />
+      </TouchableOpacity>
       {/* Search Bar */}
-      <View className="absolute top-14 left-4 right-4 z-10">
+      <View className="absolute top-16 left-4 right-4 z-10">
         <View className="flex-row items-center bg-white rounded-lg shadow-lg p-2">
           <TextInput
             className="flex-1 px-4 py-2 text-[#111B47]"
@@ -263,7 +269,7 @@ const Map = () => {
           />
           {searchTrain ? (
             <TouchableOpacity className="ml-2 p-2" onPress={clearSearch}>
-              <Ionicons name="close-circle" size={24} color="#9CA3AF" />
+              <Ionicons name="close-circle" size={24} color="#40A2B2" />
             </TouchableOpacity>
           ) : null}
           {isTracking ? (
@@ -329,8 +335,6 @@ const Map = () => {
         ref={(ref) => setMapRef(ref)}
         className="flex-1"
         initialRegion={initialRegion}
-        showsUserLocation
-        showsMyLocationButton
         showsCompass
         rotateEnabled
         provider={Platform.OS === "ios" ? PROVIDER_DEFAULT : PROVIDER_GOOGLE}
