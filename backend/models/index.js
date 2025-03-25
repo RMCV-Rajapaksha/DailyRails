@@ -72,6 +72,10 @@ const models = [
     name: "BookingSeats",
     path: "../Features/Booking/models/BookingModelTwo",
   },
+  {
+    name: "Passenger",
+    path: "../Features/Booking/models/PassengerModel",
+  }
 ];
 
 // Load models from current directory

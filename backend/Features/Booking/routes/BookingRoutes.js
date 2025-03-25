@@ -23,7 +23,8 @@ const validate = (req, res, next) => {
 };
 
 // Create a new booking
-router.post("/", validateNewBooking, validate, createBooking);
+// router.post("/", validateNewBooking, validate, createBooking);
+router.post("/", createBooking);
 
 // Get all bookings with optional filters
 router.get("/", getBookings);

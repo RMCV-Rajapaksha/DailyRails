@@ -1,7 +1,8 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef, useCallback } from "react";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import apiService from "../../http";
-import { toast } from "react-toastify";;
+import { toast } from "react-toastify";
+
 
 const Lost = () => {
   const [items, setItems] = useState([]);
@@ -9,44 +10,50 @@ const Lost = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const [total, setTotal] = useState(0);
   const itemsPerPage = 5;
+  const isFetching = useRef(false);
   
-  const fetchItems = async () => {
+  const fetchItems = useCallback(async () => {
+    if (isFetching.current) return;
+    isFetching.current = true;
     setIsLoading(true);
+    
+    const toastId = toast.loading("Fetching lost items...");
+    
     try {
-      // Simulate fetching data from API
-      // const mockItems = [
-      //   { id: 1, Title: "Lost Wallet", Description: "Black leather wallet", contactNumber: "123456789", createdAt: "2023-01-10", approved: false },
-      //   { id: 3, Title: "Lost Watch", Description: "Silver wristwatch", contactNumber: "987654321", createdAt: "2023-02-01", approved: false },
-      //   { id: 5, Title: "Lost Keychain", Description: "Leather keychain with keys", contactNumber: "555666777", createdAt: "2023-03-05", approved: false },
-      // ];
-
-      //Get lost form the backend
- 
-          const response = await apiService.get("/api/items/notapproved/lost", {
-            params: {
-              page: currentPage,
-              limit: itemsPerPage,
-            },});
-         console.log(response.data.items);
-
-         toast.success("Lost Item fetched successfully!");
-
+      const response = await apiService.get("/api/items/notapproved/lost", {
+        params: {
+          page: currentPage,
+          limit: itemsPerPage,
+        },
+      });
+      
+      toast.update(toastId, {
+        render: "Lost items fetched successfully!",
+        type: "success",
+        isLoading: false,
+        autoClose: 3000
+      });
+      
       setItems(response.data.items);
-      setTotal(response.data.items.length); // Assuming total length of mock data
+      setTotal(response.data.total);
     } catch (err) {
       console.error("Error fetching items:", err);
-      toast.error("Error fetching Lost items!");
+      toast.update(toastId, {
+        render: "Error fetching Lost items!",
+        type: "error",
+        isLoading: false,
+        autoClose: 3000
+      });
     } finally {
       setIsLoading(false);
+      isFetching.current = false;
     }
-  };
-
+  }, [currentPage, itemsPerPage]);
+  
   useEffect(() => {
-    return ()=>{
-      fetchItems();
-    }
-    
-  }, [currentPage]);
+    fetchItems();
+  }, [fetchItems]);
+
 
   const handleApprove = async (id) => {
     try {

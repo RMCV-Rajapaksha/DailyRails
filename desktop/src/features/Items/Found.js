@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef, useCallback } from "react";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import apiService from "../../http";
 import { toast } from "react-toastify";
@@ -9,9 +9,15 @@ const Found = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const [total, setTotal] = useState(0);
   const itemsPerPage = 5;
+  const isFetching = useRef(false);
 
-  const fetchItems = async () => {
+  const fetchItems = useCallback(async () => {
+    if (isFetching.current) return;
+    isFetching.current = true;
     setIsLoading(true);
+    
+    const toastId = toast.loading("Fetching found items...");
+    
     try {
       const response = await apiService.get("/api/items/notapproved/found", {
         params: {
@@ -19,24 +25,35 @@ const Found = () => {
           limit: itemsPerPage,
         },
       });
-
-      toast.success("Found items fetched successfully!");
+      
+      toast.update(toastId, {
+        render: "Found items fetched successfully!",
+        type: "success",
+        isLoading: false,
+        autoClose: 3000
+      });
+      
       setItems(response.data.items);
-      setTotal(response.data.total); // Ensure the API returns the total count
+      setTotal(response.data.total);
     } catch (err) {
       console.error("Error fetching found items:", err);
-      toast.error("Error fetching found items!");
+      toast.update(toastId, {
+        render: "Error fetching found items!",
+        type: "error",
+        isLoading: false,
+        autoClose: 3000
+      });
     } finally {
       setIsLoading(false);
+      isFetching.current = false;
     }
-  };
+  }, [currentPage, itemsPerPage]);
 
-  useEffect(() => {
-    return () =>{
-      fetchItems();
-    }
-  
-  }, [currentPage]);
+useEffect(() => {
+  fetchItems();
+}, [fetchItems]);
+
+
 
   const handleApprove = async (id) => {
     try {

@@ -9,7 +9,7 @@ const BookingPage = () => {
       <div>
         <h1>Train Booking</h1>
         <BookingForm />
-        <StripePayment />
+        {/* <StripePayment /> */}
       </div>
     </BookingProvider>
   );

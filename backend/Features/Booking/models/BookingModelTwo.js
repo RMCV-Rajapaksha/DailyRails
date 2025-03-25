@@ -36,6 +36,8 @@ module.exports = (sequelize) => {
     BookingSeats.belongsTo(models.Booking, {
       foreignKey: "BookingID",
       as: "booking",
+      onDelete: "CASCADE",
+      onUpdate: "CASCADE",
     });
   };
 

@@ -6,7 +6,7 @@ const AuthContext = createContext(null);
 
 export default function AuthProvider({ children }) {
 
-    const [user, setUser] = useState(null);
+    const [user, setUser] = useState(true);
     const [token, setToken] = useState(null);
     const [isTokenFetching, setIsTokenFetching] = useState(true); // New state to handle fetching
 
@@ -91,3 +91,4 @@ export const useAuth = () => {
     }
     return context;
 }
+

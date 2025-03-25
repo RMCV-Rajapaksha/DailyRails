@@ -1,5 +1,7 @@
+const express = require("express");
+const { Sequelize, DataTypes } = require("sequelize");
 const db = require("../../../models");
-const { Op } = require("sequelize");
+
 const { sendBookingEmail } = require("../../../Services/EmailService");
 
 // Helper function to generate next booking ID
@@ -13,7 +15,6 @@ const generateNextBookingId = async () => {
     if (!lastBooking) {
       return "BK000001";
     }
-
 
     const lastNumber = parseInt(lastBooking.BookingID.replace("BK", ""));
     const nextNumber = (lastNumber + 1).toString().padStart(4, "0");
@@ -33,9 +34,9 @@ const createBooking = async (req, res) => {
     const {
       trainId,
       journeyId,
+      passengerNIC,
       classType,
       noOfSeats,
-      passengerNic,
       email,
       date,
       time,
@@ -43,8 +44,10 @@ const createBooking = async (req, res) => {
       amount,
     } = req.body;
 
-    // Validate train and journey existence
-    const [train, journey] = await Promise.all([
+    console.log(req.body);
+  
+    // Step 1: Validate train and journey existence
+    const [train, journey,  passenger] = await Promise.all([
       db.Train.findByPk(trainId, {
         include: [
           { model: db.Station, as: "startStation" },
@@ -57,34 +60,64 @@ const createBooking = async (req, res) => {
           { model: db.Station, as: "endStation" },
         ],
       }),
+      db.Passenger.findByPk(passengerNIC, {
+        include: [
+          { model: db.Booking, as: "bookings" },
+        ],
+      }),
     ]);
 
-    if (!train || !journey) {
-      await transaction.rollback();
+     
+    if (!train) {
       return res.status(404).json({
         success: false,
-        message: "Train or Journey not found",
+        message: "Train not found with the provided ID",
+      });
+    }
+   
+    if (!journey) {
+      return res.status(404).json({
+        success: false,
+        message: "Journey not found with the provided ID",
+      });
+    }
+    if (!passenger) {
+      return res.status(404).json({
+        success: false,
+        message: "Passenger not found with the provided ID",
       });
     }
 
+    if (!train || !journey || !passenger) {
+      await transaction.rollback();
+      return res.status(404).json({
+        success: false,
+        message: "Train ,Journey or Passenger not found",
+      });
+    }
+
+
+
+     // Step 3: Generate booking ID
     const bookingId = await generateNextBookingId();
 
-    // Create main booking
+    // Step 4: Create main booking
     const booking = await db.Booking.create(
       {
         BookingID: bookingId,
         TrainID: trainId,
         JourneyID: journeyId,
+        PassengerNIC: passengerNIC,
         Class: classType,
         NoOfSeats: noOfSeats,
-        PassengerNIC: passengerNic,
         Date: date,
         Time: time,
       },
       { transaction }
     );
 
-    // Create booking seats
+
+    // Step 5: Create booking seats
     const bookingSeats = await Promise.all(
       seatNumbers.map(async (seatNumber, index) => {
         const ticketId = `TK${bookingId.substring(2)}-${(index + 1)
@@ -101,21 +134,36 @@ const createBooking = async (req, res) => {
       })
     );
 
+    const PAYMENT_STATUS = {
+      PENDING: 0,
+      COMPLETED: 1,
+      FAILED: 2,
+      REFUNDED: 3
+    };
 
-    // Create payment record
+
+    // Step 6: Create payment record
     const payment = await db.Payment.create(
       {
         PaymentID: `PY${bookingId.substring(2)}`,
         BookingID: bookingId,
         Amount: amount,
-        Status: 0, // Pending status
+        Status: PAYMENT_STATUS.PENDING,
       },
       { transaction }
     );
 
+    if (!booking || !payment) {
+      await transaction.rollback();
+      return res.status(500).json({
+        success: false,
+        message: "Failed to create booking records",
+      });
+    }
+
     await transaction.commit();
 
-    // Fetch complete booking details
+       // Step 7: Fetch complete booking details
     const completeBooking = await db.Booking.findByPk(bookingId, {
       include: [
         {
@@ -159,7 +207,7 @@ const createBooking = async (req, res) => {
       },
       seats: seatNumbers,
       user: {
-        Name: passengerNic,
+        Name: passengerNIC,
         Email: email,
       },
     });
@@ -182,10 +230,10 @@ const createBooking = async (req, res) => {
 // Get all bookings with optional filters
 const getBookings = async (req, res) => {
   try {
-    const { passengerNic, date, trainId, classType } = req.query;
+    const { passengerNIC, date, trainId, classType } = req.query;
 
     const whereClause = {};
-    if (passengerNic) whereClause.PassengerNIC = passengerNic;
+    if (passengerNIC) whereClause.PassengerNIC = passengerNIC;
     if (date) whereClause.Date = date;
     if (trainId) whereClause.TrainID = trainId;
     if (classType) whereClause.Class = classType;
