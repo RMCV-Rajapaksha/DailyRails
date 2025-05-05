@@ -12,7 +12,7 @@ const BookingForm = () => {
       [name]: value,
     }));
   };
-
+  
   return (
     <form className="space-y-4 p-4 bg-white rounded-lg shadow-md">
       <div className="flex flex-col">
