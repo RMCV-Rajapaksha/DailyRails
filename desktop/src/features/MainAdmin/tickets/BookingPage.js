@@ -1,15 +1,13 @@
 import React from "react";
-import { BookingProvider } from "./BookingProvider";
-import BookingForm from "../tickets/BookingForm";
-import StripePayment from "./StripePayment";
+import BookingForm from "../tickets/BookingForm/BookingForm";
+import { BookingProvider } from "../tickets/Context/BookingContext";
 
 const BookingPage = () => {
   return (
     <BookingProvider>
-      <div>
-        <h1>Train Booking</h1>
+      <div className="container mx-auto p-4">
+        <h1 className="text-2xl font-bold mb-6">Train Booking</h1>
         <BookingForm />
-        {/* <StripePayment /> */}
       </div>
     </BookingProvider>
   );
