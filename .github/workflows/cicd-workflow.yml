@@ -70,4 +70,4 @@ jobs:
             docker pull "${{ secrets.DOCKER_USERNAME }}"/dailyrails:latest
             docker stop dailyrails || true
             docker rm dailyrails || true
-            docker run -d --name dailyrails --network d73ec77ce253 -p 80:80 "${{ secrets.DOCKER_USERNAME }}"/dailyrails:latest
+            docker run -d --name dailyrails --network d73ec77ce253 -p 4000:4000 "${{ secrets.DOCKER_USERNAME }}"/dailyrails:latest
