@@ -3,10 +3,10 @@ name: CICD
 on:
   push:
     branches:
-      - main
+      - Github-Actions
   pull_request:
     branches:
-      - main
+      - Github-Actions
 
 jobs:
   build:
