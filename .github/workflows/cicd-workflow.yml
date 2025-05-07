@@ -54,7 +54,7 @@ jobs:
         run: docker images
 
       - name: Push Docker image to Docker Hub
-        run: docker push dailyrails/dailyrails:latest
+        run: docker push dailyrails:latest
 
   deploy:
     needs: build
