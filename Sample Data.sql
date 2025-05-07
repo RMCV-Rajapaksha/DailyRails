@@ -1,5 +1,55 @@
 use dailyrails;
 
+CREATE TABLE IF NOT EXISTS STATION (
+    StationID VARCHAR(10) PRIMARY KEY,
+    StationName VARCHAR(255) NOT NULL,
+    StationAddress VARCHAR(255),
+    StationLine VARCHAR(100),
+    ContactNumber VARCHAR(15),
+    createdAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updatedAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+);
+
+-- Create TRAINS Table
+CREATE TABLE IF NOT EXISTS TRAINS (
+    TrainID VARCHAR(10) PRIMARY KEY,
+    Name VARCHAR(255) NOT NULL,
+    StartStations VARCHAR(10),
+    EndStations VARCHAR(10),
+    StartTime TIME,
+    EndTime TIME,
+    createdAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updatedAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    FOREIGN KEY (StartStations) REFERENCES STATION(StationID),
+    FOREIGN KEY (EndStations) REFERENCES STATION(StationID)
+);
+
+-- Create STOPPING_POINTS Table
+CREATE TABLE IF NOT EXISTS STOPPING_POINTS (
+    PointID VARCHAR(15) PRIMARY KEY,
+    TrainID VARCHAR(10),
+    StationID VARCHAR(10),
+    ArrivalTime TIME,
+    DepartureTime TIME,
+    createdAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updatedAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    FOREIGN KEY (TrainID) REFERENCES TRAINS(TrainID),
+    FOREIGN KEY (StationID) REFERENCES STATION(StationID)
+);
+
+-- Create JOURNEY Table
+CREATE TABLE IF NOT EXISTS JOURNEY (
+    JourneyID VARCHAR(10) PRIMARY KEY,
+    RouteID INT,
+    Price DECIMAL(10, 2),
+    StartPoint VARCHAR(10),
+    EndPoint VARCHAR(10),
+    createdAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updatedAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    FOREIGN KEY (StartPoint) REFERENCES STATION(StationID),
+    FOREIGN KEY (EndPoint) REFERENCES STATION(StationID)
+);
+
 --  Station table
 -- Main Line Stations
 INSERT INTO STATION (StationID, StationName, StationAddress, StationLine, ContactNumber, createdAt, updatedAt) VALUES
@@ -112,6 +162,19 @@ INSERT INTO JOURNEY (JourneyID, RouteID, Price, StartPoint, EndPoint, createdAt,
 
 
 -- Add these to your Sample Data.sql file
+
+CREATE TABLE IF NOT EXISTS PASSENGER (
+    PassengerNIC VARCHAR(20) PRIMARY KEY,
+    FirstName VARCHAR(255) NOT NULL,
+    LastName VARCHAR(255) NOT NULL,
+    PhoneNumber VARCHAR(15),
+    Email VARCHAR(255),
+    Gender ENUM('Male', 'Female', 'Other'),
+    DateOfBirth DATE,
+    createdAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updatedAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+);
+
 
 -- Populate PASSENGER table
 INSERT INTO PASSENGER (PassengerNIC, FirstName, LastName, PhoneNumber, Email, Gender, DateOfBirth, createdAt, updatedAt) VALUES
