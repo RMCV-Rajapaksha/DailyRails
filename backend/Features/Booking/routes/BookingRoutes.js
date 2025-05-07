@@ -9,9 +9,10 @@ const {
   deleteBooking,
   findBookedSeats,
 } = require("../controller/BookingController");
-// const {
-//   createPaymentIntent,
-// } = require("../controller/PaymentController");
+const {
+  createPaymentIntent,
+  handleWebhookEvent,
+} = require("../controller/PaymentController");
 const {
   validateNewBooking,
   validateBookingId,
@@ -26,16 +27,26 @@ const validate = (req, res, next) => {
 };
 
 // Create a new booking
-// router.post("/", validateNewBooking, validate, createBooking);
 router.post("/", createBooking);
+
+// Special route for Stripe webhook - this needs raw body parser
+router.post(
+  "/webhook",
+  express.raw({ type: "application/json" }),
+  handleWebhookEvent
+);
 
 // Get all bookings with optional filters
 router.get("/", getBookings);
 
-// Get a specific booking by ID
-router.get("/:id", validateBookingId, validate, getBookingById);
+// Important: Place this before the routes with path parameters
+router.get("/findBookedSeats", findBookedSeats);
 
-// Update a booking
+// Payment intent creation
+router.post("/create-payment-intent", createPaymentIntent);
+
+// Routes with parameters
+router.get("/:id", validateBookingId, validate, getBookingById);
 router.put(
   "/:id",
   validateBookingId,
@@ -43,15 +54,6 @@ router.put(
   validate,
   updateBooking
 );
-
-// Delete a booking
 router.delete("/:id", validateBookingId, validate, deleteBooking);
-
-router.get("/findBookedSeats", findBookedSeats);
-
-// router.post(
-//   "/create-payment-intent",
-//   createPaymentIntent
-// );
 
 module.exports = router;
