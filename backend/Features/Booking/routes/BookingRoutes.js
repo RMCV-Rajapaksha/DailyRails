@@ -9,6 +9,9 @@ const {
   deleteBooking,
   findBookedSeats,
 } = require("../controller/BookingController");
+// const {
+//   createPaymentIntent,
+// } = require("../controller/PaymentController");
 const {
   validateNewBooking,
   validateBookingId,
@@ -45,5 +48,10 @@ router.put(
 router.delete("/:id", validateBookingId, validate, deleteBooking);
 
 router.get("/findBookedSeats", findBookedSeats);
+
+// router.post(
+//   "/create-payment-intent",
+//   createPaymentIntent
+// );
 
 module.exports = router;
