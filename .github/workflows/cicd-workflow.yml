@@ -1,0 +1,41 @@
+name: CICD
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Login to Docker Hub
+        run: echo "${{ secrets.DOCKER_PASSWORD }}" | docker login -u "${{ secrets.DOCKER_USERNAME }}" --password-stdin
+
+      - name: Build Docker image
+        run: docker build -t dailyrails/dailyrails:latest ./backend
+
+      - name: Push Docker image to Docker Hub
+        run: docker push dailyrails/dailyrails:latest
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    steps:
+      - name: Deploy to DigitalOcean via SSH
+        uses: appleboy/ssh-action@v0.1.10
+        with:
+          host: ${{ secrets.DO_HOST }}
+          username: root
+          key: ${{ secrets.DO_SSH_KEY }}
+          script: |
+            docker pull dailyrails/dailyrails:latest
+            docker stop dailyrails || true
+            docker rm dailyrails || true
+            docker run -d --name dailyrails -p 80:80 dailyrails/dailyrails:latest
