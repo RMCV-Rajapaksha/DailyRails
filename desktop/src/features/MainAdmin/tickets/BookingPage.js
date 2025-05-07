@@ -1,6 +1,8 @@
 import React from "react";
-import BookingForm from "../tickets/BookingForm/BookingForm";
-import { BookingProvider } from "../tickets/Context/BookingContext";
+
+import { BookingProvider } from "./BookingProvider";
+import BookingForm from "./BookingForm";
+import StripePayment from "./StripePayment";
 
 const BookingPage = () => {
   return (
