@@ -1,4 +1,5 @@
 import React from "react";
+
 import { BookingProvider } from "./BookingProvider";
 import BookingForm from "./BookingForm";
 import StripePayment from "./StripePayment";
@@ -6,10 +7,9 @@ import StripePayment from "./StripePayment";
 const BookingPage = () => {
   return (
     <BookingProvider>
-      <div>
-        <h1>Train Booking</h1>
+      <div className=" mx-auto h-screen">
+        <h1 className="text-2xl font-bold">Train Booking</h1>
         <BookingForm />
-        {/* <StripePayment /> */}
       </div>
     </BookingProvider>
   );

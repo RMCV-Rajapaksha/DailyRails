@@ -29,6 +29,8 @@ router.get("/", getAllTrains);
 // Get single train by ID with stopping points
 router.get("/:id", getTrainById);
 
+
+
 // Delete train and its stopping points
 router.delete("/:id", deleteTrain);
 
