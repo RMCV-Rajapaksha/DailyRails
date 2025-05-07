@@ -1,0 +1,74 @@
+name: CICD
+
+on:
+  push:
+    branches:
+      - Github-Actions
+  pull_request:
+    branches:
+      - Github-Actions
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      # Previous build steps remain unchanged...
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    steps:
+      # Test SSH connection before attempting deployment
+      - name: Test SSH connection
+        uses: appleboy/ssh-action@v0.1.10
+        with:
+          host: ${{ secrets.DO_HOST }}
+          username: root
+          key: ${{ secrets.DO_SSH_KEY }}
+          timeout: 60s
+          script: |
+            echo "SSH connection successful"
+            echo "Server information:"
+            hostname
+            ip addr show
+
+      - name: Deploy to DigitalOcean via SSH
+        uses: appleboy/ssh-action@v0.1.10
+        with:
+          host: ${{ secrets.DO_HOST }}
+          username: root
+          key: ${{ secrets.DO_SSH_KEY }}
+          script: |
+            docker pull "${{ secrets.DOCKER_USERNAME }}"/dailyrails:latest
+            docker stop dailyrails || true
+            docker rm dailyrails || true
+            docker run -d --name dailyrails --network d73ec77ce253 -p 4000:4000 "${{ secrets.DOCKER_USERNAME }}"/dailyrails:latest
+
+  database:
+    needs: deploy
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+        
+      # Use direct SSH command to transfer file instead of SCP action
+      - name: Setup SSH and transfer SQL file
+        run: |
+          echo "${{ secrets.DO_SSH_KEY }}" > ssh_key
+          chmod 600 ssh_key
+          scp -o StrictHostKeyChecking=no -i ssh_key "Sample Data.sql" root@${{ secrets.DO_HOST }}:/root/
+          rm ssh_key
+          
+      - name: Execute SQL script on MySQL container
+        uses: appleboy/ssh-action@v0.1.10
+        with:
+          host: ${{ secrets.DO_HOST }}
+          username: root
+          key: ${{ secrets.DO_SSH_KEY }}
+          script: |
+            echo "Executing SQL script on MySQL container..."
+            docker exec -i mysql-server mysql -u${{ secrets.DB_USERNAME }} -p${{ secrets.DB_PASSWORD }} ${{ secrets.DB_DATABASE }} < "/root/Sample Data.sql"
+            echo "SQL script execution completed"
