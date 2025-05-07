@@ -1,6 +1,8 @@
 import React from "react";
-import BookingForm from "../tickets/BookingForm/BookingForm";
+
 import { BookingProvider } from "../tickets/Context/BookingContext";
+import BookingForm from "../tickets/BookingForm/BookingForm";
+
 
 const BookingPage = () => {
   return (
