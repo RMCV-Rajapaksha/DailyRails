@@ -6,29 +6,38 @@ import {
   MeshReflectorMaterial,
   OrbitControls,
 } from "@react-three/drei";
-import Train from "../components/Train";
+import Train from "./components/Train";
 
-export default function SeatBooking() {
+export default function SeatBooking({ allowedSeats, selectedSeats, setSelectedSeats }) {
   const [currentCabin, setCurrentCabin] = useState(0);
-  const [bookedSeats, setBookedSeats] = useState([]);
   const reservedSeats = [1, 2, 3, 4, 5, 6, 7, 8, 38]; // Example reserved seats
 
   const handleNextCabin = () => {
-    setCurrentCabin((prev) => (prev < 4 ? prev + 1 : 4)); // Move forward
+    setCurrentCabin((prev) => (prev < 4 ? prev + 1 : 4));
   };
 
   const handlePreviousCabin = () => {
-    setCurrentCabin((prev) => (prev > 0 ? prev - 1 : 0)); // Move backward
+    setCurrentCabin((prev) => (prev > 0 ? prev - 1 : 0));
   };
 
   const handleBook = (seatNumber) => {
-    setBookedSeats((prev) => [...prev, seatNumber]);
+    if (selectedSeats.includes(seatNumber)) {
+      setSelectedSeats(selectedSeats.filter((s) => s !== seatNumber));
+      return;
+    }
+
+    if (selectedSeats.length >= allowedSeats) {
+      alert(`You can only select ${allowedSeats} seats.`);
+      return;
+    }
+    setSelectedSeats([...selectedSeats, seatNumber]);
   };
 
+
   return (
-    <>
+    <div className="relative w-full h-[75vh] overflow-hidden">
       <Canvas
-       className="fixed top-0 left-0 w-screen h-screen z-0" // Full-screen canvas with Tailwind
+        className="fixed top-0 left-0 w-screen h-screen z-0"
         dpr={[1, 1.5]}
         shadows
         camera={{ position: [-15, 15, 18], fov: 35 }}
@@ -51,14 +60,17 @@ export default function SeatBooking() {
             bottom={-20}
           />
         </directionalLight>
+
         <Suspense fallback={null}>
           <ScrollControls pages={5}>
             <Train
               currentCabin={currentCabin}
               reservedSeats={reservedSeats}
+              selectedSeats={selectedSeats}
               onBook={handleBook}
             />
           </ScrollControls>
+
           <mesh position={[0, -1.5, 0]} rotation={[-Math.PI / 2, 0, 0]}>
             <planeGeometry args={[50, 50]} />
             <MeshReflectorMaterial
@@ -73,8 +85,10 @@ export default function SeatBooking() {
               roughness={1}
             />
           </mesh>
+
           <Environment preset="dawn" />
         </Suspense>
+
         <OrbitControls />
       </Canvas>
 
@@ -94,15 +108,15 @@ export default function SeatBooking() {
       </div>
 
       <div className="absolute p-4 bg-white rounded shadow-lg top-5 right-5">
-        <h2 className="mb-2 text-xl font-bold">Booked Seats</h2>
+        <h2 className="mb-2 text-xl font-bold">Selected Seats</h2>
         <ul>
-          {bookedSeats.map((seat) => (
+          {selectedSeats.map((seat) => (
             <li key={seat} className="text-gray-700">
               Seat {seat}
             </li>
           ))}
         </ul>
       </div>
-    </>
+    </div>
   );
 }

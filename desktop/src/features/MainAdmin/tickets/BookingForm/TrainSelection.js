@@ -6,40 +6,54 @@ import { toast } from "react-toastify";
 export const TrainSelection = ({ onNextStep }) => {
   const { bookingDetails, setBookingDetails } = useContext(BookingContext);
   const [availableTrains, setAvailableTrains] = useState([]);
+  const [allJourneys, setAllJourneys] = useState([]);
 
   const handleTrainChange = (e) => {
     const selectedTrain = e.target.value;
-    setBookingDetails((prevDetails) => ({
-      ...prevDetails,
-      trainId: selectedTrain,
-    }));
-    onNextStep();
+
+    const matchingJourney = allJourneys.find(
+      (journey) =>
+        journey.StartPoint === bookingDetails.startStation.id &&
+        journey.EndPoint === bookingDetails.endStation.id
+    );
+
+    if (matchingJourney) {
+      setBookingDetails((prevDetails) => ({
+        ...prevDetails,
+        trainId: selectedTrain,
+        journeyId: matchingJourney.JourneyID,
+        price: matchingJourney.Price,
+      }));
+      onNextStep();
+    } else {
+      toast.error("No journey found for the selected stations.");
+    }
+  };
+
+  const fetchJourneys = async () => {
+    try {
+      const response = await apiService.get("/api/journeys/all");
+      console.log("Fetched journeys:", response.data);
+      const journeys = response.data || [];
+      setAllJourneys(journeys);
+    } catch (error) {
+      console.error("Error fetching journeys:", error);
+      toast.error("Failed to fetch journey data.");
+    }
   };
 
   const fetchTrains = async () => {
     try {
       const response = await apiService.get("/api/trains");
       const allTrains = response.data || [];
-      console.log(allTrains);
 
-      console.log(bookingDetails.startStation.id );
-      console.log("start :");
-      console.log(bookingDetails.endStation.id);
-      console.log(allTrains[0].EndStations);
-
-      const filteredTrains = allTrains.filter((train) => {
-
-        return (
-          train.StartStations == bookingDetails.startStation?.id &&
-          train.EndStations == bookingDetails.endStation?.id
-        );
-      });
-    
-      console.log(filteredTrains)
+      const filteredTrains = allTrains.filter(
+        (train) =>
+          train.StartStations === bookingDetails.startStation?.id &&
+          train.EndStations === bookingDetails.endStation?.id
+      );
 
       setAvailableTrains(filteredTrains);
-
-      console.log(availableTrains)
 
       if (filteredTrains.length > 0) {
         toast.success("Filtered trains loaded successfully!");
@@ -53,9 +67,8 @@ export const TrainSelection = ({ onNextStep }) => {
   };
 
   useEffect(() => {
-    console.log(1)
     if (bookingDetails.startStation.name && bookingDetails.endStation.name) {
-      fetchTrains();
+      fetchJourneys().then(fetchTrains);
     }
   }, [bookingDetails.startStation.name, bookingDetails.endStation.name]);
 

@@ -4,6 +4,7 @@ import MainAdminLayOut from "../LayOut/MainLayOut";
 import Home from "../features/Pages/Home";
 import Dashboard from "../features/DashboardPage";
 import LoginPage from "../features/Authentication/pages/LoginPage";
+import SeatBooking from "../features/MainAdmin/tickets/SeatBooking";
 
 const router1 = createBrowserRouter([
   {
@@ -38,7 +39,7 @@ const router1 = createBrowserRouter([
         index: true,
         element: <Home />,
       },]}
-      
+  
 ]);
 
 const AppRouter = () => {

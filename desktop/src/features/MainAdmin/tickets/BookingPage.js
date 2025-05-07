@@ -5,8 +5,8 @@ import { BookingProvider } from "../tickets/Context/BookingContext";
 const BookingPage = () => {
   return (
     <BookingProvider>
-      <div className="container mx-auto p-4">
-        <h1 className="text-2xl font-bold mb-6">Train Booking</h1>
+      <div className=" mx-auto h-screen">
+        <h1 className="text-2xl font-bold">Train Booking</h1>
         <BookingForm />
       </div>
     </BookingProvider>

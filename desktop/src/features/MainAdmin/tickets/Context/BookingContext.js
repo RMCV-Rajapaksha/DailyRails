@@ -4,17 +4,19 @@ const BookingContext = createContext();
 
 export const BookingProvider = ({ children }) => {
   const [bookingDetails, setBookingDetails] = useState({
-    trainId: "TR001",
+    trainId: "",
     journeyId: "",
     classType: "1",
     noOfSeats: 1,
     passengerNic: "",
+    contactNumber: "",
     date: "",
     time: "",
     startStation: { id: "", name: "" },
     endStation: { id: "", name: "" },
     seatNumbers: [],
-    amount: 100, // Default amount per seat
+    price: "", // Default amount per seat
+    
   });
 
   return (

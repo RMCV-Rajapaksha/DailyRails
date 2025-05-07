@@ -4,6 +4,8 @@ import {StationSelection} from "./StationSelection";
 import {ClassTypeSelection} from "./ClassTypeSelection";
 import {SeatSelection} from "./SeatSelection";
 import {ReviewAndPayment} from "./ReviewAndPayment";
+import {PassengerDetailsForm} from "./PassengerDetailsForm";
+
 
 
 const BookingForm = () => {
@@ -14,7 +16,8 @@ const BookingForm = () => {
     <TrainSelection onNextStep={() => setStep(3)} />,
     <ClassTypeSelection onNextStep={() => setStep(4)} />,
     <SeatSelection onNextStep={() => setStep(5)} />,
-    // <ReviewAndPayment />,
+    <PassengerDetailsForm onNextStep={() => setStep(6)} />,
+    <ReviewAndPayment />,
   ];
 
   return (
