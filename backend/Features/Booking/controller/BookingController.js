@@ -45,9 +45,9 @@ const createBooking = async (req, res) => {
     } = req.body;
 
     console.log(req.body);
-  
+
     // Step 1: Validate train and journey existence
-    const [train, journey,  passenger] = await Promise.all([
+    const [train, journey, passenger] = await Promise.all([
       db.Train.findByPk(trainId, {
         include: [
           { model: db.Station, as: "startStation" },
@@ -61,20 +61,17 @@ const createBooking = async (req, res) => {
         ],
       }),
       db.Passenger.findByPk(passengerNIC, {
-        include: [
-          { model: db.Booking, as: "bookings" },
-        ],
+        include: [{ model: db.Booking, as: "bookings" }],
       }),
     ]);
 
-     
     if (!train) {
       return res.status(404).json({
         success: false,
         message: "Train not found with the provided ID",
       });
     }
-   
+
     if (!journey) {
       return res.status(404).json({
         success: false,
@@ -96,9 +93,7 @@ const createBooking = async (req, res) => {
       });
     }
 
-
-
-     // Step 3: Generate booking ID
+    // Step 3: Generate booking ID
     const bookingId = await generateNextBookingId();
 
     // Step 4: Create main booking
@@ -115,7 +110,6 @@ const createBooking = async (req, res) => {
       },
       { transaction }
     );
-
 
     // Step 5: Create booking seats
     const bookingSeats = await Promise.all(
@@ -134,15 +128,16 @@ const createBooking = async (req, res) => {
       })
     );
 
+    // Inside the createBooking function, modify the payment creation part:
+
     const PAYMENT_STATUS = {
-      PENDING: 0,
-      COMPLETED: 1,
-      FAILED: 2,
-      REFUNDED: 3
+      PENDING: "Pending",
+      COMPLETED: "Completed",
+      FAILED: "Failed",
+      REFUNDED: "Refunded",
     };
 
-
-    // Step 6: Create payment record
+    // Step 6: Create payment record with pending status
     const payment = await db.Payment.create(
       {
         PaymentID: `PY${bookingId.substring(2)}`,
@@ -153,17 +148,27 @@ const createBooking = async (req, res) => {
       { transaction }
     );
 
-    if (!booking || !payment) {
-      await transaction.rollback();
-      return res.status(500).json({
-        success: false,
-        message: "Failed to create booking records",
-      });
-    }
-
+    // Commit the transaction to save the booking
     await transaction.commit();
 
-       // Step 7: Fetch complete booking details
+    // Return booking ID for payment processing
+    res.status(201).json({
+      success: true,
+      data: {
+        bookingId: bookingId,
+        amount: amount,
+        trainDetails: {
+          trainName: train.Name,
+          class: classType,
+          date,
+          time,
+        },
+        seats: seatNumbers,
+      },
+      message: "Booking created. Please proceed to payment.",
+    });
+
+    // Step 7: Fetch complete booking details
     const completeBooking = await db.Booking.findByPk(bookingId, {
       include: [
         {

@@ -16,7 +16,6 @@ const TrainManagement = () => {
     EndTime: "",
     stoppingPoints: [],
   });
-  
 
   const inputDataStructure = {
     Name: {
@@ -99,80 +98,76 @@ const TrainManagement = () => {
 
   const [inputs, setInputs] = useState(inputDataStructure);
 
-  // Corrected Typo in inputStoppingDataStructure
-const inputStoppingDataStructure = {
-  StationID: {
-    key: "StationID",
-    type: "text",
-    data: "",
-    placeholder: "Station ID",
-    validation: Joi.string()
-      .required()
-      .messages({
-        "string.empty": "Station ID should not be empty",
-        "any.required": "Station ID is required",
-      }),
-  },
-  ArrivalTime: {
-    key: "ArrivalTime",
-    type: "time",
-    data: "",
-    placeholder: "Arrival Time",
-    validation: Joi.string()
-      .required()
-      .messages({
-        "string.empty": "Arrival Time should not be empty",
-        "any.required": "Arrival Time is required",
-        "string.type": "Arrival Time should be a String",
-      }),
-  },
-  DepartureTime: {  // Corrected Typo here
-    key: "DepartureTime",
-    type: "time",
-    data: "",
-    placeholder: "Departure Time",
-    validation: Joi.string()
-      .required()
-      .messages({
-        "string.empty": "Departure Time should not be empty",
-        "any.required": "Departure Time is required",
-        "string.type": "Departure Time should be a String",
-      }),
-  },
-};
+  const inputStoppingDataStructure = {
+    StationID: {
+      key: "StationID",
+      type: "text",
+      data: "",
+      placeholder: "Station ID",
+      validation: Joi.string()
+        .required()
+        .messages({
+          "string.empty": "Station ID should not be empty",
+          "any.required": "Station ID is required",
+        }),
+    },
+    ArrivalTime: {
+      key: "ArrivalTime",
+      type: "time",
+      data: "",
+      placeholder: "Arrival Time",
+      validation: Joi.string()
+        .required()
+        .messages({
+          "string.empty": "Arrival Time should not be empty",
+          "any.required": "Arrival Time is required",
+          "string.type": "Arrival Time should be a String",
+        }),
+    },
+    DepartureTime: {
+      key: "DepartureTime",
+      type: "time",
+      data: "",
+      placeholder: "Departure Time",
+      validation: Joi.string()
+        .required()
+        .messages({
+          "string.empty": "Departure Time should not be empty",
+          "any.required": "Departure Time is required",
+          "string.type": "Departure Time should be a String",
+        }),
+    },
+  };
 
   const [newStop, setNewStop] = useState(inputStoppingDataStructure);
 
-  // Updated handleChange and handleStopChange Functions
-const handleChange = (input) => {
-  let input_list = { ...inputs };
-  input_list[input.key] = { ...input_list[input.key], data: input.data };
-  setInputs(input_list);
-};
+  const handleChange = (input) => {
+    let input_list = { ...inputs };
+    input_list[input.key] = { ...input_list[input.key], data: input.data };
+    setInputs(input_list);
+  };
 
-const handleStopChange = (input) => {
-  let input_list = { ...newStop };
-  input_list[input.key] = { ...input_list[input.key], data: input.data };
-  setNewStop(input_list);
-};
+  const handleStopChange = (input) => {
+    let input_list = { ...newStop };
+    input_list[input.key] = { ...input_list[input.key], data: input.data };
+    setNewStop(input_list);
+  };
 
-// Updated handleAddStop Function
-const handleAddStop = () => {
-  setForm((prev) => ({
-    ...prev,
-    stoppingPoints: [
-      ...prev.stoppingPoints,
-      {
-        StationID: newStop.StationID.data,
-        ArrivalTime: newStop.ArrivalTime.data,
-        DepartureTime: newStop.DepartureTime.data,
-      },
-    ],
-  }));
-  setNewStop(inputStoppingDataStructure);
-};
+  const handleAddStop = () => {
+    setForm((prev) => ({
+      ...prev,
+      stoppingPoints: [
+        ...prev.stoppingPoints,
+        {
+          StationID: newStop.StationID.data,
+          ArrivalTime: newStop.ArrivalTime.data,
+          DepartureTime: newStop.DepartureTime.data,
+        },
+      ],
+    }));
+    setNewStop(inputStoppingDataStructure);
+  };
 
-  // Add or update train
   const handleSave = async () => {
     const updatedForm = {
       ...form,
@@ -192,7 +187,7 @@ const handleAddStop = () => {
         await apiService.put(`/api/trains/${editTrain.TrainID}`, updatedForm);
         console.log("Train updated successfully!");
         toast.success("Train updated successfully!");
-        await fetchTrains(); // Fetch the updated list of trains
+        await fetchTrains();
       } catch (error) {
         console.error("Failed to update train. Please try again.");
         toast.error("Failed to update train. Please try again.");
@@ -202,7 +197,7 @@ const handleAddStop = () => {
         await apiService.post("/api/trains/", updatedForm);
         console.log("Train added successfully!");
         toast.success("Train added successfully!");
-        await fetchTrains(); // Fetch the updated list of trains
+        await fetchTrains();
       } catch (error) {
         console.error("Failed to add train. Please try again.");
         toast.error("Failed to add train. Please try again.");
@@ -239,11 +234,9 @@ const handleAddStop = () => {
   useEffect(() => {
     return () => {
       fetchTrains();
-    }
-    
+    };
   }, []);
 
-  // Edit train
   const handleEdit = (train) => {
     setEditTrain(train);
     setForm(train);
@@ -260,20 +253,18 @@ const handleAddStop = () => {
     setInputs(updatedInputs);
   };
 
-  // Remove train
   const handleRemove = async (id) => {
     try {
       await apiService.delete(`/api/trains/${id}`);
       console.log("Train removed successfully!");
       toast.success("Train removed successfully!");
-      await fetchTrains(); // Fetch the updated list of trains
+      await fetchTrains();
     } catch (error) {
       console.error("Failed to remove train. Please try again.");
       toast.error("Failed to remove train. Please try again.");
     }
   };
 
-  // Remove a stopping point
   const handleRemoveStop = (index) => {
     setForm((prev) => ({
       ...prev,
@@ -282,113 +273,185 @@ const handleAddStop = () => {
   };
 
   return (
-    <div className="p-6 bg-gray-100 min-h-screen">
-      <h1 className="text-2xl font-bold mb-4 text-primary">Manage Trains</h1>
+    <div className="bg-gray-100 min-h-screen p-6">
+      <div className="max-w-7xl mx-auto">
+        {/* Header */}
+        <div className="bg-white rounded-lg shadow-md p-6 mb-6">
+          <h1 className="text-3xl font-bold text-primary mb-2">Train Management</h1>
+          <p className="text-gray-600">Add, edit, and manage train schedules</p>
+        </div>
 
-      {/* Train List */}
-      <div className="overflow-y-auto max-h-80">
-        <table className="w-full text-left bg-white rounded-lg shadow-md">
-          <thead className="bg-gray-200 sticky top-0">
-            <tr>
-              <th className="py-2 px-4">Train Name</th>
-              <th className="py-2 px-4">Train ID</th>
-              <th className="py-2 px-4">Start Station</th>
-              <th className="py-2 px-4">End Station</th>
-              <th className="py-2 px-4">Start Time</th>
-              <th className="py-2 px-4">End Time</th>
-              <th className="py-2 px-4">Stopping Points</th>
-              <th className="py-2 px-4">Actions</th>
-            </tr>
-          </thead>
-          <tbody>
-            {trains.map((train, index) => (
-              <tr key={train.TrainID} className="border-b">
-                <td className="py-2 px-4">{train.Name}</td>
-                <td className="py-2 px-4">{train.TrainID}</td>
-                <td className="py-2 px-4">{train.StartStations}</td>
-                <td className="py-2 px-4">{train.EndStations}</td>
-                <td className="py-2 px-4">{train.StartTime}</td>
-                <td className="py-2 px-4">{train.EndTime}</td>
-                <td className="py-2 px-4">
-                  <div className="overflow-y-auto max-h-20">
-                    {train.stoppingPoints.map((stop, i) => (
-                      <div key={i}>
-                        {stop.StationID} ({stop.ArrivalTime} - {stop.DepartureTime})
+        {/* Form Panel */}
+        <div className="bg-white rounded-lg shadow-md p-6 mb-6">
+          <h2 className="text-xl font-bold text-primary border-b pb-3 mb-4">
+            {editTrain ? "Edit Train" : "Add New Train"}
+          </h2>
+          
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+            <Input input={inputs.Name || ""} handleChange={handleChange} labelClassName="mb-2 font-medium text-gray-700" />
+            <Input input={inputs.TrainID || ""} handleChange={handleChange} labelClassName="mb-2 font-medium text-gray-700" />
+            <Input input={inputs.StartStations || ""} handleChange={handleChange} labelClassName="mb-2 font-medium text-gray-700" />
+            <Input input={inputs.EndStations || ""} handleChange={handleChange} labelClassName="mb-2 font-medium text-gray-700" />
+            <Input input={inputs.StartTime || ""} handleChange={handleChange} labelClassName="mb-2 font-medium text-gray-700" />
+            <Input input={inputs.EndTime || ""} handleChange={handleChange} labelClassName="mb-2 font-medium text-gray-700" />
+          </div>
+
+          {/* Stopping Points */}
+          <div className="mt-6">
+            <h3 className="text-lg font-semibold text-primary mb-3">Stopping Points</h3>
+            
+            {/* Current Stopping Points */}
+            {form.stoppingPoints.length > 0 && (
+              <div className="mb-4">
+                <div className="bg-gray-50 rounded-lg p-4 mb-4">
+                  <h4 className="font-medium text-gray-700 mb-2">Current Stops</h4>
+                  <div className="overflow-y-auto max-h-40">
+                    {form.stoppingPoints.map((stop, index) => (
+                      <div key={index} className="flex items-center justify-between py-2 px-3 border-b last:border-b-0">
+                        <div className="flex flex-col sm:flex-row sm:items-center gap-2">
+                          <span className="font-medium">{stop.StationID}</span>
+                          <span className="text-sm text-gray-600">
+                            Arrival: <span className="font-semibold">{stop.ArrivalTime}</span>
+                          </span>
+                          <span className="text-sm text-gray-600">
+                            Departure: <span className="font-semibold">{stop.DepartureTime}</span>
+                          </span>
+                        </div>
+                        <button
+                          onClick={() => handleRemoveStop(index)}
+                          className="px-2 py-1 bg-red-500 text-white rounded hover:bg-red-600 focus:outline-none focus:ring-2 focus:ring-red-300"
+                        >
+                          Remove
+                        </button>
                       </div>
                     ))}
                   </div>
-                </td>
-                <td className="py-2 px-4 space-x-2">
-                  <button
-                    onClick={() => handleEdit(train)}
-                    className="px-4 py-1 bg-blue-500 text-white rounded hover:bg-blue-600"
-                  >
-                    Edit
-                  </button>
-                  <button
-                    onClick={() => handleRemove(train.TrainID)}
-                    className="px-4 py-1 bg-red-500 text-white rounded hover:bg-red-600"
-                  >
-                    Remove
-                  </button>
-                </td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
-      </div>
-
-      {/* Form */}
-      <div className="mt-6 bg-white p-6 rounded-lg shadow-md">
-        <h2 className="text-xl font-bold mb-4">
-          {editTrain ? "Edit Train" : "Add Train"}
-        </h2>
-        <div className="grid grid-cols-2 gap-4">
-          <Input input={inputs.Name || ""} handleChange={handleChange} labelClassName={inputs.Name} />
-          <Input input={inputs.TrainID || ""} handleChange={handleChange} labelClassName={inputs.TrainID} />
-          <Input input={inputs.StartStations || ""} handleChange={handleChange} labelClassName={inputs.StartStations} />
-          <Input input={inputs.EndStations || ""} handleChange={handleChange} labelClassName={inputs.EndStations} />
-          <Input input={inputs.StartTime || ""} handleChange={handleChange} labelClassName={inputs.StartTime} />
-          <Input input={inputs.EndTime || ""} handleChange={handleChange} labelClassName={inputs.EndTime} />
-        </div>
-
-        {/* Stopping Points */}
-        <div className="mt-4">
-          <h3 className="text-lg font-semibold mb-2">Stopping Points</h3>
-          <div className="overflow-y-auto max-h-20">
-            {form.stoppingPoints.map((stop, index) => (
-              <div key={index} className="flex items-center space-x-4 mb-2">
-                <span>
-                  {stop.StationID} ({stop.ArrivalTime} - {stop.DepartureTime})
-                </span>
-                <button
-                  onClick={() => handleRemoveStop(index)}
-                  className="px-2 py-1 bg-red-500 text-white rounded hover:bg-red-600"
-                >
-                  Remove
-                </button>
+                </div>
               </div>
-            ))}
+            )}
+            
+            {/* Add New Stop */}
+            <div className="bg-gray-50 rounded-lg p-4">
+              <h4 className="font-medium text-gray-700 mb-3">Add New Stop</h4>
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                <Input input={newStop.StationID || ""} handleChange={handleStopChange} labelClassName="mb-2 font-medium text-gray-700" />
+                <Input input={newStop.ArrivalTime || ""} handleChange={handleStopChange} labelClassName="mb-2 font-medium text-gray-700" />
+                <Input input={newStop.DepartureTime || ""} handleChange={handleStopChange} labelClassName="mb-2 font-medium text-gray-700" />
+              </div>
+              <button
+                onClick={handleAddStop}
+                className="mt-3 px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-300 transition duration-150"
+              >
+                Add Stop
+              </button>
+            </div>
           </div>
-          <div className="grid grid-cols-3 gap-4 mt-4">
-            <Input input={newStop.StationID || ""} handleChange={handleStopChange} labelClassName={newStop.StationID} />
-            <Input input={newStop.ArrivalTime || ""} handleChange={handleStopChange} labelClassName={newStop.ArrivalTime} />
-            <Input input={newStop.DepartureTime || ""} handleChange={handleStopChange} labelClassName={newStop.DepartureTime} />
+
+          <div className="mt-6 flex justify-end">
+            <button
+              onClick={handleSave}
+              className="px-6 py-2 bg-green-500 text-white font-medium rounded hover:bg-green-600 focus:outline-none focus:ring-2 focus:ring-green-300 transition duration-150"
+            >
+              {editTrain ? "Update Train" : "Add Train"}
+            </button>
           </div>
-          <button
-            onClick={handleAddStop}
-            className="mt-2 px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600"
-          >
-            Add Stop
-          </button>
         </div>
 
-        <button
-          onClick={handleSave}
-          className="mt-4 px-4 py-2 bg-green-500 text-white rounded hover:bg-green-600"
-        >
-          {editTrain ? "Update Train" : "Add Train"}
-        </button>
+        {/* Train List */}
+        <div className="bg-white rounded-lg shadow-md p-6">
+          <h2 className="text-xl font-bold text-primary border-b pb-3 mb-4">Train Schedule</h2>
+          <div className="overflow-x-auto">
+            <table className="w-full text-left">
+              <thead className="bg-gray-100">
+                <tr>
+                  <th className="py-3 px-4 font-semibold text-gray-700 rounded-tl-lg">Train Name</th>
+                  <th className="py-3 px-4 font-semibold text-gray-700">Train ID</th>
+                  <th className="py-3 px-4 font-semibold text-gray-700">Route</th>
+                  <th className="py-3 px-4 font-semibold text-gray-700">Time</th>
+                  <th className="py-3 px-4 font-semibold text-gray-700">Stops</th>
+                  <th className="py-3 px-4 font-semibold text-gray-700 rounded-tr-lg">Actions</th>
+                </tr>
+              </thead>
+              <tbody>
+                {trains.length === 0 ? (
+                  <tr>
+                    <td colSpan="6" className="py-4 px-4 text-center text-gray-500">
+                      No trains available. Add a new train to get started.
+                    </td>
+                  </tr>
+                ) : (
+                  trains.map((train, index) => (
+                    <tr 
+                      key={train.TrainID} 
+                      className={`border-b ${index % 2 === 0 ? 'bg-gray-50' : 'bg-white'}`}
+                    >
+                      <td className="py-4 px-4 font-medium">{train.Name}</td>
+                      <td className="py-4 px-4">{train.TrainID}</td>
+                      <td className="py-4 px-4">
+                        <div className="flex flex-col">
+                          <span className="font-medium">{train.StartStations}</span>
+                          <span className="text-gray-600">to</span>
+                          <span className="font-medium">{train.EndStations}</span>
+                        </div>
+                      </td>
+                      <td className="py-4 px-4">
+                        <div className="flex flex-col">
+                          <span>{train.StartTime}</span>
+                          <span className="text-gray-600">to</span>
+                          <span>{train.EndTime}</span>
+                        </div>
+                      </td>
+                      <td className="py-4 px-4">
+                        {train.stoppingPoints.length === 0 ? (
+                          <span className="text-gray-500">No stops</span>
+                        ) : (
+                          <div className="relative">
+                            <details className="group">
+                              <summary className="list-none cursor-pointer flex items-center">
+                                <span className="text-blue-500 font-medium">{train.stoppingPoints.length} stops</span>
+                                <svg className="ml-1 w-4 h-4 transition-transform group-open:rotate-180" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 9l-7 7-7-7" />
+                                </svg>
+                              </summary>
+                              <div className="mt-2 bg-white shadow-lg rounded-lg border p-2 absolute z-10">
+                                <div className="max-h-40 overflow-y-auto">
+                                  {train.stoppingPoints.map((stop, i) => (
+                                    <div key={i} className="py-1 px-2 border-b last:border-b-0">
+                                      <div className="font-medium">{stop.StationID}</div>
+                                      <div className="text-sm text-gray-600">
+                                        Arr: {stop.ArrivalTime} - Dep: {stop.DepartureTime}
+                                      </div>
+                                    </div>
+                                  ))}
+                                </div>
+                              </div>
+                            </details>
+                          </div>
+                        )}
+                      </td>
+                      <td className="py-4 px-4">
+                        <div className="flex space-x-2">
+                          <button
+                            onClick={() => handleEdit(train)}
+                            className="px-3 py-1 bg-blue-500 text-white rounded hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-300 transition duration-150"
+                          >
+                            Edit
+                          </button>
+                          <button
+                            onClick={() => handleRemove(train.TrainID)}
+                            className="px-3 py-1 bg-red-500 text-white rounded hover:bg-red-600 focus:outline-none focus:ring-2 focus:ring-red-300 transition duration-150"
+                          >
+                            Remove
+                          </button>
+                        </div>
+                      </td>
+                    </tr>
+                  ))
+                )}
+              </tbody>
+            </table>
+          </div>
+        </div>
       </div>
     </div>
   );
