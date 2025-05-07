@@ -1,14 +1,14 @@
-import React, { useContext } from "react";
+import React from "react";
 import { loadStripe } from "@stripe/stripe-js";
 import { Elements, useStripe, useElements, CardElement } from "@stripe/react-stripe-js";
-import BookingContext from "../tickets/BookingProvider";
+import BookingContext from "../Context/BookingContext";
 
 const stripePromise = loadStripe("your-publishable-key-here");
 
-const CheckoutForm = () => {
+const CheckoutForm = ({ totalAmount }) => {
   const stripe = useStripe();
   const elements = useElements();
-  const { bookingDetails } = useContext(BookingContext);
+  const { bookingDetails } = React.useContext(BookingContext);
 
   const handleSubmit = async (event) => {
     event.preventDefault();
@@ -18,7 +18,7 @@ const CheckoutForm = () => {
     }
 
     const { error, paymentIntent } = await stripe.createPayment({
-      amount: bookingDetails.amount,
+      amount: totalAmount * 100, // Stripe expects the amount in cents
       currency: "usd",
       payment_method: {
         card: elements.getElement(CardElement),
@@ -48,15 +48,15 @@ const CheckoutForm = () => {
     <form onSubmit={handleSubmit}>
       <CardElement />
       <button type="submit" disabled={!stripe}>
-        Pay
+        Pay ${totalAmount}
       </button>
     </form>
   );
 };
 
-const StripePayment = () => (
+const StripePayment = ({ totalAmount }) => (
   <Elements stripe={stripePromise}>
-    <CheckoutForm />
+    <CheckoutForm totalAmount={totalAmount} />
   </Elements>
 );
 
