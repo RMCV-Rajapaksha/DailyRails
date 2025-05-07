@@ -2,6 +2,7 @@ import { View, Text } from "react-native";
 import React, { useEffect, useState } from "react";
 import { SplashScreen, Stack } from "expo-router";
 import { useFonts } from "expo-font";
+import { AuthProvider } from "../context/AuthContext";
 
 // SplashScreen.preventAutoHideAsync()
 
@@ -21,18 +22,15 @@ const RootLayout = () => {
   if (!fontsLoaded && !error) {
     return null;
   }
+
   return (
-    <Stack screenOptions={{ headerShown: false }}>
-      <Stack.Screen name="index" options={{ headerShown: false }} />
-      <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
-      <Stack.Screen name="(auth)" options={{ headerShown: false }} />
-      {/* <Stack.Screen
-        name="(pages)"
-        options={{
-          headerShown: false,
-        }}
-      /> */}
-    </Stack>
+    <AuthProvider>
+      <Stack screenOptions={{ headerShown: false }}>
+        <Stack.Screen name="index" options={{ headerShown: false }} />
+        <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
+        <Stack.Screen name="(auth)" options={{ headerShown: false }} />
+      </Stack>
+    </AuthProvider>
   );
 };
 

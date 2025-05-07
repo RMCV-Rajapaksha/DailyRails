@@ -19,6 +19,9 @@
       }
     },
     "plugins": ["expo-router", "expo-location"],
-    "newArchEnabled": true
+    "newArchEnabled": true,
+    "extra": {
+      "API_URL": "http://10.0.2.2:4000/api"
+    }
   }
 }
