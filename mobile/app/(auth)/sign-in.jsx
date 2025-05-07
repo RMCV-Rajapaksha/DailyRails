@@ -1,34 +1,76 @@
-import React, { useState } from 'react';
-import { View, Text, Image, StatusBar, KeyboardAvoidingView, Platform } from 'react-native';
-import { LinearGradient } from 'expo-linear-gradient';
-import { images } from '../../constants';
-import { router } from 'expo-router';
-import CustomButton from '../../components/CustomButton';
-import CustomInput from '../../components/CustomInput';
+import React, { useState, useContext } from "react";
+import {
+  View,
+  Text,
+  Image,
+  StatusBar,
+  KeyboardAvoidingView,
+  Platform,
+  Alert,
+  ActivityIndicator,
+} from "react-native";
+import { LinearGradient } from "expo-linear-gradient";
+import { images } from "../../constants";
+import { router } from "expo-router";
+import CustomButton from "../../components/CustomButton";
+import CustomInput from "../../components/CustomInput";
+import { AuthContext } from "../../context/AuthContext";
+import AuthService from "../../services/AuthService";
 
 const SignIn = () => {
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
 
-  const handleSignIn = () => {
-    if (email && password) {
-      if(email === 'admin' && password === 'admin') {
-        router.push('/admin-home');
-      }else{
-        router.push('/home');
+  const { signIn } = useContext(AuthContext);
+
+  const handleSignIn = async () => {
+    // Basic validation
+    if (!email || !password) {
+      Alert.alert("Error", "Please enter both email and password");
+      return;
+    }
+
+    try {
+      setIsLoading(true);
+
+      // Create credentials object
+      const credentials = {
+        Email: email,
+        Password: password,
+      };
+
+      // Call login API
+      const response = await AuthService.login(credentials);
+
+      if (response.success) {
+        // Store authentication data
+        await signIn(response.user, response.token);
+
+        // Special case for admin (adjust as needed)
+        if (email.toLowerCase().includes("admin")) {
+          router.replace("/admin-home");
+        } else {
+          router.replace("/home");
+        }
+      } else {
+        Alert.alert("Error", response.message || "Login failed");
       }
-    } else {
-      alert('Please fill in all fields');
+    } catch (error) {
+      console.error("Sign in error:", error);
+      Alert.alert("Error", error.message || "Failed to sign in");
+    } finally {
+      setIsLoading(false);
     }
   };
 
   const handleSignUp = () => {
-    router.push('/sign-up');
+    router.push("/sign-up");
   };
 
   return (
-    <KeyboardAvoidingView 
-      behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+    <KeyboardAvoidingView
+      behavior={Platform.OS === "ios" ? "padding" : "height"}
       className="flex-1"
     >
       <View className="flex-1">
@@ -37,7 +79,7 @@ const SignIn = () => {
           backgroundColor="transparent"
           barStyle="light-content"
         />
-        
+
         <View className="flex-1">
           {/* Image container */}
           <View className="h-4/6 relative">
@@ -47,7 +89,7 @@ const SignIn = () => {
               resizeMode="cover"
             />
             <LinearGradient
-              colors={['rgba(0,0,0,0.1)', 'rgba(0,0,0,0.3)']}
+              colors={["rgba(0,0,0,0.1)", "rgba(0,0,0,0.3)"]}
               className="absolute w-full h-full"
             />
           </View>
@@ -68,12 +110,14 @@ const SignIn = () => {
                   {/* Input Fields Group - Added separate spacing for inputs */}
                   <View className="mb-6">
                     <CustomInput
-                      label="USERNAME"
+                      label="EMAIL"
                       placeholder="johndoe@example.com"
                       value={email}
                       onChangeText={setEmail}
                       keyboardType="email-address"
-                      containerClassName="mb-6"  // Add margin bottom to the username input container
+                      containerClassName="mb-6"
+                      autoCapitalize="none"
+                      editable={!isLoading}
                     />
                     <CustomInput
                       label="PASSWORD"
@@ -81,27 +125,30 @@ const SignIn = () => {
                       value={password}
                       onChangeText={setPassword}
                       secureTextEntry
-                      containerClassName="mb-6"  // Add margin bottom to the username input container
+                      containerClassName="mb-6"
+                      editable={!isLoading}
                     />
                   </View>
 
                   {/* Button with adjusted top margin */}
                   <CustomButton
-                    title="Sign in"
+                    title={isLoading ? "Signing in..." : "Sign in"}
                     onPress={handleSignIn}
                     variant="primary"
                     className="mt-4"
+                    disabled={isLoading}
                   />
 
                   <View className="flex-row justify-center items-center">
                     <Text className="text-gray-600 text-base">
-                      Don't have an account? 
+                      Don't have an account?
                     </Text>
                     <CustomButton
                       title="Sign up"
                       onPress={handleSignUp}
                       variant="link"
                       className="ml-1"
+                      disabled={isLoading}
                     />
                   </View>
                 </View>
@@ -109,9 +156,16 @@ const SignIn = () => {
             </View>
           </View>
         </View>
+
+        {/* Loading overlay */}
+        {isLoading && (
+          <View className="absolute inset-0 bg-black/30 flex items-center justify-center">
+            <ActivityIndicator size="large" color="#41A3B3" />
+          </View>
+        )}
       </View>
     </KeyboardAvoidingView>
   );
-}
+};
 
 export default SignIn;
