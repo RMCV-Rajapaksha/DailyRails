@@ -24,16 +24,20 @@ module.exports = (sequelize) => {
           key: "JourneyID",
         },
       },
+      PassengerNIC: {
+        type: DataTypes.STRING(20),
+        allowNull: false,
+        references: {
+          model: "PASSENGER", // References the JOURNEY table
+          key: "PassengerNIC",
+        },
+      }, 
       Class: {
         type: DataTypes.INTEGER,
         allowNull: false,
       },
       NoOfSeats: {
         type: DataTypes.INTEGER,
-        allowNull: false,
-      },
-      PassengerNIC: {
-        type: DataTypes.STRING, // Changed to STRING to accommodate NIC format
         allowNull: false,
       },
       Date: {
@@ -57,7 +61,7 @@ module.exports = (sequelize) => {
         },
         {
           fields: ["PassengerNIC"],
-        },
+        }
       ],
     }
   );
@@ -76,21 +80,37 @@ module.exports = (sequelize) => {
     Booking.hasOne(models.Payment, {
       foreignKey: "BookingID",
       as: "payment",
+      onDelete: "CASCADE",
+      onUpdate: "CASCADE",
     });
 
     Booking.belongsTo(models.Train, {
       foreignKey: "TrainID",
       as: "train",
+      onDelete: "CASCADE",
+      onUpdate: "CASCADE",
     });
 
     Booking.belongsTo(models.Journey, {
       foreignKey: "JourneyID",
       as: "journey",
+      onDelete: "CASCADE",
+      onUpdate: "CASCADE",
+     
+    });
+
+    Booking.belongsTo(models.Passenger, {
+      foreignKey: "PassengerNIC",
+      as: "passenger",
+      onDelete: "CASCADE",
+      onUpdate: "CASCADE",
     });
 
     Booking.hasMany(models.BookingSeats, {
       foreignKey: "BookingID",
       as: "bookingSeats",
+      onDelete: "CASCADE",
+      onUpdate: "CASCADE",
     });
   };
 

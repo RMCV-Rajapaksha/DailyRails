@@ -1,5 +1,7 @@
+const express = require("express");
+const { Sequelize, DataTypes } = require("sequelize");
 const db = require("../../../models");
-const { Op } = require("sequelize");
+
 const { sendBookingEmail } = require("../../../Services/EmailService");
 
 // Helper function to generate next booking ID
@@ -25,14 +27,16 @@ const generateNextBookingId = async () => {
 
 // Create a new booking
 const createBooking = async (req, res) => {
+  
   const transaction = await db.sequelize.transaction();
+
   try {
     const {
       trainId,
       journeyId,
+      passengerNIC,
       classType,
       noOfSeats,
-      passengerNic,
       email,
       date,
       time,
@@ -40,8 +44,10 @@ const createBooking = async (req, res) => {
       amount,
     } = req.body;
 
-    // Validate train and journey existence
-    const [train, journey] = await Promise.all([
+    console.log(req.body);
+  
+    // Step 1: Validate train and journey existence
+    const [train, journey,  passenger] = await Promise.all([
       db.Train.findByPk(trainId, {
         include: [
           { model: db.Station, as: "startStation" },
@@ -54,34 +60,64 @@ const createBooking = async (req, res) => {
           { model: db.Station, as: "endStation" },
         ],
       }),
+      db.Passenger.findByPk(passengerNIC, {
+        include: [
+          { model: db.Booking, as: "bookings" },
+        ],
+      }),
     ]);
 
-    if (!train || !journey) {
-      await transaction.rollback();
+     
+    if (!train) {
       return res.status(404).json({
         success: false,
-        message: "Train or Journey not found",
+        message: "Train not found with the provided ID",
+      });
+    }
+   
+    if (!journey) {
+      return res.status(404).json({
+        success: false,
+        message: "Journey not found with the provided ID",
+      });
+    }
+    if (!passenger) {
+      return res.status(404).json({
+        success: false,
+        message: "Passenger not found with the provided ID",
       });
     }
 
+    if (!train || !journey || !passenger) {
+      await transaction.rollback();
+      return res.status(404).json({
+        success: false,
+        message: "Train ,Journey or Passenger not found",
+      });
+    }
+
+
+
+     // Step 3: Generate booking ID
     const bookingId = await generateNextBookingId();
 
-    // Create main booking
+    // Step 4: Create main booking
     const booking = await db.Booking.create(
       {
         BookingID: bookingId,
         TrainID: trainId,
         JourneyID: journeyId,
+        PassengerNIC: passengerNIC,
         Class: classType,
         NoOfSeats: noOfSeats,
-        PassengerNIC: passengerNic,
         Date: date,
         Time: time,
       },
       { transaction }
     );
 
-    // Create booking seats
+
+    // Step 5: Create booking seats
     const bookingSeats = await Promise.all(
       seatNumbers.map(async (seatNumber, index) => {
         const ticketId = `TK${bookingId.substring(2)}-${(index + 1)
@@ -98,20 +134,36 @@ const createBooking = async (req, res) => {
       })
     );
 
-    // Create payment record
+    const PAYMENT_STATUS = {
+      PENDING: 0,
+      COMPLETED: 1,
+      FAILED: 2,
+      REFUNDED: 3
+    };
+
+
+    // Step 6: Create payment record
     const payment = await db.Payment.create(
       {
         PaymentID: `PY${bookingId.substring(2)}`,
         BookingID: bookingId,
         Amount: amount,
-        Status: 0, // Pending status
+        Status: PAYMENT_STATUS.PENDING,
       },
       { transaction }
     );
 
+    if (!booking || !payment) {
+      await transaction.rollback();
+      return res.status(500).json({
+        success: false,
+        message: "Failed to create booking records",
+      });
+    }
+
     await transaction.commit();
 
-    // Fetch complete booking details
+       // Step 7: Fetch complete booking details
     const completeBooking = await db.Booking.findByPk(bookingId, {
       include: [
         {
@@ -155,7 +207,7 @@ const createBooking = async (req, res) => {
       },
       seats: seatNumbers,
       user: {
-        Name: passengerNic,
+        Name: passengerNIC,
         Email: email,
       },
     });
@@ -178,10 +230,10 @@ const createBooking = async (req, res) => {
 // Get all bookings with optional filters
 const getBookings = async (req, res) => {
   try {
-    const { passengerNic, date, trainId, classType } = req.query;
+    const { passengerNIC, date, trainId, classType } = req.query;
 
     const whereClause = {};
-    if (passengerNic) whereClause.PassengerNIC = passengerNic;
+    if (passengerNIC) whereClause.PassengerNIC = passengerNIC;
     if (date) whereClause.Date = date;
     if (trainId) whereClause.TrainID = trainId;
     if (classType) whereClause.Class = classType;
@@ -425,6 +477,97 @@ const deleteBooking = async (req, res) => {
     });
   }
 };
+const findBookedSeats = async (req, res) => {
+  try {
+    const { startStationName, endStationName } = req.query;
+
+    // Step 1: Find the station IDs using the station names
+    const startStation = await db.Station.findOne({
+      where: { Name: startStationName },
+    });
+
+    const endStation = await db.Station.findOne({
+      where: { Name: endStationName },
+    });
+
+    if (!startStation || !endStation) {
+      return res.status(404).json({
+        success: false,
+        message: "Start or End station not found",
+      });
+    }
+
+    const startStationId = startStation.StationID;
+    const endStationId = endStation.StationID;
+
+    // Step 2: Find the journey ID using the start and end station IDs
+    const journey = await db.Journey.findOne({
+      where: {
+        StartPoint: startStationId,
+        EndPoint: endStationId,
+      },
+    });
+
+    if (!journey) {
+      return res.status(404).json({
+        success: false,
+        message: "Journey not found",
+      });
+    }
+
+    const journeyId = journey.JourneyID;
+
+    // Step 3: Find the train ID using the journey ID
+    const train = await db.Train.findOne({
+      include: [
+        {
+          model: db.Journey,
+          as: "journeys",
+          where: { JourneyID: journeyId },
+        },
+      ],
+    });
+
+    if (!train) {
+      return res.status(404).json({
+        success: false,
+        message: "Train not found",
+      });
+    }
+
+    const trainId = train.TrainID;
+
+    // Step 4: Find booked seats and all seats in the train using the train ID
+    const bookedSeats = await db.BookingSeats.findAll({
+      include: [
+        {
+          model: db.Booking,
+          as: "booking",
+          where: { TrainID: trainId },
+        },
+      ],
+    });
+
+    const allSeats = await db.Seat.findAll({
+      where: { TrainID: trainId },
+    });
+
+    res.status(200).json({
+      success: true,
+      data: {
+        bookedSeats,
+        allSeats,
+      },
+    });
+  } catch (error) {
+    console.error("Error finding booked seats:", error);
+    res.status(500).json({
+      success: false,
+      message: "Failed to find booked seats",
+      error: error.message,
+    });
+  }
+};
 
 module.exports = {
   createBooking,
@@ -432,4 +575,5 @@ module.exports = {
   getBookingById,
   updateBooking,
   deleteBooking,
+  findBookedSeats,
 };

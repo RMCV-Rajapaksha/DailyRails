@@ -108,3 +108,20 @@ INSERT INTO JOURNEY (JourneyID, RouteID, Price, StartPoint, EndPoint, createdAt,
 -- Anuradhapura - Jaffna Route
 ('JN0017', 305, 600, 'ST012', 'ST014', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
 ('JN0018', 306, 600, 'ST014', 'ST012', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
+
+
+
+-- Add these to your Sample Data.sql file
+
+-- Populate PASSENGER table
+INSERT INTO PASSENGER (PassengerNIC, FirstName, LastName, PhoneNumber, Email, Gender, DateOfBirth, createdAt, updatedAt) VALUES
+('982761234V', 'Kasun', 'Perera', '0712345678', 'kasun.perera@gmail.com', 'Male', '1998-10-05', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
+('956782341V', 'Malini', 'Silva', '0723456789', 'malini.silva@gmail.com', 'Female', '1995-03-15', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
+('906543217V', 'Nuwan', 'Fernando', '0734567890', 'nuwan.fernando@gmail.com', 'Male', '1990-07-22', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
+('887654321V', 'Chamari', 'Gunasekara', '0745678901', 'chamari.g@gmail.com', 'Female', '1988-12-10', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
+('927865439V', 'Anjana', 'Wijethilaka', '0756789012', 'anjana.w@gmail.com', 'Male', '1992-05-28', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
+('967654328V', 'Dilini', 'Bandara', '0767890123', 'dilini.b@gmail.com', 'Female', '1996-11-03', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
+('851234567V', 'Rohan', 'Gunawardena', '0778901234', 'rohan.g@gmail.com', 'Male', '1985-02-14', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
+('937812345V', 'Thilini', 'Rathnayake', '0789012345', 'thilini.r@gmail.com', 'Female', '1993-09-17', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
+('947865432V', 'Dinesh', 'Jayasinghe', '0790123456', 'dinesh.j@gmail.com', 'Male', '1994-04-30', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
+('917654329V', 'Anusha', 'Karunaratne', '0701234567', 'anusha.k@gmail.com', 'Female', '1991-08-21', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);

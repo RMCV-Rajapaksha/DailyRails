@@ -43,10 +43,18 @@ module.exports = (sequelize) => {
     Journey.belongsTo(models.Station, {
       foreignKey: "StartPoint",
       as: "startStation",
+      onDelete: "CASCADE",
+      onUpdate: "CASCADE",
     });
     Journey.belongsTo(models.Station, {
       foreignKey: "EndPoint",
       as: "endStation",
+      onDelete: "CASCADE",
+      onUpdate: "CASCADE",
+    });
+    Journey.hasMany(models.Booking, {
+      foreignKey: "JourneyID",
+      as: "bookings",
     });
   };
 

@@ -21,9 +21,10 @@ module.exports = (sequelize) => {
         allowNull: false,
       },
       Status: {
-        type: DataTypes.INTEGER,
+        type: DataTypes.STRING,
         allowNull: false,
-      },
+        defaultValue: "Pending"
+      }
     },
     {
       tableName: "PAYMENT",

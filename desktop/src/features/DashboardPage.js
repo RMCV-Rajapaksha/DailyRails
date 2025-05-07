@@ -4,9 +4,9 @@ import {
   FaArrowRight,
 } from "react-icons/fa";
 import SideBar from "./MainAdmin/components/SideBar";
-import Tickets from "../features/MainAdmin/tickets/Tickets.js";
+import Booking from "./MainAdmin/tickets/BookingPage.js";
 import RoleRegistration from "../features/Account/Register/RoleRegistration.js";
-import NotificationPage from "../features/MainAdmin/Notification/pages/NotificationPage";
+import Notification from "./MainAdmin/Announcement/Announcement.js";
 import TrainSchedule from "./MainAdmin/trains/Train_schedule.js";
 import TrainManagement from "./MainAdmin/trains/Train_management.js";
 import Home from "./Pages/Home";
@@ -25,9 +25,8 @@ const DashboardPage = ({ section }) => {
     <div className="flex h-screen bg-gray-50">
       {/* Sidebar */}
       <aside
-        className={`relative flex flex-col bg-gradient-to-b from-blue-900 to-blue-800 text-white shadow-xl transition-all duration-300 ease-in-out ${
-          isExpanded ? "w-64" : "w-20"
-        }`}
+        className={`relative flex flex-col bg-gradient-to-b from-blue-900 to-blue-800 text-white shadow-xl transition-all duration-300 ease-in-out ${isExpanded ? "w-64" : "w-20"
+          }`}
       >
         {/* Toggle Button */}
         <button
@@ -43,9 +42,8 @@ const DashboardPage = ({ section }) => {
 
         {/* Logo */}
         <div className="flex items-center justify-center p-6">
-          <div className={`overflow-hidden rounded-xl bg-white p-2 shadow-inner transition-all duration-300 ${
-            isExpanded ? "w-40" : "w-12"
-          }`}>
+          <div className={`overflow-hidden rounded-xl bg-white p-2 shadow-inner transition-all duration-300 ${isExpanded ? "w-40" : "w-12"
+            }`}>
             <img
               src={`${process.env.PUBLIC_URL}/logo.png`}
               alt="Logo"
@@ -71,9 +69,9 @@ const DashboardPage = ({ section }) => {
             {section === "home" && <Home />}
             {section === "schedules" && <TrainSchedule />}
             {section === "trains" && <TrainManagement />}
-            {section === "tickets" && <Tickets />}
+            {section === "tickets" && <Booking />}
             {section === "admins" && <RoleRegistration />}
-            {section === "notifications" && <NotificationPage />}
+            {section === "notifications" && <Notification />}
             {section === "losts" && <Lost />}
             {section === "founds" && <Found />}
           </div>
