@@ -67,7 +67,7 @@ jobs:
           username: root
           key: ${{ secrets.DO_SSH_KEY }}
           script: |
-            docker pull dailyrails/dailyrails:latest
+            docker pull "${{ secrets.DOCKER_USERNAME }}"/dailyrails:latest
             docker stop dailyrails || true
             docker rm dailyrails || true
-            docker run -d --name dailyrails --network d73ec77ce253 -p 80:80 dailyrails/dailyrails:latest
+            docker run -d --name dailyrails --network d73ec77ce253 -p 80:80 "${{ secrets.DOCKER_USERNAME }}"/dailyrails:latest
