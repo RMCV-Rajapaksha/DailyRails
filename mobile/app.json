@@ -11,19 +11,14 @@
       "supportsTablet": true
     },
     "android": {
-      "permissions": [
-        "ACCESS_COARSE_LOCATION",
-        "ACCESS_FINE_LOCATION"
-      ],
+      "permissions": ["ACCESS_COARSE_LOCATION", "ACCESS_FINE_LOCATION"],
       "config": {
         "googleMaps": {
           "apiKey": "https://maps.googleapis.com/maps/api/geocode/json?address=1600+Amphitheatre+Parkway,+Mountain+View,+CA&key=AIzaSyAOVYRIgupAurZup5y1PRh8Ismb1A3lLao"
         }
       }
     },
-    "plugins": [
-      "expo-router",
-      "expo-location"
-    ]
+    "plugins": ["expo-router", "expo-location"],
+    "newArchEnabled": true
   }
 }

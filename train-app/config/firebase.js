@@ -1,5 +1,5 @@
-import { initializeApp, getApps } from "firebase/app";
-import { getDatabase, ref, set, onValue, off } from "firebase/database";
+import { initializeApp } from "firebase/app";
+import { getDatabase, ref, set } from "firebase/database";
 
 const firebaseConfig = {
   apiKey: "AIzaSyAB9Brn4eOGECdPX7hUAWEEi9pKF652bZE",
@@ -12,15 +12,8 @@ const firebaseConfig = {
   measurementId: "G-NVC81MFWYM",
 };
 
-// Initialize Firebase only if no app exists
-let app;
-if (getApps().length === 0) {
-  app = initializeApp(firebaseConfig);
-} else {
-  app = getApps()[0];
-}
-
-// Initialize Realtime Database
+// Initialize Firebase
+const app = initializeApp(firebaseConfig);
 const database = getDatabase(app);
 
-export { database, ref, set, onValue, off };
+export { database, ref, set };

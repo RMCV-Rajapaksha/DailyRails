@@ -28,6 +28,9 @@ app.use(
       const allowedOrigins = [
         /^http:\/\/localhost:300[0-5]$/,
         /^http:\/\/10.0.2.2:300[0-5]$/,
+        /^http:\/\/192\.168\.\d{1,3}\.\d{1,3}(:\d+)?$/,
+        /^exp:\/\/[\w\.-]+\.exp\.direct:\d+$/,
+        /^https?:\/\/.*\.expo\.io$/,
       ];
 
       const isAllowed = allowedOrigins.some((regex) => regex.test(origin));
