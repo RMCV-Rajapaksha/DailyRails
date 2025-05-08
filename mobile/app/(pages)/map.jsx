@@ -117,7 +117,7 @@ const Map = () => {
     if (!trainId.trim()) return;
 
     try {
-      const trainRef = ref(database, `/trains/${trainId}/location`);
+      const trainRef = ref(database, `/${trainId}`);
       setIsTracking(true);
 
       const unsubscribeFromTrain = onValue(trainRef, (snapshot) => {
