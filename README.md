@@ -57,9 +57,9 @@ The **Real-Time Train Tracking System** is built with the following technologies
 
 | **Frontend**  | **Backend**  | **Database** |
 |---------------|--------------|--------------|
-| React.js      | Node.js      | MySql      |
-| TailwindCSS   | Express.js   | sequelize     |
-| Axios         | JWT          |        |
+| React.js      | Node.js      | MySql        |
+| TailwindCSS   | Express.js   | sequelize    |
+| Axios         | JWT          |              |
 
 
 ---
