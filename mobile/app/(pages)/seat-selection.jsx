@@ -325,17 +325,15 @@ const BookingSummary = () => {
               </Text>
             </View>
           </ScrollView>
-          // Fix the onPress handler in the Bottom action bar section:
           {/* Bottom action bar */}
           <View className="p-4 border-t border-gray-200">
             <TouchableOpacity
               className="bg-[#40A2B2] py-4 rounded-md items-center"
               onPress={() => {
-                // For demo purposes, navigate to payment with a valid URL
+                // Navigate to our custom payment page
                 router.push({
                   pathname: "/payment",
                   params: {
-                    paymentUrl: "https://stripe.com/docs/testing", // A real URL that will load
                     trainName,
                     date,
                     passengers,

@@ -1,5 +1,5 @@
 import { Text, View, TextInput, TouchableOpacity, ActivityIndicator } from 'react-native';
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useCallback } from 'react';
 import { getLocation } from '../utils/locationService';
 import { database, ref, set } from '../config/firebase';
 import {
@@ -28,11 +28,13 @@ export const ScreenContent = ({ title, path, children }: ScreenContentProps) => 
   const [error, setError] = useState<string | null>(null);
   const [showPasswordInput, setShowPasswordInput] = useState(false);
   const [password, setPassword] = useState('');
+  const [lastUpdateTime, setLastUpdateTime] = useState<number | null>(null);
   const STOP_PASSWORD = 'admin123';
 
-  const updateLocation = async () => {
+  const updateLocation = useCallback(async () => {
     try {
       setLoading(true);
+      console.log('Updating location...');
       const coords = await getLocation();
       if (coords) {
         const timestamp = Date.now();
@@ -44,19 +46,22 @@ export const ScreenContent = ({ title, path, children }: ScreenContentProps) => 
           isActive: true,
         });
         setLocation(coords);
+        setLastUpdateTime(timestamp);
+        console.log('Location updated successfully:', coords);
         setError(null);
       }
     } catch (err: unknown) {
+      console.error('Error updating location:', err);
       if (err instanceof Error) {
         setError(err.message);
       } else {
         setError('An unknown error occurred');
       }
-      setIsTracking(false);
+      // Don't stop tracking on a single error
     } finally {
       setLoading(false);
     }
-  };
+  }, [inputValue]);
 
   const startTracking = async () => {
     try {
@@ -64,6 +69,10 @@ export const ScreenContent = ({ title, path, children }: ScreenContentProps) => 
         setError('Please enter a Train ID');
         return;
       }
+
+      // First update location immediately when starting tracking
+      await updateLocation();
+
       await startBackgroundUpdate(inputValue);
       setIsTracking(true);
       setError(null);
@@ -96,6 +105,7 @@ export const ScreenContent = ({ title, path, children }: ScreenContentProps) => 
     }
   };
 
+  // Background task verification effect
   useEffect(() => {
     const checkBackgroundTask = async () => {
       if (isTracking) {
@@ -111,6 +121,27 @@ export const ScreenContent = ({ title, path, children }: ScreenContentProps) => 
     const intervalCheck = setInterval(checkBackgroundTask, 1000);
     return () => clearInterval(intervalCheck);
   }, [isTracking]);
+
+  // Location update effect - improved implementation
+  useEffect(() => {
+    let locationInterval: NodeJS.Timeout;
+
+    if (isTracking && inputValue) {
+      // Update immediately when this effect runs
+      updateLocation();
+
+      // Then set up interval for regular updates
+      locationInterval = setInterval(updateLocation, 15000); // 15 seconds for more frequent updates
+      console.log('Location tracking interval started');
+    }
+
+    return () => {
+      if (locationInterval) {
+        clearInterval(locationInterval);
+        console.log('Location tracking interval stopped');
+      }
+    };
+  }, [isTracking, inputValue, updateLocation]);
 
   return (
     <View className="flex-1 bg-gray-50 p-6">
@@ -134,6 +165,11 @@ export const ScreenContent = ({ title, path, children }: ScreenContentProps) => 
             <>
               <Text className="font-medium">Latitude: {location.latitude.toFixed(15)}</Text>
               <Text className="font-medium">Longitude: {location.longitude.toFixed(15)}</Text>
+              {lastUpdateTime && (
+                <Text className="text-xs text-gray-500">
+                  Last updated: {new Date(lastUpdateTime).toLocaleTimeString()}
+                </Text>
+              )}
             </>
           ) : (
             <Text className="text-gray-500">No location data available</Text>
