@@ -253,6 +253,7 @@ const editTrain = async (req, res) => {
     });
   }
 };
+
 const getTrainsBetweenStations = async (req, res) => {
   const { Location_1, Location_2 } = req.body;
 
@@ -267,7 +268,7 @@ const getTrainsBetweenStations = async (req, res) => {
 
     if (!station1 || !station2) {
       return res
-        .status(404)
+        .status(400)
         .json({ message: "One or both stations not found" });
     }
 

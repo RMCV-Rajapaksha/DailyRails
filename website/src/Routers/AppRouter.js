@@ -12,6 +12,8 @@ import SubmitItem from "../features/Recovery/pages/SubmitItem";
 import News from "../features/News/pages/News";
 import NoUrl from "../features/NoUrl"; // Ensure this import is correct
 import SeatBooking from "../features/Booking/pages/SelectSeat";
+import Success from "../features/Booking/pages/Success";
+import Cancle from "../features/Booking/pages/Cancle";
 
 const router1 = createBrowserRouter([
   {
@@ -28,7 +30,7 @@ const router1 = createBrowserRouter([
         element: <Booking />,
       },
       {
-        path: "seatBooking/:id",
+        path: "seatBooking",
         element: <SeatBooking />,
       },
       {
@@ -58,6 +60,14 @@ const router1 = createBrowserRouter([
       {
         path: "news",
         element: <News />,
+      },
+      {
+        path: "success:id",
+        element: <Success />,
+      },
+      {
+        path: "cancle",
+        element: <Cancle />,
       },
       {
         path: "*",

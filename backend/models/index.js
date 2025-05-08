@@ -75,6 +75,10 @@ const models = [
   {
     name: "Passenger",
     path: "../Features/Booking/models/PassengerModel",
+  },
+  {
+    name: "Journey",
+    path: "../Features/Journey/models/JourneyModel",
   }
 ];
 

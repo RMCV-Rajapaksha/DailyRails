@@ -28,7 +28,7 @@ export default function SeatBooking() {
   return (
     <>
       <Canvas
-        className="w-screen h-screen" // Full-screen canvas with Tailwind
+       className="fixed top-0 left-0 w-screen h-screen z-0" // Full-screen canvas with Tailwind
         dpr={[1, 1.5]}
         shadows
         camera={{ position: [-15, 15, 18], fov: 35 }}

@@ -75,7 +75,7 @@ export default function App() {
                 <TouchableOpacity
                   className="w-full bg-[#41A3B3] py-4 rounded-lg"
                   activeOpacity={0.8}
-                  onPress={handleSignIn}
+                  onPress={handleSignUp}
                 >
                   <Text className="text-white text-center text-lg font-semibold">
                     Sign In
@@ -90,22 +90,6 @@ export default function App() {
                 >
                   <Text className="text-white text-center text-lg font-semibold">
                     Sign Up
-                  </Text>
-                </TouchableOpacity>
-
-                {/* Or Divider */}
-                <View className="flex-row items-center justify-center my-1">
-                  <Text className="text-gray-500 text-lg">or</Text>
-                </View>
-
-                {/* Google Sign In Button */}
-                <TouchableOpacity
-                  className="w-full bg-white border border-gray-300 py-4 rounded-lg flex-row justify-center items-center"
-                  activeOpacity={0.8}
-                  onPress={handleGoogleSignIn}
-                >
-                  <Text className="text-gray-700 text-center text-lg font-semibold">
-                    Continue with Google
                   </Text>
                 </TouchableOpacity>
               </View>

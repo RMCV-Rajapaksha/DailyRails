@@ -15,7 +15,7 @@ import Found from "./Items/Found.js";
 
 const DashboardPage = ({ section }) => {
   const [isExpanded, setIsExpanded] = useState(true);
-  const [section1, setSection] = useState("admins");
+  const [section1, setSection] = useState("home");
 
   const toggleSidebar = () => {
     setIsExpanded(!isExpanded);

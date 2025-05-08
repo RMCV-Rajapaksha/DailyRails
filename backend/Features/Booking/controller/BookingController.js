@@ -27,7 +27,6 @@ const generateNextBookingId = async () => {
 
 // Create a new booking
 const createBooking = async (req, res) => {
-  
   const transaction = await db.sequelize.transaction();
 
   try {
@@ -45,9 +44,9 @@ const createBooking = async (req, res) => {
     } = req.body;
 
     console.log(req.body);
-  
+
     // Step 1: Validate train and journey existence
-    const [train, journey,  passenger] = await Promise.all([
+    const [train, journey, passenger] = await Promise.all([
       db.Train.findByPk(trainId, {
         include: [
           { model: db.Station, as: "startStation" },
@@ -61,20 +60,17 @@ const createBooking = async (req, res) => {
         ],
       }),
       db.Passenger.findByPk(passengerNIC, {
-        include: [
-          { model: db.Booking, as: "bookings" },
-        ],
+        include: [{ model: db.Booking, as: "bookings" }],
       }),
     ]);
 
-     
     if (!train) {
       return res.status(404).json({
         success: false,
         message: "Train not found with the provided ID",
       });
     }
-   
+
     if (!journey) {
       return res.status(404).json({
         success: false,
@@ -96,9 +92,7 @@ const createBooking = async (req, res) => {
       });
     }
 
-
-
-     // Step 3: Generate booking ID
+    // Step 3: Generate booking ID
     const bookingId = await generateNextBookingId();
 
     // Step 4: Create main booking
@@ -115,7 +109,6 @@ const createBooking = async (req, res) => {
       },
       { transaction }
     );
-
 
     // Step 5: Create booking seats
     const bookingSeats = await Promise.all(
@@ -138,9 +131,8 @@ const createBooking = async (req, res) => {
       PENDING: 0,
       COMPLETED: 1,
       FAILED: 2,
-      REFUNDED: 3
+      REFUNDED: 3,
     };
-
 
     // Step 6: Create payment record
     const payment = await db.Payment.create(
@@ -163,7 +155,7 @@ const createBooking = async (req, res) => {
 
     await transaction.commit();
 
-       // Step 7: Fetch complete booking details
+    // Step 7: Fetch complete booking details
     const completeBooking = await db.Booking.findByPk(bookingId, {
       include: [
         {
@@ -413,15 +405,7 @@ const updateBooking = async (req, res) => {
             { model: db.Station, as: "startStation" },
             { model: db.Station, as: "endStation" },
           ],
-        },
-        {
-          model: db.Journey,
-          as: "journey",
-          include: [
-            { model: db.Station, as: "startStation" },
-            { model: db.Station, as: "endStation" },
-          ],
-        },
+        }
       ],
     });
 

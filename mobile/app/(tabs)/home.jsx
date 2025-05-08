@@ -38,7 +38,7 @@ const menuItems = [
     icon: icons.booking,
     title: "Ticket Booking",
     subtitle: "Book your tickets",
-    route: "/(pages)/booking",
+    route: "/(pages)/booking-seats",
   },
   {
     icon: icons.lostAndFound,

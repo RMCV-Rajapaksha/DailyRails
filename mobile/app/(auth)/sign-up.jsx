@@ -1,35 +1,89 @@
-import React, { useState } from 'react';
-import { View, Text, Image, TextInput, TouchableOpacity, StatusBar, KeyboardAvoidingView, Platform } from 'react-native';
-import { LinearGradient } from 'expo-linear-gradient';
-import { images } from '../../constants';
-import { router } from 'expo-router';
+import React, { useState } from "react";
+import {
+  View,
+  Text,
+  Image,
+  TextInput,
+  TouchableOpacity,
+  StatusBar,
+  KeyboardAvoidingView,
+  Platform,
+  ActivityIndicator,
+  Alert,
+} from "react-native";
+import { LinearGradient } from "expo-linear-gradient";
+import { images } from "../../constants";
+import { router } from "expo-router";
+import AuthService from "../../services/AuthService";
 
 const SignUp = () => {
-  const [firstName, setFirstName] = useState('');
-  const [lastName, setLastName] = useState('');
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
-  const [confirmPassword, setConfirmPassword] = useState('');
+  const [firstName, setFirstName] = useState("");
+  const [lastName, setLastName] = useState("");
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
 
-  const handleSignUp = () => {
-    if (firstName && lastName && email && password && confirmPassword) {
-      if (password !== confirmPassword) {
-        alert('Passwords do not match');
-        return;
+  const handleSignUp = async () => {
+    // Form validation
+    if (!firstName || !lastName || !email || !password || !confirmPassword) {
+      Alert.alert("Error", "Please fill in all fields");
+      return;
+    }
+
+    if (password !== confirmPassword) {
+      Alert.alert("Error", "Passwords do not match");
+      return;
+    }
+
+    // Password strength validation (simplified)
+    if (password.length < 8) {
+      Alert.alert("Error", "Password must be at least 8 characters long");
+      return;
+    }
+
+    try {
+      setIsLoading(true);
+
+      // Prepare user data according to your API requirements
+      const userData = {
+        Name: `${firstName} ${lastName}`,
+        Email: email,
+        Password: password,
+      };
+
+      const response = await AuthService.register(userData);
+
+      if (response.success) {
+        Alert.alert("Success", "Your account has been created successfully!", [
+          {
+            text: "OK",
+            onPress: () => router.push("/sign-in"),
+          },
+        ]);
+      } else {
+        Alert.alert(
+          "Registration Failed",
+          response.message || "Something went wrong"
+        );
       }
-      router.push('/home');
-    } else {
-      alert('Please fill in all fields');
+    } catch (error) {
+      const errorMessage =
+        error.message || "Registration failed. Please try again.";
+      Alert.alert("Error", errorMessage);
+      console.error("Sign up error:", error);
+    } finally {
+      setIsLoading(false);
     }
   };
 
   const handleSignIn = () => {
-    router.push('/sign-in');
+    router.push("/sign-in");
   };
 
   return (
-    <KeyboardAvoidingView 
-      behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+    <KeyboardAvoidingView
+      behavior={Platform.OS === "ios" ? "padding" : "height"}
       className="flex-1"
     >
       <View className="flex-1">
@@ -38,7 +92,7 @@ const SignUp = () => {
           backgroundColor="transparent"
           barStyle="light-content"
         />
-        
+
         {/* Main container */}
         <View className="flex-1">
           {/* Image container */}
@@ -49,7 +103,7 @@ const SignUp = () => {
               resizeMode="cover"
             />
             <LinearGradient
-              colors={['rgba(0,0,0,0.1)', 'rgba(0,0,0,0.3)']}
+              colors={["rgba(0,0,0,0.1)", "rgba(0,0,0,0.3)"]}
               className="absolute w-full h-full"
             />
           </View>
@@ -78,6 +132,7 @@ const SignUp = () => {
                       placeholder="John"
                       value={firstName}
                       onChangeText={setFirstName}
+                      editable={!isLoading}
                     />
                   </View>
 
@@ -91,6 +146,7 @@ const SignUp = () => {
                       placeholder="Doe"
                       value={lastName}
                       onChangeText={setLastName}
+                      editable={!isLoading}
                     />
                   </View>
 
@@ -106,6 +162,7 @@ const SignUp = () => {
                       onChangeText={setEmail}
                       autoCapitalize="none"
                       keyboardType="email-address"
+                      editable={!isLoading}
                     />
                   </View>
 
@@ -120,6 +177,7 @@ const SignUp = () => {
                       value={password}
                       onChangeText={setPassword}
                       secureTextEntry
+                      editable={!isLoading}
                     />
                   </View>
 
@@ -134,26 +192,37 @@ const SignUp = () => {
                       value={confirmPassword}
                       onChangeText={setConfirmPassword}
                       secureTextEntry
+                      editable={!isLoading}
                     />
                   </View>
 
-                  {/* Next Button */}
+                  {/* Sign Up Button */}
                   <TouchableOpacity
-                    className="w-full bg-[#41A3B3] py-4 rounded-lg mt-6"
+                    className={`w-full bg-[#41A3B3] py-4 rounded-lg mt-6 ${
+                      isLoading ? "opacity-70" : ""
+                    }`}
                     activeOpacity={0.8}
                     onPress={handleSignUp}
+                    disabled={isLoading}
                   >
-                    <Text className="text-white text-center text-lg font-semibold">
-                      Sign Up
-                    </Text>
+                    {isLoading ? (
+                      <ActivityIndicator color="#ffffff" />
+                    ) : (
+                      <Text className="text-white text-center text-lg font-semibold">
+                        Sign Up
+                      </Text>
+                    )}
                   </TouchableOpacity>
 
                   {/* Sign In Link */}
                   <View className="flex-row justify-center items-center pt-4">
                     <Text className="text-gray-600 text-base">
-                      Already have an account? 
+                      Already have an account?
                     </Text>
-                    <TouchableOpacity onPress={handleSignIn}>
+                    <TouchableOpacity
+                      onPress={handleSignIn}
+                      disabled={isLoading}
+                    >
                       <Text className="text-[#41A3B3] text-base font-semibold ml-1">
                         Sign in
                       </Text>
@@ -164,9 +233,16 @@ const SignUp = () => {
             </View>
           </View>
         </View>
+
+        {/* Overlay loading indicator for the entire screen if needed */}
+        {isLoading && (
+          <View className="absolute inset-0 bg-black/30 flex items-center justify-center">
+            <ActivityIndicator size="large" color="#41A3B3" />
+          </View>
+        )}
       </View>
     </KeyboardAvoidingView>
   );
-}
+};
 
 export default SignUp;
