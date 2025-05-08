@@ -1,125 +1,95 @@
 const stripe = require("stripe")(process.env.STRIPE_SECRET_KEY);
-const db = require("../../../models");
+const { v4: uuidv4 } = require("uuid"); // Add this dependency
+const { createBooking } = require("../controller/BookingController");
+
+// Store pending bookings with their payment details
+const pendingBookings = new Map();
 
 const createPaymentIntent = async (req, res) => {
-  const { amount, trainDetails, seats, bookingId } = req.body;
-  // Note: Now we're also expecting a bookingId in the request
-
   try {
-    if (!process.env.STRIPE_SECRET_KEY) {
-      return res.status(500).json({
-        success: false,
-        message: "Stripe secret key is missing",
-      });
-    }
+    // Generate a unique identifier for this booking attempt
+    const bookingRef = uuidv4();
 
-    // Convert amount to cents for Stripe
-    const amountInCents = Math.round(amount * 100);
+    // Store the booking data temporarily
+    pendingBookings.set(bookingRef, {
+      bookingData: req.body,
+      timestamp: Date.now(),
+    });
 
-    const lineItems = seats.map((seat) => ({
-      price_data: {
-        currency: "usd",
-        product_data: {
-          name: `Train Booking - ${trainDetails.trainName}`,
-          description: `Seat: ${seat}, Class: ${trainDetails.class}, Date: ${trainDetails.date}`,
-        },
-        unit_amount: amountInCents,
-      },
-      quantity: 1,
-    }));
+    console.log("Pending bookings:", pendingBookings);
+
+    // Clean up old entries every hour
+    setTimeout(() => {
+      if (pendingBookings.has(bookingRef)) {
+        pendingBookings.delete(bookingRef);
+      }
+    }, 3600000);
+
+    const { amount } = req.body;
 
     const session = await stripe.checkout.sessions.create({
-      payment_method_types: ["card"],
-      line_items: lineItems,
+      line_items: [
+        {
+          price_data: {
+            currency: "usd",
+            product_data: {
+              name: "Train Ticket Booking",
+            },
+            unit_amount: amount * 100, // Convert to cents
+          },
+          quantity: 1,
+        },
+      ],
       mode: "payment",
-      success_url: `${process.env.CLIENT_URL}/booking/success?session_id={CHECKOUT_SESSION_ID}&booking_id=${bookingId}`,
-      cancel_url: `${process.env.CLIENT_URL}/booking/cancel?booking_id=${bookingId}`,
-      metadata: {
-        booking_id: bookingId,
-      },
+      success_url: `${process.env.FRONTEND_URL}/success?ref=${bookingRef}`,
+      cancel_url: `${process.env.FRONTEND_URL}/cancle`,
     });
 
-    res.json({
-      success: true,
-      sessionId: session.id,
-      url: session.url,
-      message: "Payment session created successfully",
-    });
+    // Send the session URL to the client
+    res.json({ url: session.url });
   } catch (error) {
-    console.error("Error creating payment session:", error);
+    console.error("Error creating Stripe checkout session:", error.message);
+    res.status(500).send("Internal Server Error");
+  }
+};
+
+const handlePaymentSuccess = async (req, res) => {
+  try {
+    const { ref } = req.query;
+
+    if (!ref || !pendingBookings.has(ref)) {
+      return res.status(404).json({
+        success: false,
+        message: "Invalid or expired booking reference",
+      });
+    }
+ 
+    // Get the stored booking data
+    const { bookingData } = pendingBookings.get(ref);
+
+    // Delete the reference to prevent reuse
+    pendingBookings.delete(ref);
+
+    // Update the payment status to completed
+    bookingData.paymentCompleted = true;
+
+    // Forward the request to the booking controller
+    req.body = bookingData;
+
+    // Call the createBooking function (passing control)
+    return createBooking(req, res);
+  } catch (error) {
+    console.error("Error processing successful payment:", error);
     res.status(500).json({
       success: false,
-      message: "Failed to create payment session",
+      message: "Failed to process successful payment",
       error: error.message,
     });
   }
 };
 
-// Add a new function to handle webhook events from Stripe
-const handleWebhookEvent = async (req, res) => {
-  const signature = req.headers["stripe-signature"];
-  let event;
-
-  try {
-    // Verify the webhook signature
-    event = stripe.webhooks.constructEvent(
-      req.body,
-      signature,
-      process.env.STRIPE_WEBHOOK_SECRET
-    );
-  } catch (error) {
-    console.error("Webhook signature verification failed:", error.message);
-    return res.status(400).send(`Webhook Error: ${error.message}`);
-  }
-
-  // Handle specific event types
-  if (event.type === "checkout.session.completed") {
-    const session = event.data.object;
-    await handleSuccessfulPayment(session);
-  }
-
-  // Return success response to Stripe
-  res.status(200).json({ received: true });
-};
-
-// Helper function to handle successful payments
-const handleSuccessfulPayment = async (session) => {
-  try {
-    const bookingId = session.metadata.booking_id;
-
-    // Start a transaction
-    const transaction = await db.sequelize.transaction();
-
-    try {
-      // Update the payment status
-      await db.Payment.update(
-        { Status: "Completed" },
-        {
-          where: { BookingID: bookingId },
-          transaction,
-        }
-      );
-
-      // Optionally: Update the booking status if you have a status field
-      // await db.Booking.update(
-      //   { Status: "Confirmed" },
-      //   { where: { BookingID: bookingId }, transaction }
-      // );
-
-      await transaction.commit();
-      console.log(`Payment for booking ${bookingId} marked as completed`);
-    } catch (error) {
-      await transaction.rollback();
-      console.error("Error updating payment status:", error);
-      throw error;
-    }
-  } catch (error) {
-    console.error("Error handling successful payment:", error);
-    throw error;
-  }
-};
-
 module.exports = {
   createPaymentIntent,
-  handleWebhookEvent,
+  handlePaymentSuccess,
+  pendingBookings, // Export for testing purposes
 };

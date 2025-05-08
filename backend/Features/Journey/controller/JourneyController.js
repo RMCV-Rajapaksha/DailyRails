@@ -71,42 +71,7 @@ const getAllJourneys = async (req, res) => {
   }
 };
 
-// Add this to your JourneyController.js
-const getJourneyById = async (req, res) => {
-  try {
-    const { id } = req.params;
-    
-    if (!id) {
-      return res.status(400).json({
-        success: false,
-        message: "Journey ID is required",
-      });
-    }
-    
-    const journey = await Journey.findByPk(id);
-    
-    if (!journey) {
-      return res.status(404).json({
-        success: false,
-        message: "Journey not found",
-      });
-    }
-    
-    return res.status(200).json({
-      success: true,
-      data: journey,
-    });
-  } catch (error) {
-    console.error("Error fetching journey by ID:", error);
-    return res.status(500).json({
-      success: false,
-      message: "Internal server error",
-      error: error.message,
-    });
-  }
-};
 
-// Add this to your exports
 module.exports = {
   getJourneyByStations,
   getAllJourneys,

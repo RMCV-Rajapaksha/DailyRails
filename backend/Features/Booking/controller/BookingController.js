@@ -27,7 +27,6 @@ const generateNextBookingId = async () => {
 
 // Create a new booking
 const createBooking = async (req, res) => {
-
   const transaction = await db.sequelize.transaction();
 
   try {
@@ -128,16 +127,14 @@ const createBooking = async (req, res) => {
       })
     );
 
-    // Inside the createBooking function, modify the payment creation part:
-
     const PAYMENT_STATUS = {
-      PENDING: "Pending",
-      COMPLETED: "Completed",
-      FAILED: "Failed",
-      REFUNDED: "Refunded",
+      PENDING: 0,
+      COMPLETED: 1,
+      FAILED: 2,
+      REFUNDED: 3,
     };
 
-    // Step 6: Create payment record with pending status
+    // Step 6: Create payment record
     const payment = await db.Payment.create(
       {
         PaymentID: `PY${bookingId.substring(2)}`,
@@ -148,25 +145,15 @@ const createBooking = async (req, res) => {
       { transaction }
     );
 
-    // Commit the transaction to save the booking
-    await transaction.commit();
+    if (!booking || !payment) {
+      await transaction.rollback();
+      return res.status(500).json({
+        success: false,
+        message: "Failed to create booking records",
+      });
+    }
 
-    // Return booking ID for payment processing
-    res.status(201).json({
-      success: true,
-      data: {
-        bookingId: bookingId,
-        amount: amount,
-        trainDetails: {
-          trainName: train.Name,
-          class: classType,
-          date,
-          time,
-        },
-        seats: seatNumbers,
-      },
-      message: "Booking created. Please proceed to payment.",
-    });
+    await transaction.commit();
 
     // Step 7: Fetch complete booking details
     const completeBooking = await db.Booking.findByPk(bookingId, {
@@ -418,15 +405,7 @@ const updateBooking = async (req, res) => {
             { model: db.Station, as: "startStation" },
             { model: db.Station, as: "endStation" },
           ],
-        },
-        {
-          model: db.Journey,
-          as: "journey",
-          include: [
-            { model: db.Station, as: "startStation" },
-            { model: db.Station, as: "endStation" },
-          ],
-        },
+        }
       ],
     });
 

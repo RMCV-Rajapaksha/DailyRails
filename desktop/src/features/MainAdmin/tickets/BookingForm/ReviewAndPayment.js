@@ -38,6 +38,7 @@ export const ReviewAndPayment = () => {
         <p><strong>Date & Time:</strong> {date}</p>
         <p><strong>Passenger NIC:</strong> {passengerNic}</p>
         <p><strong>Contact Number:</strong> {bookingDetails.contactNumber}</p>
+        <p><strong>Email:</strong> {bookingDetails.email}</p>
         <p><strong>From:</strong> {startStation.name}</p>
         <p><strong>To:</strong> {endStation.name}</p>
         <p><strong>Class:</strong> {classType}</p>
@@ -48,7 +49,12 @@ export const ReviewAndPayment = () => {
       </div>
 
       <div className="mt-6">
-        <StripePayment totalAmount={totalAmount} />
+      <button class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-full"
+      
+      >
+          Button
+       </button>
+        {/* <StripePayment totalAmount={totalAmount} /> */}
       </div>
     </div>
   );
