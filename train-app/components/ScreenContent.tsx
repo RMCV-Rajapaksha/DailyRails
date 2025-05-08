@@ -91,6 +91,24 @@ export const ScreenContent = ({ title, path, children }: ScreenContentProps) => 
         Alert.alert('Invalid Password', 'Please enter the correct password to stop tracking');
         return;
       }
+
+      // First, update the database to set isActive to false
+      if (inputValue) {
+        const trainRef = ref(database, `/${inputValue}/`);
+        await set(trainRef, {
+          // Keep existing data but update isActive status
+          ...(location
+            ? {
+                latitude: location.latitude,
+                longitude: location.longitude,
+              }
+            : {}),
+          timestamp: Date.now(),
+          isActive: false, // Set status to inactive
+        });
+        console.log('Train status set to inactive in database');
+      }
+
       await stopBackgroundUpdate();
       setIsTracking(false);
       setShowPasswordInput(false);
