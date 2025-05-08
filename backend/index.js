@@ -35,6 +35,9 @@ app.use(
 
       // Allow localhost and Android emulator
       const allowedOrigins = [
+        "http://localhost:3001",
+        "http://localhost:3000",
+        "http://localhost:3002",
         /^http:\/\/localhost:300[0-5]$/,
         /^http:\/\/10.0.2.2:300[0-5]$/,
         /^http:\/\/192\.168\.\d{1,3}\.\d{1,3}(:\d+)?$/,
