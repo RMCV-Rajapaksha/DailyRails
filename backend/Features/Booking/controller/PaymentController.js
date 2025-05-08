@@ -41,8 +41,8 @@ const createPaymentIntent = async (req, res) => {
         },
       ],
       mode: "payment",
-      success_url: `${process.env.FRONTEND_URL}/booking/success?ref=${bookingRef}`,
-      cancel_url: `${process.env.FRONTEND_URL}/booking/cancel`,
+      success_url: `${process.env.FRONTEND_URL}/success?ref=${bookingRef}`,
+      cancel_url: `${process.env.FRONTEND_URL}/cancle`,
     });
 
     // Send the session URL to the client

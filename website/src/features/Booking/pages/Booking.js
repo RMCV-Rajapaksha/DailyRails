@@ -232,7 +232,7 @@ function Booking() {
         </form>
       </motion.div> */}
 
-      <BookingPage/>
+      <BookingPage />
     </>
   );
 }
