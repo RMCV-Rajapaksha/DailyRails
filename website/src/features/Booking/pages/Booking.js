@@ -6,6 +6,7 @@ import InputField from "../../../components/InputField";
 import train_01 from "../../../assets/images/train_01.jpg";
 import train_02 from "../../../assets/images/train_02.jpg";
 import train_03 from "../../../assets/images/train_03.jpg";
+import BookingPage from "../tickets/BookingPage";
 
 const images = [train_01, train_02, train_03];
 
@@ -146,7 +147,7 @@ function Booking() {
       </motion.div>
 
       {/* Form */}
-      <motion.div
+      {/* <motion.div
         initial="hidden"
         animate="visible"
         variants={formContainerVariants}
@@ -229,7 +230,9 @@ function Booking() {
             </motion.div>
           </motion.div>
         </form>
-      </motion.div>
+      </motion.div> */}
+
+      <BookingPage/>
     </>
   );
 }

@@ -418,15 +418,7 @@ const updateBooking = async (req, res) => {
             { model: db.Station, as: "startStation" },
             { model: db.Station, as: "endStation" },
           ],
-        },
-        {
-          model: db.Journey,
-          as: "journey",
-          include: [
-            { model: db.Station, as: "startStation" },
-            { model: db.Station, as: "endStation" },
-          ],
-        },
+        }
       ],
     });
 
