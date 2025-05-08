@@ -18,7 +18,7 @@ Welcome to the **Real-Time Train Tracking System**, a state-of-the-art platform 
 
 ## 💡 About The Project
 
-The **Real-Time Train Tracking System** is designed to enhance the travel experience for passengers and improve train operations. With real-time GPS tracking, dynamic schedules, and instant notifications, the system keeps passengers, operators, and authorities informed at all times.
+The **Real-Time Train Tracking System** is designed to enhance the travel experience for passengers and improve train operations. With real-time GPS tracking, dynamic schedules, and instant notifications, the system keeps passengers, operators, and authorities informed at all times. 
 
 Key goals of the system:
 - **Efficiency**: Real-time tracking and automated schedule management.
