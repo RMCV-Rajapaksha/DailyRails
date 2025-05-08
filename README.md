@@ -49,7 +49,6 @@ Key goals of the system:
 - Simple-to-use dashboard for monitoring and managing train statuses, routes, and schedules.
 - Access detailed logs of past incidents, delays, and operational performance.
 
-
 ---
 
 ## 🛠️ Tech Stack
