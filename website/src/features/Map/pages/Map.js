@@ -4,6 +4,7 @@ import { onValue, off } from "firebase/database";
 import InputField from "../../../components/InputField";
 import axiosInstance from "../../../utils/axiosInstance";
 import { toast, ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 function Map() {
   const [trains, setTrains] = useState([]);
@@ -23,18 +24,14 @@ function Map() {
       setLoading(true);
       const response = await axiosInstance.get("/trains");
       if (response.data.success) {
-        console.log("Trains fetched:", response.data.data);
         setTrains(response.data.data);
-        toast.success("Train data loaded successfully");
+        // Removed success toast for initial data load
       } else {
-        // toast.error("Failed to load train data");
+        toast.error("Failed to load train data");
       }
     } catch (error) {
       console.error("Error fetching trains:", error);
-      toast.error(
-        error.response?.data?.message ||
-          "Failed to fetch train data. Please try again later."
-      );
+      toast.error("Failed to fetch train data. Please try again later.");
     } finally {
       setLoading(false);
     }
@@ -92,14 +89,12 @@ function Map() {
       );
 
       setMap(mapInstance);
-      toast.info("Map initialized");
+      // Removed map initialization toast
     };
 
     script.onload = initMap;
     script.onerror = () =>
-      toast.error(
-        "Failed to load Google Maps. Please check your internet connection."
-      );
+      toast.error("Failed to load map. Please refresh the page.");
     document.body.appendChild(script);
 
     return () => {
@@ -113,25 +108,23 @@ function Map() {
       return;
     }
 
-  
+    // Removed fetching toast message
     const locationRef = ref(database, selectedTrainId);
 
     const handleData = (snapshot) => {
       const data = snapshot.val();
-      console.log("Firebase Data:", data);
       if (data) {
         const newLocation = { lat: data.latitude, lng: data.longitude };
         setLocation(newLocation);
-        toast.success("Location updated successfully");
+        toast.success("Train location updated");
       } else {
-        console.log("No location data found for this train");
-        toast.error("No location data available for this train at the moment");
+        toast.error("No location data available for this train");
       }
     };
 
     onValue(locationRef, handleData, (error) => {
       console.error("Firebase error:", error);
-      toast.error(`Error retrieving location: ${error.message}`);
+      toast.error("Error retrieving train location");
     });
 
     return () => {
@@ -160,7 +153,7 @@ function Map() {
       });
 
       setMarker(newMarker);
-      toast.info("Train location displayed on map");
+      // Removed marker display toast
     }
   }, [location, map, marker]);
 
@@ -176,15 +169,16 @@ function Map() {
     <>
       <ToastContainer
         position="top-right"
-        autoClose={3000}
+        autoClose={2000}
         hideProgressBar={false}
         newestOnTop
         closeOnClick
         rtl={false}
-        pauseOnFocusLoss
+        pauseOnFocusLoss={false}
         draggable
-        pauseOnHover
+        pauseOnHover={false}
         theme="light"
+        limit={3}
       />
 
       <main className="relative h-screen body-font font-body">
