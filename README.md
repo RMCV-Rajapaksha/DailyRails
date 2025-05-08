@@ -31,7 +31,6 @@ Key goals of the system:
 - **Operational Efficiency**: Historical data analytics to improve future performance.
 
 ---
-
 ## 🔑 Features
 
 ### 🚆 Real-Time Train Location Tracking
