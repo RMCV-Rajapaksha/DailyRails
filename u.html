@@ -1,0 +1,292 @@
+ails\u.html -->
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DailyRails Booking Test</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        .container {
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            padding: 20px;
+            margin-bottom: 20px;
+        }
+
+        h1 {
+            color: #2c3e50;
+        }
+
+        label {
+            display: block;
+            margin: 10px 0 5px;
+            font-weight: bold;
+        }
+
+        input,
+        select {
+            width: 100%;
+            padding: 8px;
+            margin-bottom: 10px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+        }
+
+        button {
+            background-color: #3498db;
+            color: white;
+            border: none;
+            padding: 10px 15px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 16px;
+        }
+
+        button:hover {
+            background-color: #2980b9;
+        }
+
+        #result {
+            margin-top: 20px;
+            padding: 15px;
+            border-left: 4px solid #3498db;
+            background-color: #f8f9fa;
+            display: none;
+        }
+
+        .seat {
+            width: 40px;
+            height: 40px;
+            margin: 5px;
+            display: inline-block;
+            text-align: center;
+            line-height: 40px;
+            background-color: #eee;
+            cursor: pointer;
+        }
+
+        .seat.selected {
+            background-color: #3498db;
+            color: white;
+        }
+
+        .seats-container {
+            margin: 15px 0;
+        }
+
+        .dummy-data-button {
+            background-color: #27ae60;
+            margin-bottom: 20px;
+        }
+    </style>
+</head>
+
+<body>
+    <h1>DailyRails Booking Test</h1>
+
+    <div class="container">
+        <h2>Create Booking</h2>
+        <form id="bookingForm">
+            <label for="trainId">Train ID:</label>
+            <input type="text" id="trainId" name="trainId" value="TR1001" required>
+
+            <label for="journeyId">Journey ID:</label>
+            <input type="text" id="journeyId" name="journeyId" value="JN2001" required>
+
+            <label for="passengerNIC">Passenger NIC:</label>
+            <input type="text" id="passengerNIC" name="passengerNIC" value="960123456V" required>
+
+            <label for="classType">Class Type:</label>
+            <select id="classType" name="classType" required>
+                <option value="Economy">Economy</option>
+                <option value="Business" selected>Business</option>
+                <option value="First">First Class</option>
+            </select>
+
+            <label for="email">Email:</label>
+            <input type="email" id="email" name="email" value="test@example.com" required>
+
+            <label for="date">Journey Date:</label>
+            <input type="date" id="date" name="date" required>
+
+            <label for="time">Journey Time:</label>
+            <input type="time" id="time" name="time" value="10:00" required>
+
+            <label>Select Seats:</label>
+            <div class="seats-container" id="seatsContainer">
+                <!-- Seats will be generated here -->
+            </div>
+
+            <label for="amount">Amount (USD):</label>
+            <input type="number" id="amount" name="amount" value="25.00" step="0.01" required>
+
+            <button type="submit">Proceed to Payment</button>
+        </form>
+    </div>
+
+    <div id="result"></div>
+
+    <div class="container" id="successContainer" style="display:none;">
+        <h2>Payment Success</h2>
+        <p>Your payment was successful! Processing your booking...</p>
+        <div id="bookingDetails"></div>
+    </div>
+
+    <script>
+        // Set tomorrow's date as default
+        const tomorrow = new Date();
+        tomorrow.setDate(tomorrow.getDate() + 1);
+        document.getElementById('date').valueAsDate = tomorrow;
+
+        // Generate sample seats
+        const seatsContainer = document.getElementById('seatsContainer');
+        const selectedSeats = [];
+
+        for (let i = 1; i <= 20; i++) {
+            const seat = document.createElement('div');
+            seat.classList.add('seat');
+            seat.textContent = i;
+            seat.dataset.seatNumber = i;
+            seat.addEventListener('click', () => {
+                seat.classList.toggle('selected');
+                const seatNumber = seat.dataset.seatNumber;
+
+                if (seat.classList.contains('selected')) {
+                    selectedSeats.push(seatNumber);
+                } else {
+                    const index = selectedSeats.indexOf(seatNumber);
+                    if (index > -1) {
+                        selectedSeats.splice(index, 1);
+                    }
+                }
+
+                // Update number of seats
+                document.getElementById('noOfSeats').value = selectedSeats.length;
+            });
+            seatsContainer.appendChild(seat);
+
+            // Pre-select seats 3 and 4 as defaults
+            if (i === 3 || i === 4) {
+                setTimeout(() => {
+                    seat.click();
+                }, 100);
+            }
+        }
+
+        // Add hidden input for number of seats
+        const noOfSeatsInput = document.createElement('input');
+        noOfSeatsInput.type = 'hidden';
+        noOfSeatsInput.id = 'noOfSeats';
+        noOfSeatsInput.name = 'noOfSeats';
+        noOfSeatsInput.value = '0';
+        document.getElementById('bookingForm').appendChild(noOfSeatsInput);
+
+        // Form submission handler
+        document.getElementById('bookingForm').addEventListener('submit', async (event) => {
+            event.preventDefault();
+
+            // Get form data
+            const trainId = document.getElementById('trainId').value;
+            const journeyId = document.getElementById('journeyId').value;
+            const passengerNIC = document.getElementById('passengerNIC').value;
+            const classType = document.getElementById('classType').value;
+            const noOfSeats = selectedSeats.length;
+            const email = document.getElementById('email').value;
+            const date = document.getElementById('date').value;
+            const time = document.getElementById('time').value;
+            const amount = document.getElementById('amount').value;
+
+            // Create booking data object
+            const bookingData = {
+                trainId,
+                journeyId,
+                passengerNIC,
+                classType,
+                noOfSeats,
+                email,
+                date,
+                time,
+                seatNumbers: selectedSeats,
+                amount: parseFloat(amount)
+            };
+
+            try {
+                // Display the data being sent
+                const resultDiv = document.getElementById('result');
+                resultDiv.innerHTML = '<h3>Sending Booking Data:</h3><pre>' +
+                    JSON.stringify(bookingData, null, 2) + '</pre>';
+                resultDiv.style.display = 'block';
+
+                // Send booking data to create payment intent
+                const response = await fetch('http://localhost:4000/api/bookings/create-payment-intent', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(bookingData)
+                });
+
+                const data = await response.json();
+
+                if (data.url) {
+                    // Redirect to Stripe checkout
+                    window.location.href = data.url;
+                } else {
+                    resultDiv.innerHTML += '<p>Error: No checkout URL returned</p>';
+                }
+            } catch (error) {
+                document.getElementById('result').innerHTML += '<p>Error: ' + error.message + '</p>';
+            }
+        });
+
+        // Handle redirect back from Stripe
+        window.onload = async function () {
+            // Check if we have a reference in the URL
+            const urlParams = new URLSearchParams(window.location.search);
+            const bookingRef = urlParams.get('ref');
+
+            if (bookingRef) {
+                // We came back from a successful payment
+                document.getElementById('successContainer').style.display = 'block';
+                document.getElementById('bookingDetails').innerHTML = '<p>Processing booking reference: ' + bookingRef + '</p>';
+
+                try {
+                    // Call the success endpoint
+                    const response = await fetch(`http://localhost:4000/api/bookings/payment/success?ref=${bookingRef}`);
+                    const data = await response.json();
+
+                    if (data.success) {
+                        document.getElementById('bookingDetails').innerHTML += `
+                            <h3>Booking Confirmed!</h3>
+                            <p>Booking ID: ${data.data.BookingID}</p>
+                            <p>Train: ${data.data.train.Name}</p>
+                            <p>Date: ${data.data.Date}</p>
+                            <p>Time: ${data.data.Time}</p>
+                            <p>Class: ${data.data.Class}</p>
+                            <p>Seats: ${data.data.bookingSeats.map(seat => seat.SeatNumber).join(', ')}</p>
+                            <p>Amount: $${data.data.payment.Amount}</p>
+                        `;
+                    } else {
+                        document.getElementById('bookingDetails').innerHTML += `
+                            <p style="color:red">Error processing booking: ${data.message}</p>
+                        `;
+                    }
+                } catch (error) {
+                    document.getElementById('bookingDetails').innerHTML += `
+                        <p style="color:red">Error: ${error.message}</p>
+                    `;
+                }
+            }
+        };
+    </script>
+</body>
+
+</html>

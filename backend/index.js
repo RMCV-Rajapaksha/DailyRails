@@ -31,17 +31,38 @@ app.use(
         /^http:\/\/192\.168\.\d{1,3}\.\d{1,3}(:\d+)?$/,
         /^exp:\/\/[\w\.-]+\.exp\.direct:\d+$/,
         /^https?:\/\/.*\.expo\.io$/,
+        "http://127.0.0.1:5500", // Fixed: removed trailing slash
+        "http://127.0.0.1:5501",
       ];
 
-      const isAllowed = allowedOrigins.some((regex) => regex.test(origin));
-      if (isAllowed) {
+      const regexPatterns = [
+        new RegExp("^http://192\\.168\\.\\d{1,3}\\.\\d{1,3}(:\\d+)?$"),
+        new RegExp("^exp://[\\w\\.-]+\\.exp\\.direct:\\d+$"),
+        new RegExp("^https?://.*\\.expo\\.io$"),
+      ];
+
+      // Check if origin is in allowed list
+      if (allowedOrigins.includes(origin)) {
         callback(null, true);
-      } else {
-        callback(new Error("Not allowed by CORS"));
+        return;
       }
+
+      // Check if origin matches any regex pattern
+      for (let i = 0; i < regexPatterns.length; i++) {
+        if (regexPatterns[i].test(origin)) {
+          callback(null, true);
+          return;
+        }
+      }
+
+      // If we got here, origin is not allowed
+      console.log(`Origin ${origin} not allowed by CORS`);
+      callback(new Error("Not allowed by CORS"));
     },
-    methods: "GET,POST,PUT,DELETE,PATCH",
+    methods: "GET,POST,PUT,DELETE,PATCH,OPTIONS",
     credentials: true,
+    preflightContinue: false,
+    optionsSuccessStatus: 204,
   })
 );
 // Routers
