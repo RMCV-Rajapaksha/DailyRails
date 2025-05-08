@@ -2,19 +2,38 @@ import React, { useEffect, useState } from "react";
 import { database, ref } from "../config/firebase";
 import { onValue, off } from "firebase/database";
 import InputField from "../../../components/InputField";
-import axiosInstance from "../../../utils/axiosInstance";
+import axiosInstance from "../../../utils/axiosInstance"; // Make sure this path is correct
 
 function Map() {
-  const [train, setTrain] = useState("");
   const [trains, setTrains] = useState([]);
+  const [selectedTrainId, setSelectedTrainId] = useState("");
   const [location, setLocation] = useState({ lat: null, lng: null });
   const [map, setMap] = useState(null);
   const [marker, setMarker] = useState(null);
-  const [isTracking, setIsTracking] = useState(false);
-  const [unsubscribe, setUnsubscribe] = useState(null);
+  const [loading, setLoading] = useState(false);
 
+  // Fetch trains when component mounts
   useEffect(() => {
     fetchTrains();
+  }, []);
+
+  const fetchTrains = async () => {
+    try {
+      setLoading(true);
+      const response = await axiosInstance.get("/trains");
+      if (response.data.success) {
+        console.log("Trains fetched:", response.data.data);
+        setTrains(response.data.data);
+      }
+    } catch (error) {
+      console.error("Error fetching trains:", error);
+      // Add error handling UI if needed
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
     const script = document.createElement("script");
     script.src = `https://maps.googleapis.com/maps/api/js?key=AIzaSyB9W4g53QUfZ50HcuXDhou3aT6iFM_Zf_M`;
     script.async = true;
@@ -73,48 +92,34 @@ function Map() {
 
     return () => {
       document.body.removeChild(script);
-      if (unsubscribe) unsubscribe();
     };
   }, []);
 
-  const fetchTrains = async () => {
-    try {
-      const response = await axiosInstance.get("/trains");
-      if (response.data.success) {
-        console.log("Trains fetched:", response.data.data);
-        setTrains(response.data.data);
-      }
-    } catch (error) {
-      console.error("Error fetching trains:", error);
-      // Add error handling UI if needed
-    }
-  };
-
-  const startTrackingTrain = () => {
-    if (!train || !train.trim()) return;
-
-    // Clear previous tracking if exists
-    if (unsubscribe) {
-      unsubscribe();
+  const getLocation = () => {
+    if (!selectedTrainId) {
+      alert("Please select a train first");
+      return;
     }
 
-    setIsTracking(true);
-    const trainRef = ref(database, `/trains/${train}/location`);
+    const locationRef = ref(database, selectedTrainId);
 
     const handleData = (snapshot) => {
       const data = snapshot.val();
       console.log("Firebase Data:", data);
-      if (data?.latitude && data?.longitude) {
-        const newLocation = {
-          lat: parseFloat(data.latitude),
-          lng: parseFloat(data.longitude),
-        };
+      if (data) {
+        const newLocation = { lat: data.latitude, lng: data.longitude };
         setLocation(newLocation);
+      } else {
+        console.log("No location data found for this train");
+        alert("No location data available for this train at the moment");
       }
     };
 
-    onValue(trainRef, handleData);
-    setUnsubscribe(() => () => off(trainRef, handleData));
+    onValue(locationRef, handleData);
+
+    return () => {
+      off(locationRef, handleData);
+    };
   };
 
   useEffect(() => {
@@ -125,6 +130,7 @@ function Map() {
     if (marker) {
       marker.setPosition(location);
     } else {
+      // Create a new marker with a train icon
       const newMarker = new window.google.maps.Marker({
         position: location,
         map: map,
@@ -139,6 +145,14 @@ function Map() {
       setMarker(newMarker);
     }
   }, [location, map, marker]);
+
+  // Find the train name based on selected ID
+  const getSelectedTrainName = () => {
+    const selectedTrain = trains.find(
+      (train) => train.TrainID === selectedTrainId
+    );
+    return selectedTrain ? selectedTrain.Name : "";
+  };
 
   return (
     <>
@@ -165,28 +179,39 @@ function Map() {
               </label>
               <select
                 id="train"
-                value={train}
-                onChange={(e) => setTrain(e.target.value)}
+                value={selectedTrainId}
+                onChange={(e) => setSelectedTrainId(e.target.value)}
                 className="w-full px-3 py-2 text-base leading-8 transition-colors duration-200 ease-in-out border rounded-sm outline-none text-secondary bg-gray-50 border-secondary-1 focus:border-primary focus:ring-2 focus:ring-primary-200"
+                disabled={loading}
               >
-                <option value="">Select a train</option>
-                {trains.map((trainItem) => (
-                  <option key={trainItem.TrainID} value={trainItem.TrainID}>
-                    {trainItem.Name} ({trainItem.TrainID})
+                <option value="">Select Train</option>
+                {trains.map((train) => (
+                  <option key={train.TrainID} value={train.TrainID}>
+                    {train.Name} ({train.TrainID})
                   </option>
                 ))}
               </select>
             </div>
 
+            {selectedTrainId && (
+              <div className="p-3 mb-4 rounded-sm bg-gray-50">
+                <p className="text-sm text-secondary-1">
+                  <strong>Selected:</strong> {getSelectedTrainName()}
+                </p>
+              </div>
+            )}
+
             <button
-              onClick={startTrackingTrain}
-              disabled={!train}
+              onClick={getLocation}
+              disabled={!selectedTrainId || loading}
               className={`px-6 py-2 text-lg text-white border-0 rounded-sm ${
-                !train ? "bg-gray-400" : "bg-primary hover:bg-secondary"
+                !selectedTrainId || loading
+                  ? "bg-gray-400"
+                  : "bg-primary hover:bg-secondary"
               } focus:outline-none`}
-              aria-label="Track Train"
+              aria-label="Get Updates"
             >
-              {isTracking ? "Tracking..." : "Track Train"}
+              {loading ? "Loading..." : "Get Updates"}
             </button>
           </div>
         </div>
