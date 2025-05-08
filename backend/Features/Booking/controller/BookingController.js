@@ -241,7 +241,7 @@ const newBooking = async (req, res) => {
       classType,
       noOfSeats,
       seatNumbers,
-      price,
+      price, 
       totalAmount,
       passengerNic,
       contactNumber,
