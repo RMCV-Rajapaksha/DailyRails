@@ -13,12 +13,12 @@ import axios from "axios";
 import { API_URL } from "@env";
 import { AuthContext } from "../../context/AuthContext";
 
-const SeatSelection = () => {
+const BookingSummary = () => {
   const router = useRouter();
   const params = useLocalSearchParams();
   const { user } = useContext(AuthContext);
 
-  // Extract parameters
+  // Extract parameters passed from booking page
   const {
     trainId,
     trainName,
@@ -28,139 +28,79 @@ const SeatSelection = () => {
     date,
     passengers,
     class: classType,
+    startStationName, // New: Get station names directly if available
+    endStationName, // New: Get station names directly if available
+    price: basePrice = 0, // New: Get price directly if available
   } = params;
 
   // State variables
-  const [availableSeats, setAvailableSeats] = useState([]);
-  const [bookedSeats, setBookedSeats] = useState([]);
-  const [selectedSeats, setSelectedSeats] = useState([]);
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(false);
   const [bookingLoading, setBookingLoading] = useState(false);
-  const [stationNames, setStationNames] = useState({ start: "", end: "" });
-
-  // Calculate price per seat based on journey price and class
+  const [stationNames, setStationNames] = useState({
+    start: startStationName || "",
+    end: endStationName || "",
+  });
   const [price, setPrice] = useState(0);
+  const [totalPrice, setTotalPrice] = useState(0);
 
-  // Fetch seats data
+  // Calculate prices based on class type and passenger count
   useEffect(() => {
-    const fetchData = async () => {
-      try {
-        // Get station names
-        const [startResponse, endResponse] = await Promise.all([
-          axios.get(`${API_URL}/stations/${startStation}`),
-          axios.get(`${API_URL}/stations/${endStation}`),
-        ]);
+    // If we don't have station names yet, try to get them from station IDs
+    const fetchStationNames = async () => {
+      if (!stationNames.start || !stationNames.end) {
+        try {
+          setLoading(true);
+          const [startResponse, endResponse] = await Promise.all([
+            axios.get(`${API_URL}/stations/${startStation}`),
+            axios.get(`${API_URL}/stations/${endStation}`),
+          ]);
 
-        if (startResponse.data.success && endResponse.data.success) {
           setStationNames({
-            start: startResponse.data.data.Name,
-            end: endResponse.data.data.Name,
+            start: startResponse.data?.data?.Name || "Departure",
+            end: endResponse.data?.data?.Name || "Arrival",
           });
-
-          // Get booked seats
-          const bookedSeatsResponse = await axios.get(
-            `${API_URL}/bookings/findBookedSeats`,
-            {
-              params: {
-                startStationName: startResponse.data.data.Name,
-                endStationName: endResponse.data.data.Name,
-                date: date,
-              },
-            }
-          );
-
-          // Get journey price
-          const journeyResponse = await axios.get(
-            `${API_URL}/journeys/${journeyId}`
-          );
-
-          if (journeyResponse.data.success) {
-            // Calculate price based on class
-            let basePrice = journeyResponse.data.data.Price;
-            let classMultiplier = 1;
-
-            switch (parseInt(classType)) {
-              case 1:
-                classMultiplier = 1.5;
-                break;
-              case 2:
-                classMultiplier = 1;
-                break;
-              case 3:
-                classMultiplier = 0.75;
-                break;
-              default:
-                classMultiplier = 1;
-            }
-
-            setPrice(Math.round(basePrice * classMultiplier));
-          }
-
-          if (bookedSeatsResponse.data.success) {
-            // Extract booked seat numbers
-            const booked = bookedSeatsResponse.data.data.bookedSeats.map(
-              (seat) => seat.SeatNumber
-            );
-            setBookedSeats(booked);
-
-            // Get all seats for this train and class type
-            const allSeatsResponse = await axios.get(`${API_URL}/seats`, {
-              params: {
-                trainId,
-                classType,
-              },
-            });
-
-            if (allSeatsResponse.data.success) {
-              // Filter out booked seats
-              const availableSeatsData = allSeatsResponse.data.data.filter(
-                (seat) => !booked.includes(seat.SeatNumber)
-              );
-              setAvailableSeats(availableSeatsData);
-            }
-          }
+        } catch (error) {
+          console.error("Error fetching station names:", error);
+        } finally {
+          setLoading(false);
         }
-      } catch (error) {
-        console.error("Error fetching seat data:", error);
-        alert("Failed to load seat information");
-      } finally {
-        setLoading(false);
       }
     };
 
-    fetchData();
-  }, [trainId, journeyId, startStation, endStation, date, classType]);
+    fetchStationNames();
 
-  // Handle seat selection
-  const toggleSeatSelection = (seat) => {
-    const isSelected = selectedSeats.some(
-      (s) => s.SeatNumber === seat.SeatNumber
+    // Calculate price based on class type
+    let parsedBasePrice = parseFloat(basePrice) || 100;
+    let classMultiplier = 1;
+
+    switch (parseInt(classType)) {
+      case 1:
+        classMultiplier = 1.5;
+        break;
+      case 2:
+        classMultiplier = 1;
+        break;
+      case 3:
+        classMultiplier = 0.75;
+        break;
+      default:
+        classMultiplier = 1;
+    }
+
+    const pricePerSeat = Math.round(parsedBasePrice * classMultiplier);
+    setPrice(pricePerSeat);
+    setTotalPrice(pricePerSeat * parseInt(passengers));
+
+    console.log(
+      `Price calculation: ${parsedBasePrice} × ${classMultiplier} × ${passengers} = ${
+        pricePerSeat * parseInt(passengers)
+      }`
     );
+  }, [startStation, endStation, basePrice, classType, passengers]);
 
-    if (isSelected) {
-      // Deselect the seat
-      setSelectedSeats(
-        selectedSeats.filter((s) => s.SeatNumber !== seat.SeatNumber)
-      );
-    } else {
-      // Check if we've already selected the max number of seats
-      if (selectedSeats.length >= parseInt(passengers)) {
-        alert(`You can only select ${passengers} seat(s)`);
-        return;
-      }
+  // Replace the handleCreateBooking function with this implementation:
 
-      // Select the seat
-      setSelectedSeats([...selectedSeats, seat]);
-    }
-  };
-
-  // Create booking
   const handleCreateBooking = async () => {
-    if (selectedSeats.length < parseInt(passengers)) {
-      alert(`Please select ${passengers} seat(s)`);
-      return;
-    }
-
     if (!user) {
       alert("Please sign in to book tickets");
       router.push("/sign-in");
@@ -170,86 +110,96 @@ const SeatSelection = () => {
     setBookingLoading(true);
 
     try {
-      const totalAmount = price * selectedSeats.length;
-      const seatNumbers = selectedSeats.map((seat) => seat.SeatNumber);
+      // Generate seat numbers automatically (we're not selecting specific seats)
+      const seatNumbers = Array.from(
+        { length: parseInt(passengers) },
+        (_, i) => `Auto-${i + 1}`
+      );
 
-      // Create booking
-      const response = await axios.post(`${API_URL}/bookings`, {
+      console.log("Proceeding directly to payment for:", {
         trainId,
+        trainName,
         journeyId,
         passengerNIC: user.PassengerNIC,
         classType,
-        noOfSeats: selectedSeats.length,
+        noOfSeats: parseInt(passengers),
         email: user.Email,
         date,
-        time: "08:00:00", // You may want to get this from train data
-        seatNumbers,
-        amount: totalAmount,
+        amount: totalPrice,
       });
 
-      if (response.data.success) {
-        // Proceed to payment
-        const paymentResponse = await axios.post(
-          `${API_URL}/bookings/create-payment-intent`,
-          {
-            bookingId: response.data.data.bookingId,
-            amount: totalAmount,
-            trainDetails: {
-              trainName,
-              class: classType,
-              date,
-              time: "08:00:00", // Same as above
-            },
-            seats: seatNumbers,
-          }
-        );
-
-        if (paymentResponse.data.success) {
-          // Redirect to payment URL or handle in-app payment
-          router.push({
-            pathname: "/payment-webview",
-            params: {
-              paymentUrl: paymentResponse.data.url,
-              bookingId: response.data.data.bookingId,
-            },
-          });
-        } else {
-          alert("Failed to create payment. Please try again.");
+      // Skip booking creation and go directly to payment
+      const paymentResponse = await axios.post(
+        `${API_URL}/bookings/create-payment-intent`,
+        {
+          // Include all booking data in the payment request
+          // so it can be saved after successful payment
+          bookingData: {
+            trainId,
+            journeyId,
+            passengerNIC: user.PassengerNIC,
+            classType: parseInt(classType),
+            noOfSeats: parseInt(passengers),
+            email: user.Email,
+            date,
+            time: "08:00:00",
+            seatNumbers,
+            amount: totalPrice,
+          },
+          amount: totalPrice,
+          trainDetails: {
+            trainName,
+            class: classType,
+            date,
+            time: "08:00:00",
+          },
+          seats: seatNumbers,
         }
+      );
+
+      console.log("Payment response:", paymentResponse.data);
+
+      if (paymentResponse.data.success) {
+        // Show success message
+        alert("Redirecting to payment portal...");
+
+        // Redirect to payment URL
+        router.push({
+          pathname: "/payment-webview",
+          params: {
+            paymentUrl: paymentResponse.data.url,
+            // Pass temporary booking data as params if needed for confirmation
+            trainName,
+            date,
+            passengers,
+            amount: totalPrice,
+            classType,
+          },
+        });
       } else {
-        alert("Booking failed. Please try again.");
+        alert("Failed to create payment. Please try again.");
       }
     } catch (error) {
-      console.error("Error creating booking:", error);
-      alert("An error occurred while creating your booking");
+      console.error("Error creating payment:", error);
+      console.error("Error details:", error.response?.data || error.message);
+      alert("An error occurred while processing your payment request");
     } finally {
       setBookingLoading(false);
     }
   };
 
-  // Render a seat
-  const renderSeat = (seat) => {
-    const isBooked = bookedSeats.includes(seat.SeatNumber);
-    const isSelected = selectedSeats.some(
-      (s) => s.SeatNumber === seat.SeatNumber
-    );
-
-    let bgColor = "bg-gray-200"; // Available seat
-    if (isBooked) bgColor = "bg-gray-400"; // Booked seat
-    if (isSelected) bgColor = "bg-green-500"; // Selected seat
-
-    return (
-      <TouchableOpacity
-        key={seat.SeatNumber}
-        className={`w-12 h-12 m-1 rounded-md items-center justify-center ${bgColor}`}
-        disabled={isBooked}
-        onPress={() => toggleSeatSelection(seat)}
-      >
-        <Text className={isSelected ? "text-white" : "text-black"}>
-          {seat.SeatNumber}
-        </Text>
-      </TouchableOpacity>
-    );
+  // Get class name from class number
+  const getClassName = (classNum) => {
+    switch (parseInt(classNum)) {
+      case 1:
+        return "1st Class";
+      case 2:
+        return "2nd Class";
+      case 3:
+        return "3rd Class";
+      default:
+        return "Standard";
+    }
   };
 
   return (
@@ -259,112 +209,150 @@ const SeatSelection = () => {
         <TouchableOpacity onPress={() => router.back()} className="p-2">
           <Ionicons name="arrow-back" size={24} color="black" />
         </TouchableOpacity>
-        <Text className="text-xl font-bold ml-2">Select Seats</Text>
+        <Text className="text-xl font-bold ml-2">Booking Summary</Text>
       </View>
 
       {loading ? (
         <View className="flex-1 justify-center items-center">
           <ActivityIndicator size="large" color="#40A2B2" />
-          <Text className="mt-4 text-gray-600">Loading seats...</Text>
+          <Text className="mt-4 text-gray-600">Loading journey details...</Text>
         </View>
       ) : (
         <>
-          {/* Journey Info */}
-          <View className="bg-blue-50 p-4">
-            <Text className="font-bold text-lg">{trainName}</Text>
-            <View className="flex-row justify-between mt-1">
-              <Text className="text-gray-600">
-                {stationNames.start} → {stationNames.end}
-              </Text>
-              <Text className="text-gray-600">{date}</Text>
-            </View>
-            <Text className="mt-1">Class: {classType}</Text>
-            <View className="flex-row justify-between items-center mt-2">
-              <Text className="font-semibold">Price per seat: ₹{price}</Text>
-              <Text className="font-semibold">Passengers: {passengers}</Text>
-            </View>
-          </View>
-
-          {/* Seat Legend */}
-          <View className="flex-row justify-around bg-gray-100 p-3">
-            <View className="flex-row items-center">
-              <View className="w-4 h-4 bg-gray-200 mr-2 rounded"></View>
-              <Text>Available</Text>
-            </View>
-            <View className="flex-row items-center">
-              <View className="w-4 h-4 bg-gray-400 mr-2 rounded"></View>
-              <Text>Booked</Text>
-            </View>
-            <View className="flex-row items-center">
-              <View className="w-4 h-4 bg-green-500 mr-2 rounded"></View>
-              <Text>Selected</Text>
-            </View>
-          </View>
-
-          {/* Seat Map */}
+          {/* Train & Journey Info Card */}
           <ScrollView className="flex-1 p-4">
-            <Text className="text-xl font-bold mb-4">Select your seats</Text>
-
-            {/* Front of the train indicator */}
-            <View className="items-center mb-6">
-              <View className="w-20 h-1 bg-gray-400"></View>
-              <Text className="text-gray-500 mt-1">Front</Text>
-            </View>
-
-            <View className="flex-row flex-wrap justify-center">
-              {availableSeats.map((seat) => renderSeat(seat))}
-            </View>
-
-            {/* Selected seats summary */}
-            <View className="mt-6 p-4 bg-gray-50 rounded-lg">
-              <Text className="font-bold mb-2">
-                Selected Seats ({selectedSeats.length}/{passengers})
+            <View className="bg-white rounded-lg shadow-md p-4 mb-4">
+              <Text className="font-bold text-xl text-[#40A2B2] mb-2">
+                {trainName}
               </Text>
-              <View className="flex-row flex-wrap">
-                {selectedSeats.map((seat) => (
-                  <View
-                    key={seat.SeatNumber}
-                    className="bg-green-100 rounded-full px-3 py-1 m-1"
-                  >
-                    <Text>{seat.SeatNumber}</Text>
-                  </View>
-                ))}
+
+              <View className="flex-row items-center mb-4">
+                <View className="flex-1">
+                  <Text className="text-gray-500">From</Text>
+                  <Text className="font-semibold text-lg">
+                    {stationNames.start}
+                  </Text>
+                </View>
+                <View className="items-center px-4">
+                  <Ionicons name="arrow-forward" size={20} color="#40A2B2" />
+                </View>
+                <View className="flex-1">
+                  <Text className="text-gray-500">To</Text>
+                  <Text className="font-semibold text-lg">
+                    {stationNames.end}
+                  </Text>
+                </View>
+              </View>
+
+              <View className="flex-row justify-between border-t border-gray-100 pt-3 mb-2">
+                <View>
+                  <Text className="text-gray-500">Date</Text>
+                  <Text className="font-semibold">{date}</Text>
+                </View>
+                <View>
+                  <Text className="text-gray-500">Class</Text>
+                  <Text className="font-semibold">
+                    {getClassName(classType)}
+                  </Text>
+                </View>
               </View>
             </View>
 
-            {/* Total price */}
-            <View className="bg-gray-50 p-4 rounded-lg mt-4">
-              <View className="flex-row justify-between">
-                <Text>Price per seat:</Text>
-                <Text>₹{price}</Text>
+            {/* Rest of the component remains the same */}
+            {/* Passenger Details */}
+            <View className="bg-white rounded-lg shadow-md p-4 mb-4">
+              <Text className="font-bold text-lg mb-3">Passenger Details</Text>
+
+              {user && (
+                <>
+                  <View className="flex-row justify-between mb-2">
+                    <Text className="text-gray-500">Name</Text>
+                    <Text className="font-semibold">
+                      {user.Name || user.PassengerNIC}
+                    </Text>
+                  </View>
+
+                  <View className="flex-row justify-between mb-2">
+                    <Text className="text-gray-500">Email</Text>
+                    <Text className="font-semibold">{user.Email}</Text>
+                  </View>
+                </>
+              )}
+
+              <View className="flex-row justify-between border-t border-gray-100 pt-3">
+                <Text className="text-gray-500">Number of Passengers</Text>
+                <Text className="font-semibold">{passengers}</Text>
               </View>
-              <View className="flex-row justify-between">
-                <Text>Number of seats:</Text>
-                <Text>{selectedSeats.length}</Text>
+            </View>
+
+            {/* Pricing Summary */}
+            <View className="bg-white rounded-lg shadow-md p-4 mb-8">
+              <Text className="font-bold text-lg mb-3">Price Summary</Text>
+
+              <View className="flex-row justify-between mb-2">
+                <Text className="text-gray-500">Price per passenger</Text>
+                <Text className="font-semibold">Rs.{price.toFixed(2)}</Text>
               </View>
-              <View className="flex-row justify-between mt-2 pt-2 border-t border-gray-200">
-                <Text className="font-bold">Total:</Text>
-                <Text className="font-bold">
-                  ₹{price * selectedSeats.length}
+
+              <View className="flex-row justify-between mb-2">
+                <Text className="text-gray-500">Passengers</Text>
+                <Text className="font-semibold">× {passengers}</Text>
+              </View>
+
+              {parseInt(passengers) > 1 && (
+                <View className="flex-row justify-between mb-2 border-t border-gray-100 pt-2">
+                  <Text className="text-gray-500">Subtotal</Text>
+                  <Text className="font-semibold">
+                    Rs.{(price * parseInt(passengers)).toFixed(2)}
+                  </Text>
+                </View>
+              )}
+
+              <View className="flex-row justify-between border-t border-gray-200 mt-3 pt-3">
+                <Text className="font-bold text-lg">Total Price</Text>
+                <Text className="font-bold text-lg text-[#40A2B2]">
+                  Rs.{totalPrice.toFixed(2)}
                 </Text>
               </View>
             </View>
-          </ScrollView>
 
+            {/* Notes/Policy */}
+            <View className="bg-gray-50 rounded-lg p-4 mb-8">
+              <Text className="text-sm text-gray-500 italic">
+                Note: Your seats will be automatically assigned based on
+                availability. Tickets are non-refundable after 24 hours before
+                departure.
+              </Text>
+            </View>
+          </ScrollView>
+          // Fix the onPress handler in the Bottom action bar section:
           {/* Bottom action bar */}
           <View className="p-4 border-t border-gray-200">
             <TouchableOpacity
               className="bg-[#40A2B2] py-4 rounded-md items-center"
-              onPress={handleCreateBooking}
-              disabled={
-                selectedSeats.length < parseInt(passengers) || bookingLoading
-              }
+              onPress={() => {
+                // For demo purposes, navigate to payment with a valid URL
+                router.push({
+                  pathname: "/payment",
+                  params: {
+                    paymentUrl: "https://stripe.com/docs/testing", // A real URL that will load
+                    trainName,
+                    date,
+                    passengers,
+                    amount: totalPrice,
+                    classType,
+                    from: stationNames.start,
+                    to: stationNames.end,
+                  },
+                });
+              }}
+              disabled={bookingLoading}
             >
               {bookingLoading ? (
                 <ActivityIndicator color="white" />
               ) : (
                 <Text className="text-white font-bold text-lg">
-                  Continue to Payment
+                  Proceed to Payment
                 </Text>
               )}
             </TouchableOpacity>
@@ -375,4 +363,4 @@ const SeatSelection = () => {
   );
 };
 
-export default SeatSelection;
+export default BookingSummary;

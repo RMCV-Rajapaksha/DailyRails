@@ -559,9 +559,6 @@ const selectTrain = (train, selectedClass) => {
                               <Text className="text-white font-medium">
                                 1st Class
                               </Text>
-                              <Text className="text-white text-xs">
-                                ₹{getTrainPrice(train, 1.5)}
-                              </Text>
                             </TouchableOpacity>
 
                             <TouchableOpacity
@@ -571,9 +568,6 @@ const selectTrain = (train, selectedClass) => {
                               <Text className="text-white font-medium">
                                 2nd Class
                               </Text>
-                              <Text className="text-white text-xs">
-                                ₹{getTrainPrice(train, 1)}
-                              </Text>
                             </TouchableOpacity>
 
                             <TouchableOpacity
@@ -582,9 +576,6 @@ const selectTrain = (train, selectedClass) => {
                             >
                               <Text className="text-white font-medium">
                                 3rd Class
-                              </Text>
-                              <Text className="text-white text-xs">
-                                ₹{getTrainPrice(train, 0.75)}
                               </Text>
                             </TouchableOpacity>
                           </View>
