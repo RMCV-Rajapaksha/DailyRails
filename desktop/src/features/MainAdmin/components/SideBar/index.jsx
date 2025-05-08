@@ -19,12 +19,7 @@ const SideBar = ({ section, isExpanded, setSection }) => {
       icon: <FaHome className="h-5 w-5" />,
       value: "home",
     },
-    {
-      title: "Schedules",
-      url: "/train-schedule",
-      icon: <FaCalendarAlt className="h-5 w-5" />,
-      value: "schedules",
-    },
+    
     {
       title: "Train Management",
       url: "/train-management",
@@ -61,12 +56,7 @@ const SideBar = ({ section, isExpanded, setSection }) => {
       icon: <FaBell className="h-5 w-5" />,
       value: "founds",
     },
-    {
-      title: "Logout",
-      url: "/logout",
-      icon: <FaSignOutAlt className="h-5 w-5" />,
-      value: "logout",
-    },
+    
   ];
 
   return (

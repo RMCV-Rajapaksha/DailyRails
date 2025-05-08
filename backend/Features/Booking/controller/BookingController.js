@@ -1,6 +1,7 @@
 const express = require("express");
 const { Sequelize, DataTypes } = require("sequelize");
 const db = require("../../../models");
+const NewBooking = db.newBooking;
 
 const { sendBookingEmail } = require("../../../Services/EmailService");
 
@@ -27,7 +28,8 @@ const generateNextBookingId = async () => {
 
 // Create a new booking
 const createBooking = async (req, res) => {
-  const transaction = await db.sequelize.transaction();
+
+ 
 
   try {
     const {
@@ -127,14 +129,16 @@ const createBooking = async (req, res) => {
       })
     );
 
+    // Inside the createBooking function, modify the payment creation part:
+
     const PAYMENT_STATUS = {
-      PENDING: 0,
-      COMPLETED: 1,
-      FAILED: 2,
-      REFUNDED: 3,
+      PENDING: "Pending",
+      COMPLETED: "Completed",
+      FAILED: "Failed",
+      REFUNDED: "Refunded",
     };
 
-    // Step 6: Create payment record
+    // Step 6: Create payment record with pending status
     const payment = await db.Payment.create(
       {
         PaymentID: `PY${bookingId.substring(2)}`,
@@ -145,15 +149,25 @@ const createBooking = async (req, res) => {
       { transaction }
     );
 
-    if (!booking || !payment) {
-      await transaction.rollback();
-      return res.status(500).json({
-        success: false,
-        message: "Failed to create booking records",
-      });
-    }
-
+    // Commit the transaction to save the booking
     await transaction.commit();
+
+    // Return booking ID for payment processing
+    res.status(201).json({
+      success: true,
+      data: {
+        bookingId: bookingId,
+        amount: amount,
+        trainDetails: {
+          trainName: train.Name,
+          class: classType,
+          date,
+          time,
+        },
+        seats: seatNumbers,
+      },
+      message: "Booking created. Please proceed to payment.",
+    });
 
     // Step 7: Fetch complete booking details
     const completeBooking = await db.Booking.findByPk(bookingId, {
@@ -216,6 +230,84 @@ const createBooking = async (req, res) => {
       message: "Failed to create booking",
       error: error.message,
     });
+  }
+};
+
+const newBooking = async (req, res) => {
+  try {
+    const {
+      trainId,
+      journeyId,
+      classType,
+      noOfSeats,
+      seatNumbers,
+      price,
+      totalAmount,
+      passengerNic,
+      contactNumber,
+      email,
+      startStationId,
+      endStationId,
+      date,
+      time,
+      firstName,
+      lastName
+    } = req.body;
+
+    const booking = await NewBooking.create({
+      trainId,
+      journeyId,
+      classType,
+      noOfSeats,
+      seatNumbers,
+      price,
+      totalAmount,
+      passengerNic,
+      contactNumber,
+      email,
+      startStationId,
+      endStationId,
+      date,
+      time,
+    });
+
+    // Generate a booking reference for the email
+    const bookingReference = `BK-${Math.random().toString(36).substring(2, 8).toUpperCase()}`;
+    
+    // Send email notification
+    try {
+      await sendBookingEmail({
+        amount: totalAmount,
+        trainDetails: {
+          trainName: `Train ${trainId}`,
+          class: classType,
+          date: date,
+          time: time
+        },
+        seats: Array.isArray(seatNumbers) ? seatNumbers : [seatNumbers],
+        user: {
+          Name: `${firstName || ''} ${lastName || passengerNic || 'Valued Customer'}`,
+          Email: email
+        },
+        reference: bookingReference
+      });
+      
+      console.log("Booking confirmation email sent successfully");
+    } catch (emailError) {
+      // Log email error but don't fail the booking
+      console.error("Error sending booking confirmation email:", emailError);
+    }
+
+    // Return success response with booking data and reference
+    res.status(201).json({ 
+      success: true, 
+      booking, 
+      reference: bookingReference,
+      emailSent: true 
+    });
+  } catch (error) {
+    console.error("Booking creation failed:", error);
+    res.status(500).json({ success: false, message: "Internal server error" });
   }
 };
 
@@ -555,6 +647,7 @@ const findBookedSeats = async (req, res) => {
 
 module.exports = {
   createBooking,
+  newBooking,
   getBookings,
   getBookingById,
   updateBooking,

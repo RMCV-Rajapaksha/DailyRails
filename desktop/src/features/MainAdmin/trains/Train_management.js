@@ -177,7 +177,11 @@ const TrainManagement = () => {
       EndStations: inputs.EndStations.data,
       StartTime: inputs.StartTime.data,
       EndTime: inputs.EndTime.data,
-      stoppingPoints: form.stoppingPoints,
+      stoppingPoints: form.stoppingPoints.map(stop => ({
+        StationID: stop.StationID,
+        ArrivalTime: stop.ArrivalTime,
+        DepartureTime: stop.DepartureTime
+      }))
     };
 
     console.log("Form to save:", updatedForm);

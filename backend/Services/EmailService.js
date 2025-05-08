@@ -49,10 +49,15 @@ const sendEmail = async (userData) => {
     console.error("Error sending email:", error);
   }
 };
+
+
 const sendBookingEmail = async (bookingData) => {
-  const { amount, trainDetails, seats, user } = bookingData;
+  const { amount, trainDetails, seats, user, reference } = bookingData;
   const { trainName, class: trainClass, date, time } = trainDetails;
   const { Name, Email } = user;
+  
+  // Use provided reference or generate a new one
+  const bookingReference = reference || generateBookingReference();
 
   // Format date and time more professionally
   const formattedDate = new Date(date).toLocaleDateString("en-US", {
@@ -62,26 +67,26 @@ const sendBookingEmail = async (bookingData) => {
     day: "numeric",
   });
 
-  const formattedTime = new Date(`2000-01-01T${time}`).toLocaleTimeString(
+  const formattedTime = time ? new Date(`2000-01-01T${time}`).toLocaleTimeString(
     "en-US",
     {
       hour: "2-digit",
       minute: "2-digit",
     }
-  );
+  ) : "Not specified";
 
   const mailOptions = {
     from: process.env.EMAIL_USER,
     to: Email,
-    subject: `Booking Confirmation - ${trainName} | Reference: ${generateBookingReference()}`,
+    subject: `Booking Confirmation - ${trainName} | Reference: ${bookingReference}`,
     text: `
 Dear ${Name},
 
-Thank you for choosing our railway service! We're delighted to confirm your booking.
+Thank you for choosing DailyRails! We're delighted to confirm your booking.
 
 BOOKING DETAILS
 --------------
-Booking Reference: ${generateBookingReference()}
+Booking Reference: ${bookingReference}
 Train: ${trainName}
 Class: ${trainClass}
 Date: ${formattedDate}
@@ -97,12 +102,12 @@ IMPORTANT INFORMATION
 
 For any queries, please contact our 24/7 customer service:
 Phone: 1-800-RAILWAY
-Email: support@railway.com
+Email: support@dailyrails.com
 
 We wish you a pleasant journey!
 
 Best regards,
-The Railway Team
+The DailyRails Team
     `,
     html: `
       <!DOCTYPE html>
@@ -169,14 +174,14 @@ The Railway Team
           <div class="container">
             <div class="header">
               <h1>Booking Confirmation</h1>
-              <p>Thank you for choosing our railway service!</p>
+              <p>Thank you for choosing DailyRails!</p>
             </div>
 
             <div class="booking-details">
               <h2>Booking Details</h2>
               <div class="detail-row">
                 <strong>Booking Reference:</strong>
-                <span>${generateBookingReference()}</span>
+                <span>${bookingReference}</span>
               </div>
               <div class="detail-row">
                 <strong>Train:</strong>
@@ -213,19 +218,19 @@ The Railway Team
               </ul>
             </div>
 
-            <a href="https://railway.com/manage-booking" class="button">
+            <a href="https://dailyrails.com/manage-booking?ref=${bookingReference}" class="button">
               Manage Your Booking
             </a>
 
             <p>
               For any queries, please contact our 24/7 customer service:<br>
               Phone: 1-800-RAILWAY<br>
-              Email: support@railway.com
+              Email: support@dailyrails.com
             </p>
 
             <div class="footer">
               <p>We wish you a pleasant journey!</p>
-              <p>Best regards,<br>The Railway Team</p>
+              <p>Best regards,<br>The DailyRails Team</p>
             </div>
           </div>
         </body>
