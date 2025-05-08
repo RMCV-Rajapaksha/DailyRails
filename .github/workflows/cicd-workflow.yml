@@ -60,11 +60,19 @@ jobs:
       - name: Build Docker image
         run: docker build -t "${{ secrets.DOCKER_USERNAME }}"/dailyrails:latest ./backend
 
+      # Build website Docker image
+      - name: Build website Docker image
+        run: docker build -t "${{ secrets.DOCKER_USERNAME }}"/dailyrails-website:latest ./website
+
       - name: List Docker images
         run: docker images
 
       - name: Push Docker image to Docker Hub
         run: docker push "${{ secrets.DOCKER_USERNAME }}"/dailyrails:latest
+        
+      # Push website Docker image
+      - name: Push website Docker image to Docker Hub
+        run: docker push "${{ secrets.DOCKER_USERNAME }}"/dailyrails-website:latest
 
   test:
     needs: build
@@ -141,6 +149,12 @@ jobs:
             docker stop dailyrails || true
             docker rm dailyrails || true
             docker run -d --name dailyrails --network d73ec77ce253 -p 4000:4000 "${{ secrets.DOCKER_USERNAME }}"/dailyrails:latest
+            
+            # Deploy website container
+            docker pull "${{ secrets.DOCKER_USERNAME }}"/dailyrails-website:latest
+            docker stop dailyrails-website || true
+            docker rm dailyrails-website || true
+            docker run -d --name dailyrails-website --network d73ec77ce253 -p 3000:3000 "${{ secrets.DOCKER_USERNAME }}"/dailyrails-website:latest
 
   database:
     needs: deploy
