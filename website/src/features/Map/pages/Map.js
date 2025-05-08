@@ -177,7 +177,7 @@ function Map() {
 
   useEffect(() => {
     const script = document.createElement("script");
-    script.src = `https://maps.googleapis.com/maps/api/js?key=AIzaSyAOVYRIgupAurZup5y1PRh8Ismb1A3lLao`;
+    script.src = `https://maps.googleapis.com/maps/api/js?key=AIzaSyB9W4g53QUfZ50HcuXDhou3aT6iFM_Zf_M`;
     script.async = true;
 
     const initMap = () => {
