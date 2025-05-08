@@ -72,7 +72,6 @@ const getAllJourneys = async (req, res) => {
 };
 
 
-
 module.exports = {
   getJourneyByStations,
   getAllJourneys
