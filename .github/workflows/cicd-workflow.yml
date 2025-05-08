@@ -153,6 +153,22 @@ jobs:
           username: root
           key: ${{ secrets.DO_SSH_KEY }}
           script: |
+            # Check for any container using port 3000
+            PORT_3000_CONTAINER=$(docker ps -q --filter publish=3000)
+            if [ ! -z "$PORT_3000_CONTAINER" ]; then
+              echo "Found container using port 3000. Stopping it first."
+              docker stop $PORT_3000_CONTAINER
+              docker rm $PORT_3000_CONTAINER
+            fi
+            
+            # Check for any container using port 4000
+            PORT_4000_CONTAINER=$(docker ps -q --filter publish=4000)
+            if [ ! -z "$PORT_4000_CONTAINER" ]; then
+              echo "Found container using port 4000. Stopping it first."
+              docker stop $PORT_4000_CONTAINER
+              docker rm $PORT_4000_CONTAINER
+            fi
+            
             # Deploy backend
             docker pull "${{ secrets.DOCKER_USERNAME }}"/dailyrails-backend:latest
             docker stop dailyrails-backend || true
