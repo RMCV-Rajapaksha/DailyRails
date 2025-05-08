@@ -1,5 +1,6 @@
 use dailyrails;
 
+
 -- --  Station table
 -- -- Main Line Stations
 -- INSERT INTO STATION (StationID, StationName, StationAddress, StationLine, ContactNumber, createdAt, updatedAt) VALUES

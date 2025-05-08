@@ -32,12 +32,6 @@ const SideBar = ({ section, isExpanded, setSection }) => {
       value: "train-management",
     },
     {
-      title: "Routes",
-      url: "/routes",
-      icon: <FaRoute className="h-5 w-5" />,
-      value: "routes",
-    },
-    {
       title: "Tickets",
       url: "/tickets",
       icon: <FaTicketAlt className="h-5 w-5" />,
@@ -48,12 +42,6 @@ const SideBar = ({ section, isExpanded, setSection }) => {
       url: "/register",
       icon: <FaUserShield className="h-5 w-5" />,
       value: "admins",
-    },
-    {
-      title: "Statistics",
-      url: "/statistics",
-      icon: <FaChartBar className="h-5 w-5" />,
-      value: "statistics",
     },
     {
       title: "Notification Management",

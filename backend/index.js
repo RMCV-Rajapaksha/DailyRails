@@ -8,7 +8,15 @@ const {
   setupWebSocket,
 } = require("./Features/Reports/controller/WebsocketServer");
 // Middleware to parse JSON
-app.use(express.json());
+app.use((req, res, next) => {
+  if (req.originalUrl === "/api/bookings/webhook") {
+    // Skip body parsing for webhook route
+    next();
+  } else {
+    // Apply JSON body parser for all other routes
+    express.json()(req, res, next);
+  }
+});
 
 // CORS setup
 // app.use(
@@ -18,6 +26,7 @@ app.use(express.json());
 //     credentials: true,
 //   })
 // );
+app.use(express.urlencoded({ extended: true }));
 app.use(
   cors({
     origin: (origin, callback) => {
