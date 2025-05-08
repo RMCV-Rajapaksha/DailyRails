@@ -15,6 +15,7 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v3
 
+      # Backend configuration setup
       - name: Create config.json
         run: |
           mkdir -p backend/config
@@ -53,26 +54,33 @@ jobs:
           EMAIL_USER=${{ secrets.EMAIL_USER }}
           EMAIL_PASS=${{ secrets.EMAIL_PASS }}
           EOF
+      
+      # Frontend configuration setup
+      - name: Create frontend .env file
+        run: |
+          cat > website/.env << EOF
+          REACT_APP_API_URL=${{ secrets.REACT_APP_API_URL || 'http://localhost:4000' }}
+          EOF
 
       - name: Login to Docker Hub
         run: echo "${{ secrets.DOCKER_PASSWORD }}" | docker login -u "${{ secrets.DOCKER_USERNAME }}" --password-stdin
 
-      - name: Build Docker image
-        run: docker build -t "${{ secrets.DOCKER_USERNAME }}"/dailyrails:latest ./backend
+      # Build and push backend
+      - name: Build backend Docker image
+        run: docker build -t "${{ secrets.DOCKER_USERNAME }}"/dailyrails-backend:latest ./backend
 
-      # Build website Docker image
-      - name: Build website Docker image
-        run: docker build -t "${{ secrets.DOCKER_USERNAME }}"/dailyrails-website:latest ./website
+      # Build and push frontend
+      - name: Build frontend Docker image
+        run: docker build -t "${{ secrets.DOCKER_USERNAME }}"/dailyrails-frontend:latest ./website
 
       - name: List Docker images
         run: docker images
 
-      - name: Push Docker image to Docker Hub
-        run: docker push "${{ secrets.DOCKER_USERNAME }}"/dailyrails:latest
+      - name: Push backend Docker image to Docker Hub
+        run: docker push "${{ secrets.DOCKER_USERNAME }}"/dailyrails-backend:latest
         
-      # Push website Docker image
-      - name: Push website Docker image to Docker Hub
-        run: docker push "${{ secrets.DOCKER_USERNAME }}"/dailyrails-website:latest
+      - name: Push frontend Docker image to Docker Hub
+        run: docker push "${{ secrets.DOCKER_USERNAME }}"/dailyrails-frontend:latest
 
   test:
     needs: build
@@ -145,16 +153,17 @@ jobs:
           username: root
           key: ${{ secrets.DO_SSH_KEY }}
           script: |
-            docker pull "${{ secrets.DOCKER_USERNAME }}"/dailyrails:latest
-            docker stop dailyrails || true
-            docker rm dailyrails || true
-            docker run -d --name dailyrails --network d73ec77ce253 -p 4000:4000 "${{ secrets.DOCKER_USERNAME }}"/dailyrails:latest
+            # Deploy backend
+            docker pull "${{ secrets.DOCKER_USERNAME }}"/dailyrails-backend:latest
+            docker stop dailyrails-backend || true
+            docker rm dailyrails-backend || true
+            docker run -d --name dailyrails-backend --network d73ec77ce253 -p 4000:4000 "${{ secrets.DOCKER_USERNAME }}"/dailyrails-backend:latest
             
-            # Deploy website container
-            docker pull "${{ secrets.DOCKER_USERNAME }}"/dailyrails-website:latest
-            docker stop dailyrails-website || true
-            docker rm dailyrails-website || true
-            docker run -d --name dailyrails-website --network d73ec77ce253 -p 3000:3000 "${{ secrets.DOCKER_USERNAME }}"/dailyrails-website:latest
+            # Deploy frontend
+            docker pull "${{ secrets.DOCKER_USERNAME }}"/dailyrails-frontend:latest
+            docker stop dailyrails-frontend || true
+            docker rm dailyrails-frontend || true
+            docker run -d --name dailyrails-frontend --network d73ec77ce253 -p 3000:3000 "${{ secrets.DOCKER_USERNAME }}"/dailyrails-frontend:latest
 
   database:
     needs: deploy
