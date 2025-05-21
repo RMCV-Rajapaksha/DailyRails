@@ -25,26 +25,26 @@ jobs:
               "username": "${{ secrets.DB_USERNAME }}",
               "password": "${{ secrets.DB_PASSWORD }}",
               "database": "${{ secrets.DB_DATABASE }}",
-              "host": "mysql-server",
+              "host": "${{ secrets.DB_HOST }}",
               "dialect": "mysql"
             },
             "test": {
               "username": "${{ secrets.DB_USERNAME }}",
               "password": "${{ secrets.DB_PASSWORD }}",
               "database": "${{ secrets.DB_DATABASE }}",
-              "host": "mysql-server",
+              "host": "${{ secrets.DB_HOST }}",
               "dialect": "mysql"
             },
             "production": {
               "username": "${{ secrets.DB_USERNAME }}",
               "password": "${{ secrets.DB_PASSWORD }}",
               "database": "${{ secrets.DB_DATABASE }}",
-              "host": "mysql-server",
+              "host": "${{ secrets.DB_HOST }}",
               "dialect": "mysql"
             }
           }
           EOF
-
+          
       - name: Create .env file
         run: |
           cat > backend/.env << EOF
@@ -54,7 +54,7 @@ jobs:
           EMAIL_USER=${{ secrets.EMAIL_USER }}
           EMAIL_PASS=${{ secrets.EMAIL_PASS }}
           EOF
-
+      
       # Frontend configuration setup
       - name: Create frontend .env file
         run: |
@@ -78,7 +78,7 @@ jobs:
 
       - name: Push backend Docker image to Docker Hub
         run: docker push "${{ secrets.DOCKER_USERNAME }}"/dailyrails-backend:latest
-
+        
       - name: Push frontend Docker image to Docker Hub
         run: docker push "${{ secrets.DOCKER_USERNAME }}"/dailyrails-frontend:latest
 
@@ -88,40 +88,40 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v3
-
+        
       - name: Setup Node.js
         uses: actions/setup-node@v3
         with:
-          node-version: "16"
-
+          node-version: '16'
+          
       - name: Install dependencies
         run: |
           cd backend
           echo "Installing dependencies..."
           # Dummy command - would normally run npm install
           echo "Dependencies installed successfully"
-
+          
       - name: Run linting
         run: |
           cd backend
           echo "Running linting checks..."
           # Dummy command - would normally run eslint
           echo "Lint check passed"
-
+          
       - name: Run unit tests
         run: |
           cd backend
           echo "Running unit tests..."
           # Dummy command - would normally run test suite
           echo "All unit tests passed successfully"
-
+          
       - name: Run integration tests
         run: |
           cd backend
           echo "Running integration tests..."
           # Dummy command - would normally run integration tests
           echo "All integration tests passed"
-
+          
       - name: Generate test report
         run: |
           echo "Generating test coverage report..."
@@ -153,60 +153,6 @@ jobs:
           username: root
           key: ${{ secrets.DO_SSH_KEY }}
           script: |
-            # Set up Docker network if it doesn't exist
-            if ! docker network ls | grep -q d73ec77ce253; then
-              echo "Creating Docker network..."
-              docker network create d73ec77ce253
-            fi
-
-            # Setup MySQL container if it doesn't exist
-            if ! docker ps -a | grep -q mysql-server; then
-              echo "MySQL container doesn't exist. Creating it..."
-              docker pull mysql:8.0
-              docker run -d --name mysql-server \
-                --network d73ec77ce253 \
-                -p 3306:3306 \
-                -e MYSQL_ROOT_PASSWORD=${{ secrets.DB_PASSWORD }} \
-                -e MYSQL_DATABASE=${{ secrets.DB_DATABASE }} \
-                -v mysql_data:/var/lib/mysql \
-                mysql:8.0
-              
-              # Wait for MySQL to initialize properly
-              echo "Waiting for MySQL to initialize..."
-              sleep 45
-              
-              # Verify MySQL is running
-              if ! docker ps | grep -q mysql-server; then
-                echo "ERROR: MySQL container failed to start. Checking logs:"
-                docker logs mysql-server
-                exit 1
-              fi
-            else
-              echo "MySQL container already exists"
-              # Ensure MySQL is running
-              if ! docker ps | grep -q mysql-server; then
-                echo "MySQL container exists but is not running. Starting it..."
-                docker start mysql-server
-                sleep 10
-              fi
-            fi
-
-            # Wait for MySQL to be truly ready
-            echo "Waiting for MySQL to be ready to accept connections..."
-            for i in {1..30}; do
-              if docker exec mysql-server mysqladmin ping -h localhost -u${{ secrets.DB_USERNAME }} -p${{ secrets.DB_PASSWORD }} --silent; then
-                echo "MySQL is ready!"
-                break
-              fi
-              if [ $i -eq 30 ]; then
-                echo "ERROR: MySQL did not become ready in time"
-                docker logs mysql-server
-                exit 1
-              fi
-              echo "Waiting for MySQL to be ready... ($i/30)"
-              sleep 2
-            done
-
             # Check for any container using port 3000
             PORT_3000_CONTAINER=$(docker ps -q --filter publish=3000)
             if [ ! -z "$PORT_3000_CONTAINER" ]; then
@@ -214,7 +160,7 @@ jobs:
               docker stop $PORT_3000_CONTAINER
               docker rm $PORT_3000_CONTAINER
             fi
-
+            
             # Check for any container using port 4000
             PORT_4000_CONTAINER=$(docker ps -q --filter publish=4000)
             if [ ! -z "$PORT_4000_CONTAINER" ]; then
@@ -222,67 +168,18 @@ jobs:
               docker stop $PORT_4000_CONTAINER
               docker rm $PORT_4000_CONTAINER
             fi
-
-            # Deploy backend with environment variables and logging (improved multi-line format)
-            echo "Deploying backend container..."
+            
+            # Deploy backend
             docker pull "${{ secrets.DOCKER_USERNAME }}"/dailyrails-backend:latest
             docker stop dailyrails-backend || true
             docker rm dailyrails-backend || true
-            docker run -d --name dailyrails-backend \
-              --network d73ec77ce253 \
-              -p 4000:4000 \
-              -e NODE_ENV=production \
-              -e DB_USERNAME=${{ secrets.DB_USERNAME }} \
-              -e DB_PASSWORD=${{ secrets.DB_PASSWORD }} \
-              -e DB_DATABASE=${{ secrets.DB_DATABASE }} \
-              -e DB_HOST=mysql-server \
-              -e PORT=4000 \
-              -e JWT_SECRET=${{ secrets.JWT_SECRET }} \
-              -e STRIPE_SECRET_KEY=${{ secrets.STRIPE_SECRET_KEY }} \
-              -e EMAIL_USER=${{ secrets.EMAIL_USER }} \
-              -e EMAIL_PASS=${{ secrets.EMAIL_PASS }} \
-              "${{ secrets.DOCKER_USERNAME }}"/dailyrails-backend:latest
-
-            # Check if backend started successfully
-            sleep 10
-            if ! docker ps | grep -q dailyrails-backend; then
-              echo "ERROR: Backend container failed to start. Checking logs:"
-              docker logs dailyrails-backend
-              exit 1
-            else
-              echo "Backend container started successfully"
-              docker logs --tail 10 dailyrails-backend
-            fi
-
-            # Deploy frontend (improved multi-line format)
-            echo "Deploying frontend container..."
+            docker run -d --name dailyrails-backend --network d73ec77ce253 -p 4000:4000 "${{ secrets.DOCKER_USERNAME }}"/dailyrails-backend:latest
+            
+            # Deploy frontend
             docker pull "${{ secrets.DOCKER_USERNAME }}"/dailyrails-frontend:latest
             docker stop dailyrails-frontend || true
             docker rm dailyrails-frontend || true
-            docker run -d --name dailyrails-frontend \
-              --network d73ec77ce253 \
-              -p 3000:3000 \
-              -e REACT_APP_API_URL=${{ secrets.REACT_APP_API_URL || 'http://localhost:4000' }} \
-              "${{ secrets.DOCKER_USERNAME }}"/dailyrails-frontend:latest
-
-            # Check if frontend started successfully
-            sleep 10
-            if ! docker ps | grep -q dailyrails-frontend; then
-              echo "ERROR: Frontend container failed to start. Checking logs:"
-              docker logs dailyrails-frontend
-              exit 1
-            else
-              echo "Frontend container started successfully"
-              docker logs --tail 10 dailyrails-frontend
-            fi
-
-            # Show running containers
-            echo "Currently running containers:"
-            docker ps
-
-            # Network connectivity test
-            echo "Testing network connectivity between containers:"
-            docker exec dailyrails-backend ping -c 2 mysql-server || echo "Network connectivity issue between backend and database"
+            docker run -d --name dailyrails-frontend --network d73ec77ce253 -p 3000:3000 "${{ secrets.DOCKER_USERNAME }}"/dailyrails-frontend:latest
 
   database:
     needs: deploy
@@ -290,7 +187,7 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v3
-
+        
       # Use direct SSH command to transfer file instead of SCP action
       - name: Setup SSH and transfer SQL file
         run: |
@@ -298,7 +195,7 @@ jobs:
           chmod 600 ssh_key
           scp -o StrictHostKeyChecking=no -i ssh_key "Sample Data.sql" root@${{ secrets.DO_HOST }}:/root/
           rm ssh_key
-
+          
       - name: Execute SQL script on MySQL container
         uses: appleboy/ssh-action@v0.1.10
         with:
@@ -306,14 +203,6 @@ jobs:
           username: root
           key: ${{ secrets.DO_SSH_KEY }}
           script: |
-            # Wait for MySQL to be ready
-            echo "Waiting for MySQL to be ready..."
-            sleep 10
-
             echo "Executing SQL script on MySQL container..."
             docker exec -i mysql-server mysql -u${{ secrets.DB_USERNAME }} -p${{ secrets.DB_PASSWORD }} ${{ secrets.DB_DATABASE }} < "/root/Sample Data.sql"
             echo "SQL script execution completed"
-
-            # Verify database setup
-            echo "Verifying database setup..."
-            docker exec -i mysql-server mysql -u${{ secrets.DB_USERNAME }} -p${{ secrets.DB_PASSWORD }} -e "USE ${{ secrets.DB_DATABASE }}; SHOW TABLES;"
