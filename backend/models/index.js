@@ -23,6 +23,7 @@ if (config.use_env_variable) {
 }
 
 // Model definitions
+// In the models array, make sure Journey comes before Booking
 const models = [
   {
     name: "Item",
@@ -45,45 +46,42 @@ const models = [
     path: "../Features/Auth/models/UserModel",
   },
   {
-    name: "Train",
-    path: "../Features/Schedule/models/TrainModel",
+    name: "Station",
+    path: "../Features/Station/models/StationModel",
   },
   {
-    name: "Payment",
-    path: "../Features/Booking/models/PaymentModel",
+    name: "Train",
+    path: "../Features/Schedule/models/TrainModel",
   },
   {
     name: "StoppingPoint",
     path: "../Features/Schedule/models/StoppingPointModel",
   },
   {
-    name: "Station",
-    path: "../Features/Station/models/StationModel",
+    name: "Passenger",
+    path: "../Features/Booking/models/PassengerModel",
   },
+  // Move Journey before Booking
   {
     name: "Journey",
-    path: "../Features/Booking/models/JourneyModel",
+    path: "../Features/Booking/models/JourneyModel", 
   },
   {
     name: "Booking",
     path: "../Features/Booking/models/BookingModel",
   },
   {
-    name: "NewBooking",
-    path: "../Features/Booking/models/NewBookingModel",
-  },
-  {
     name: "BookingSeats",
     path: "../Features/Booking/models/BookingModelTwo",
   },
   {
-    name: "Passenger",
-    path: "../Features/Booking/models/PassengerModel",
+    name: "Payment",
+    path: "../Features/Booking/models/PaymentModel",
   },
   {
-    name: "Journey",
-    path: "../Features/Journey/models/JourneyModel",
-  }
+    name: "newBooking", 
+    path: "../Features/Booking/models/newBookingModel",
+  },
 ];
 
 // Load models from current directory
