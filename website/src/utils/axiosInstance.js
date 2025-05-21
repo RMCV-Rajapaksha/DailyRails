@@ -1,7 +1,7 @@
 import axios from "axios";
 
 const axiosInstance = axios.create({
-  baseURL: "http://64.227.172.42:4000/api",
+  baseURL: "https://dailyrails.altero.dev/api",
   headers: {
     "Content-Type": "application/json",
   },

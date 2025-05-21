@@ -45,6 +45,7 @@ app.use(
         /^https?:\/\/.*\.expo\.io$/,
         "http://127.0.0.1:5500", // Fixed: removed trailing slash
         "http://127.0.0.1:5501",
+        "https://dailyrails.altero.dev"
       ];
 
       const regexPatterns = [
