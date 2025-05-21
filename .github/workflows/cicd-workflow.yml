@@ -44,7 +44,7 @@ jobs:
             }
           }
           EOF
-          
+
       - name: Create .env file
         run: |
           cat > backend/.env << EOF
@@ -54,7 +54,7 @@ jobs:
           EMAIL_USER=${{ secrets.EMAIL_USER }}
           EMAIL_PASS=${{ secrets.EMAIL_PASS }}
           EOF
-      
+
       # Frontend configuration setup
       - name: Create frontend .env file
         run: |
@@ -78,7 +78,7 @@ jobs:
 
       - name: Push backend Docker image to Docker Hub
         run: docker push "${{ secrets.DOCKER_USERNAME }}"/dailyrails-backend:latest
-        
+
       - name: Push frontend Docker image to Docker Hub
         run: docker push "${{ secrets.DOCKER_USERNAME }}"/dailyrails-frontend:latest
 
@@ -88,40 +88,40 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v3
-        
+
       - name: Setup Node.js
         uses: actions/setup-node@v3
         with:
-          node-version: '16'
-          
+          node-version: "16"
+
       - name: Install dependencies
         run: |
           cd backend
           echo "Installing dependencies..."
           # Dummy command - would normally run npm install
           echo "Dependencies installed successfully"
-          
+
       - name: Run linting
         run: |
           cd backend
           echo "Running linting checks..."
           # Dummy command - would normally run eslint
           echo "Lint check passed"
-          
+
       - name: Run unit tests
         run: |
           cd backend
           echo "Running unit tests..."
           # Dummy command - would normally run test suite
           echo "All unit tests passed successfully"
-          
+
       - name: Run integration tests
         run: |
           cd backend
           echo "Running integration tests..."
           # Dummy command - would normally run integration tests
           echo "All integration tests passed"
-          
+
       - name: Generate test report
         run: |
           echo "Generating test coverage report..."
@@ -158,7 +158,7 @@ jobs:
               echo "Creating Docker network..."
               docker network create d73ec77ce253
             fi
-            
+
             # Setup MySQL container if it doesn't exist
             if ! docker ps -a | grep -q mysql-server; then
               echo "MySQL container doesn't exist. Creating it..."
@@ -190,7 +190,7 @@ jobs:
                 sleep 10
               fi
             fi
-            
+
             # Wait for MySQL to be truly ready
             echo "Waiting for MySQL to be ready to accept connections..."
             for i in {1..30}; do
@@ -206,7 +206,7 @@ jobs:
               echo "Waiting for MySQL to be ready... ($i/30)"
               sleep 2
             done
-            
+
             # Check for any container using port 3000
             PORT_3000_CONTAINER=$(docker ps -q --filter publish=3000)
             if [ ! -z "$PORT_3000_CONTAINER" ]; then
@@ -214,7 +214,7 @@ jobs:
               docker stop $PORT_3000_CONTAINER
               docker rm $PORT_3000_CONTAINER
             fi
-            
+
             # Check for any container using port 4000
             PORT_4000_CONTAINER=$(docker ps -q --filter publish=4000)
             if [ ! -z "$PORT_4000_CONTAINER" ]; then
@@ -222,7 +222,7 @@ jobs:
               docker stop $PORT_4000_CONTAINER
               docker rm $PORT_4000_CONTAINER
             fi
-            
+
             # Deploy backend with environment variables and logging
             echo "Deploying backend container..."
             docker pull "${{ secrets.DOCKER_USERNAME }}"/dailyrails-backend:latest
@@ -242,7 +242,7 @@ jobs:
               -e EMAIL_USER=${{ secrets.EMAIL_USER }} \
               -e EMAIL_PASS=${{ secrets.EMAIL_PASS }} \
               "${{ secrets.DOCKER_USERNAME }}"/dailyrails-backend:latest
-            
+
             # Check if backend started successfully
             sleep 10
             if ! docker ps | grep -q dailyrails-backend; then
@@ -253,7 +253,7 @@ jobs:
               echo "Backend container started successfully"
               docker logs --tail 10 dailyrails-backend
             fi
-            
+
             # Deploy frontend
             echo "Deploying frontend container..."
             docker pull "${{ secrets.DOCKER_USERNAME }}"/dailyrails-frontend:latest
@@ -264,7 +264,7 @@ jobs:
               -p 3000:3000 \
               -e REACT_APP_API_URL=${{ secrets.REACT_APP_API_URL || 'http://localhost:4000' }} \
               "${{ secrets.DOCKER_USERNAME }}"/dailyrails-frontend:latest
-            
+
             # Check if frontend started successfully
             sleep 10
             if ! docker ps | grep -q dailyrails-frontend; then
@@ -275,11 +275,11 @@ jobs:
               echo "Frontend container started successfully"
               docker logs --tail 10 dailyrails-frontend
             fi
-            
+
             # Show running containers
             echo "Currently running containers:"
             docker ps
-            
+
             # Network connectivity test
             echo "Testing network connectivity between containers:"
             docker exec dailyrails-backend ping -c 2 mysql-server || echo "Network connectivity issue between backend and database"
@@ -290,7 +290,7 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v3
-        
+
       # Use direct SSH command to transfer file instead of SCP action
       - name: Setup SSH and transfer SQL file
         run: |
@@ -298,7 +298,7 @@ jobs:
           chmod 600 ssh_key
           scp -o StrictHostKeyChecking=no -i ssh_key "Sample Data.sql" root@${{ secrets.DO_HOST }}:/root/
           rm ssh_key
-          
+
       - name: Execute SQL script on MySQL container
         uses: appleboy/ssh-action@v0.1.10
         with:
@@ -309,11 +309,11 @@ jobs:
             # Wait for MySQL to be ready
             echo "Waiting for MySQL to be ready..."
             sleep 10
-            
+
             echo "Executing SQL script on MySQL container..."
             docker exec -i mysql-server mysql -u${{ secrets.DB_USERNAME }} -p${{ secrets.DB_PASSWORD }} ${{ secrets.DB_DATABASE }} < "/root/Sample Data.sql"
             echo "SQL script execution completed"
-            
+
             # Verify database setup
             echo "Verifying database setup..."
             docker exec -i mysql-server mysql -u${{ secrets.DB_USERNAME }} -p${{ secrets.DB_PASSWORD }} -e "USE ${{ secrets.DB_DATABASE }}; SHOW TABLES;"
