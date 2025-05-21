@@ -223,25 +223,12 @@ jobs:
               docker rm $PORT_4000_CONTAINER
             fi
 
-            # Deploy backend with environment variables and logging
+            # Deploy backend with environment variables and logging (simplified approach)
             echo "Deploying backend container..."
             docker pull "${{ secrets.DOCKER_USERNAME }}"/dailyrails-backend:latest
             docker stop dailyrails-backend || true
             docker rm dailyrails-backend || true
-            docker run -d --name dailyrails-backend \
-              --network d73ec77ce253 \
-              -p 4000:4000 \
-              -e NODE_ENV=production \
-              -e DB_USERNAME=${{ secrets.DB_USERNAME }} \
-              -e DB_PASSWORD=${{ secrets.DB_PASSWORD }} \
-              -e DB_DATABASE=${{ secrets.DB_DATABASE }} \
-              -e DB_HOST=mysql-server \
-              -e PORT=4000 \
-              -e JWT_SECRET=${{ secrets.JWT_SECRET }} \
-              -e STRIPE_SECRET_KEY=${{ secrets.STRIPE_SECRET_KEY }} \
-              -e EMAIL_USER=${{ secrets.EMAIL_USER }} \
-              -e EMAIL_PASS=${{ secrets.EMAIL_PASS }} \
-              "${{ secrets.DOCKER_USERNAME }}"/dailyrails-backend:latest
+            docker run -d --name dailyrails-backend --network d73ec77ce253 -p 4000:4000 -e NODE_ENV=production -e DB_USERNAME=${{ secrets.DB_USERNAME }} -e DB_PASSWORD=${{ secrets.DB_PASSWORD }} -e DB_DATABASE=${{ secrets.DB_DATABASE }} -e DB_HOST=mysql-server -e PORT=4000 -e JWT_SECRET=${{ secrets.JWT_SECRET }} -e STRIPE_SECRET_KEY=${{ secrets.STRIPE_SECRET_KEY }} -e EMAIL_USER=${{ secrets.EMAIL_USER }} -e EMAIL_PASS=${{ secrets.EMAIL_PASS }} "${{ secrets.DOCKER_USERNAME }}"/dailyrails-backend:latest
 
             # Check if backend started successfully
             sleep 10
@@ -254,16 +241,12 @@ jobs:
               docker logs --tail 10 dailyrails-backend
             fi
 
-            # Deploy frontend
+            # Deploy frontend (simplified approach)
             echo "Deploying frontend container..."
             docker pull "${{ secrets.DOCKER_USERNAME }}"/dailyrails-frontend:latest
             docker stop dailyrails-frontend || true
             docker rm dailyrails-frontend || true
-            docker run -d --name dailyrails-frontend \
-              --network d73ec77ce253 \
-              -p 3000:3000 \
-              -e REACT_APP_API_URL=${{ secrets.REACT_APP_API_URL || 'http://localhost:4000' }} \
-              "${{ secrets.DOCKER_USERNAME }}"/dailyrails-frontend:latest
+            docker run -d --name dailyrails-frontend --network d73ec77ce253 -p 3000:3000 -e REACT_APP_API_URL=${{ secrets.REACT_APP_API_URL || 'http://localhost:4000' }} "${{ secrets.DOCKER_USERNAME }}"/dailyrails-frontend:latest
 
             # Check if frontend started successfully
             sleep 10
