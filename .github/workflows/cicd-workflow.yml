@@ -171,12 +171,41 @@ jobs:
                 -v mysql_data:/var/lib/mysql \
                 mysql:8.0
               
-              # Wait for MySQL to initialize
+              # Wait for MySQL to initialize properly
               echo "Waiting for MySQL to initialize..."
-              sleep 30
+              sleep 45
+              
+              # Verify MySQL is running
+              if ! docker ps | grep -q mysql-server; then
+                echo "ERROR: MySQL container failed to start. Checking logs:"
+                docker logs mysql-server
+                exit 1
+              fi
             else
               echo "MySQL container already exists"
+              # Ensure MySQL is running
+              if ! docker ps | grep -q mysql-server; then
+                echo "MySQL container exists but is not running. Starting it..."
+                docker start mysql-server
+                sleep 10
+              fi
             fi
+            
+            # Wait for MySQL to be truly ready
+            echo "Waiting for MySQL to be ready to accept connections..."
+            for i in {1..30}; do
+              if docker exec mysql-server mysqladmin ping -h localhost -u${{ secrets.DB_USERNAME }} -p${{ secrets.DB_PASSWORD }} --silent; then
+                echo "MySQL is ready!"
+                break
+              fi
+              if [ $i -eq 30 ]; then
+                echo "ERROR: MySQL did not become ready in time"
+                docker logs mysql-server
+                exit 1
+              fi
+              echo "Waiting for MySQL to be ready... ($i/30)"
+              sleep 2
+            done
             
             # Check for any container using port 3000
             PORT_3000_CONTAINER=$(docker ps -q --filter publish=3000)
@@ -194,19 +223,67 @@ jobs:
               docker rm $PORT_4000_CONTAINER
             fi
             
-            # Deploy backend
+            # Deploy backend with environment variables and logging
+            echo "Deploying backend container..."
             docker pull "${{ secrets.DOCKER_USERNAME }}"/dailyrails-backend:latest
             docker stop dailyrails-backend || true
             docker rm dailyrails-backend || true
-            docker run -d --name dailyrails-backend --network d73ec77ce253 -p 4000:4000 "${{ secrets.DOCKER_USERNAME }}"/dailyrails-backend:latest
+            docker run -d --name dailyrails-backend \
+              --network d73ec77ce253 \
+              -p 4000:4000 \
+              -e NODE_ENV=production \
+              -e DB_USERNAME=${{ secrets.DB_USERNAME }} \
+              -e DB_PASSWORD=${{ secrets.DB_PASSWORD }} \
+              -e DB_DATABASE=${{ secrets.DB_DATABASE }} \
+              -e DB_HOST=mysql-server \
+              -e PORT=4000 \
+              -e JWT_SECRET=${{ secrets.JWT_SECRET }} \
+              -e STRIPE_SECRET_KEY=${{ secrets.STRIPE_SECRET_KEY }} \
+              -e EMAIL_USER=${{ secrets.EMAIL_USER }} \
+              -e EMAIL_PASS=${{ secrets.EMAIL_PASS }} \
+              "${{ secrets.DOCKER_USERNAME }}"/dailyrails-backend:latest
+            
+            # Check if backend started successfully
+            sleep 10
+            if ! docker ps | grep -q dailyrails-backend; then
+              echo "ERROR: Backend container failed to start. Checking logs:"
+              docker logs dailyrails-backend
+              exit 1
+            else
+              echo "Backend container started successfully"
+              docker logs --tail 10 dailyrails-backend
+            fi
             
             # Deploy frontend
+            echo "Deploying frontend container..."
             docker pull "${{ secrets.DOCKER_USERNAME }}"/dailyrails-frontend:latest
             docker stop dailyrails-frontend || true
             docker rm dailyrails-frontend || true
-            docker run -d --name dailyrails-frontend --network d73ec77ce253 -p 3000:3000 "${{ secrets.DOCKER_USERNAME }}"/dailyrails-frontend:latest
-
+            docker run -d --name dailyrails-frontend \
+              --network d73ec77ce253 \
+              -p 3000:3000 \
+              -e REACT_APP_API_URL=${{ secrets.REACT_APP_API_URL || 'http://localhost:4000' }} \
+              "${{ secrets.DOCKER_USERNAME }}"/dailyrails-frontend:latest
             
+            # Check if frontend started successfully
+            sleep 10
+            if ! docker ps | grep -q dailyrails-frontend; then
+              echo "ERROR: Frontend container failed to start. Checking logs:"
+              docker logs dailyrails-frontend
+              exit 1
+            else
+              echo "Frontend container started successfully"
+              docker logs --tail 10 dailyrails-frontend
+            fi
+            
+            # Show running containers
+            echo "Currently running containers:"
+            docker ps
+            
+            # Network connectivity test
+            echo "Testing network connectivity between containers:"
+            docker exec dailyrails-backend ping -c 2 mysql-server || echo "Network connectivity issue between backend and database"
+
   database:
     needs: deploy
     runs-on: ubuntu-latest
@@ -236,3 +313,7 @@ jobs:
             echo "Executing SQL script on MySQL container..."
             docker exec -i mysql-server mysql -u${{ secrets.DB_USERNAME }} -p${{ secrets.DB_PASSWORD }} ${{ secrets.DB_DATABASE }} < "/root/Sample Data.sql"
             echo "SQL script execution completed"
+            
+            # Verify database setup
+            echo "Verifying database setup..."
+            docker exec -i mysql-server mysql -u${{ secrets.DB_USERNAME }} -p${{ secrets.DB_PASSWORD }} -e "USE ${{ secrets.DB_DATABASE }}; SHOW TABLES;"
