@@ -25,21 +25,21 @@ jobs:
               "username": "${{ secrets.DB_USERNAME }}",
               "password": "${{ secrets.DB_PASSWORD }}",
               "database": "${{ secrets.DB_DATABASE }}",
-              "host": "${{ secrets.DB_HOST }}",
+              "host": "mysql-server",
               "dialect": "mysql"
             },
             "test": {
               "username": "${{ secrets.DB_USERNAME }}",
               "password": "${{ secrets.DB_PASSWORD }}",
               "database": "${{ secrets.DB_DATABASE }}",
-              "host": "${{ secrets.DB_HOST }}",
+              "host": "mysql-server",
               "dialect": "mysql"
             },
             "production": {
               "username": "${{ secrets.DB_USERNAME }}",
               "password": "${{ secrets.DB_PASSWORD }}",
               "database": "${{ secrets.DB_DATABASE }}",
-              "host": "${{ secrets.DB_HOST }}",
+              "host": "mysql-server",
               "dialect": "mysql"
             }
           }
@@ -153,6 +153,31 @@ jobs:
           username: root
           key: ${{ secrets.DO_SSH_KEY }}
           script: |
+            # Set up Docker network if it doesn't exist
+            if ! docker network ls | grep -q d73ec77ce253; then
+              echo "Creating Docker network..."
+              docker network create d73ec77ce253
+            fi
+            
+            # Setup MySQL container if it doesn't exist
+            if ! docker ps -a | grep -q mysql-server; then
+              echo "MySQL container doesn't exist. Creating it..."
+              docker pull mysql:8.0
+              docker run -d --name mysql-server \
+                --network d73ec77ce253 \
+                -p 3306:3306 \
+                -e MYSQL_ROOT_PASSWORD=${{ secrets.DB_PASSWORD }} \
+                -e MYSQL_DATABASE=${{ secrets.DB_DATABASE }} \
+                -v mysql_data:/var/lib/mysql \
+                mysql:8.0
+              
+              # Wait for MySQL to initialize
+              echo "Waiting for MySQL to initialize..."
+              sleep 30
+            else
+              echo "MySQL container already exists"
+            fi
+            
             # Check for any container using port 3000
             PORT_3000_CONTAINER=$(docker ps -q --filter publish=3000)
             if [ ! -z "$PORT_3000_CONTAINER" ]; then
@@ -181,6 +206,7 @@ jobs:
             docker rm dailyrails-frontend || true
             docker run -d --name dailyrails-frontend --network d73ec77ce253 -p 3000:3000 "${{ secrets.DOCKER_USERNAME }}"/dailyrails-frontend:latest
 
+            
   database:
     needs: deploy
     runs-on: ubuntu-latest
@@ -203,6 +229,10 @@ jobs:
           username: root
           key: ${{ secrets.DO_SSH_KEY }}
           script: |
+            # Wait for MySQL to be ready
+            echo "Waiting for MySQL to be ready..."
+            sleep 10
+            
             echo "Executing SQL script on MySQL container..."
             docker exec -i mysql-server mysql -u${{ secrets.DB_USERNAME }} -p${{ secrets.DB_PASSWORD }} ${{ secrets.DB_DATABASE }} < "/root/Sample Data.sql"
             echo "SQL script execution completed"

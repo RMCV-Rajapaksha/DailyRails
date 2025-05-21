@@ -69,6 +69,10 @@ const models = [
     path: "../Features/Booking/models/BookingModel",
   },
   {
+    name: "NewBooking",
+    path: "../Features/Booking/models/NewBookingModel",
+  },
+  {
     name: "BookingSeats",
     path: "../Features/Booking/models/BookingModelTwo",
   },

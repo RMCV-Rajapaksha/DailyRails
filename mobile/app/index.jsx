@@ -75,7 +75,7 @@ export default function App() {
                 <TouchableOpacity
                   className="w-full bg-[#41A3B3] py-4 rounded-lg"
                   activeOpacity={0.8}
-                  onPress={handleSignUp}
+                  onPress={handleSignIn}
                 >
                   <Text className="text-white text-center text-lg font-semibold">
                     Sign In

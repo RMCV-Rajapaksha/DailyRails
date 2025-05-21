@@ -76,3 +76,4 @@ module.exports = {
   getJourneyByStations,
   getAllJourneys
 };
+ 

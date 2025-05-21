@@ -8,6 +8,7 @@ const {
   updateBooking,
   deleteBooking,
   findBookedSeats,
+  newBooking,
 } = require("../controller/BookingController");
 const {
   createPaymentIntent,
@@ -33,6 +34,7 @@ router.get("/payment/success", handlePaymentSuccess);
 // Create a new booking - Now this will only be called after payment success
 // router.post("/", validateNewBooking, validate, createBooking);
 router.post("/direct", createBooking); // Keep direct booking option for testing
+router.post("/newBooking", newBooking); 
 
 // Get all bookings with optional filters
 router.get("/", getBookings);

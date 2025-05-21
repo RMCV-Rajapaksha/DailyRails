@@ -6,4 +6,5 @@ const { getJourneyByStations, getAllJourneys } = require("../controller/JourneyC
 router.get("/get-journey", getJourneyByStations);
 router.get("/all", getAllJourneys);
 
+
 module.exports = router;
