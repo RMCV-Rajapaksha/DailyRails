@@ -71,7 +71,7 @@ function Contact() {
 
     try {
       const response = await axios.post(
-        "http://localhost:4000/api/reports",
+        "https://dailyrails.altero.dev//api/reports",
         formData,
         {
           headers: {

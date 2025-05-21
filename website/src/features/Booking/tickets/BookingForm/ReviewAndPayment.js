@@ -51,7 +51,7 @@ export const ReviewAndPayment = () => {
     try {
       // Send booking data to create payment intent
       const response = await fetch(
-        "http://localhost:4000/api/bookings/create-payment-intent",
+        "https://dailyrails.altero.dev//api/bookings/create-payment-intent",
         {
           method: "POST",
           headers: {
