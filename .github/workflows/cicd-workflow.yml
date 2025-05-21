@@ -206,6 +206,7 @@ jobs:
             docker rm dailyrails-frontend || true
             docker run -d --name dailyrails-frontend --network d73ec77ce253 -p 3000:3000 "${{ secrets.DOCKER_USERNAME }}"/dailyrails-frontend:latest
 
+            
   database:
     needs: deploy
     runs-on: ubuntu-latest
