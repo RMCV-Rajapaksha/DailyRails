@@ -106,10 +106,6 @@ export const ReviewAndPayment = ({ onPreviousStep }) => {
             <span className="font-medium text-gray-600">Date:</span>
             <span className="text-gray-800 font-medium">{date}</span>
           </div>
-          <div className="flex justify-between items-center py-2 border-b border-gray-100">
-            <span className="font-medium text-gray-600">Time:</span>
-            <span className="text-gray-800 font-medium">{time}</span>
-          </div>
           <div className="flex justify-between items-center py-2">
             <span className="font-medium text-gray-600">Seats:</span>
             <span className="text-gray-800 font-medium">

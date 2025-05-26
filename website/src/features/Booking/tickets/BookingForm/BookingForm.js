@@ -9,12 +9,13 @@ import { PassengerDetailsForm } from "./PassengerDetailsForm";
 const BookingForm = () => {
   const [step, setStep] = useState(1);
 
+  // Updated step titles with new order
   const stepTitles = [
     "Select Stations",
+    "Passenger Details", // Moved to 2nd position
     "Select Train",
     "Select Class Type",
     "Select Seats",
-    "Passenger Details",
     "Review & Payment",
   ];
 
@@ -28,24 +29,25 @@ const BookingForm = () => {
     }
   };
 
+  // Updated steps array with new order
   const steps = [
     <StationSelection
       onNextStep={() => goToNextStep(2)}
       onPreviousStep={goToPreviousStep}
     />,
-    <TrainSelection
+    <PassengerDetailsForm
       onNextStep={() => goToNextStep(3)}
       onPreviousStep={goToPreviousStep}
     />,
-    <ClassTypeSelection
+    <TrainSelection
       onNextStep={() => goToNextStep(4)}
       onPreviousStep={goToPreviousStep}
     />,
-    <SeatSelection
+    <ClassTypeSelection
       onNextStep={() => goToNextStep(5)}
       onPreviousStep={goToPreviousStep}
     />,
-    <PassengerDetailsForm
+    <SeatSelection
       onNextStep={() => goToNextStep(6)}
       onPreviousStep={goToPreviousStep}
     />,
@@ -54,6 +56,7 @@ const BookingForm = () => {
 
   return (
     <div className="p-6 bg-white rounded-lg shadow-lg border border-gray-200">
+      {/* Step Title */}
       <h2 className="text-2xl font-bold mb-6 text-primary">
         {stepTitles[step - 1]}
       </h2>

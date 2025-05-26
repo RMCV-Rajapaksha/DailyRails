@@ -75,32 +75,18 @@ export const PassengerDetailsForm = ({ onNextStep, onPreviousStep }) => {
 
   return (
     <div className="space-y-6">
-      {/* Journey Information */}
-      <div className="p-4 bg-gradient-to-r from-primary/10 to-secondary/10 rounded-lg border border-primary/20">
-        <div className="space-y-1">
+      {/* Selected Route Information */}
+      {bookingDetails.startStation && bookingDetails.endStation && (
+        <div className="p-4 bg-gradient-to-r from-primary/10 to-secondary/10 rounded-lg border border-primary/20">
           <p className="text-sm font-medium text-primary">
-            Journey:{" "}
+            Selected Route:{" "}
             <span className="text-secondary font-semibold">
               {bookingDetails.startStation?.name} →{" "}
               {bookingDetails.endStation?.name}
             </span>
           </p>
-          <p className="text-sm text-secondary">
-            Train:{" "}
-            <span className="font-medium">{bookingDetails.trainName}</span>
-          </p>
-          <p className="text-sm text-secondary">
-            Class:{" "}
-            <span className="font-medium">{bookingDetails.className}</span>
-          </p>
-          <p className="text-sm text-secondary">
-            Seats:{" "}
-            <span className="font-medium">
-              {bookingDetails.seatNumbers?.join(", ")}
-            </span>
-          </p>
         </div>
-      </div>
+      )}
 
       {/* Form Header */}
       <div>
@@ -108,7 +94,7 @@ export const PassengerDetailsForm = ({ onNextStep, onPreviousStep }) => {
           Passenger Details
         </h3>
         <p className="text-secondary">
-          Please provide your information for the booking confirmation
+          Please provide your information before selecting trains and seats
         </p>
       </div>
 
@@ -260,16 +246,12 @@ export const PassengerDetailsForm = ({ onNextStep, onPreviousStep }) => {
         )}
 
       {/* Important Notice */}
-      <div className="p-4 bg-yellow-50 rounded-lg border border-yellow-200">
-        <h4 className="font-medium text-yellow-800 mb-2">
-          📋 Important Notice
-        </h4>
-        <ul className="text-sm text-yellow-700 space-y-1">
-          <li>• Please ensure all details are correct before proceeding</li>
-          <li>• You'll need to present your NIC at the station</li>
-          <li>• Confirmation details will be sent to your email</li>
-          <li>• Contact number will be used for urgent notifications</li>
-        </ul>
+      <div className="p-4 bg-blue-50 rounded-lg border border-blue-200">
+        <h4 className="font-medium text-blue-800 mb-2">💡 Next Steps</h4>
+        <p className="text-sm text-blue-700">
+          After completing your details, you'll be able to search for trains,
+          select your class, and choose your seats.
+        </p>
       </div>
 
       {/* Navigation Buttons */}
@@ -278,7 +260,7 @@ export const PassengerDetailsForm = ({ onNextStep, onPreviousStep }) => {
           onClick={onPreviousStep}
           className="px-6 py-3 bg-gray-300 text-gray-700 rounded-lg hover:bg-gray-400 transition-all duration-300"
         >
-          ← Back to Seat Selection
+          ← Back to Stations
         </button>
         <button
           onClick={handleContinue}
@@ -292,7 +274,7 @@ export const PassengerDetailsForm = ({ onNextStep, onPreviousStep }) => {
               : "bg-gray-300 text-gray-500 cursor-not-allowed"
           }`}
         >
-          Continue to Review & Payment →
+          Continue to Train Selection →
         </button>
       </div>
     </div>

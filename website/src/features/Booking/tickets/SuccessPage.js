@@ -101,12 +101,6 @@ const PaymentSuccess = () => {
 
         <div className="space-y-4">
           <button
-            onClick={handleViewBookings}
-            className="w-full px-6 py-3 bg-gradient-to-r from-primary to-secondary text-white rounded-lg hover:shadow-lg transform hover:scale-105 transition-all duration-300 font-semibold"
-          >
-            View My Bookings
-          </button>
-          <button
             onClick={handleGoHome}
             className="w-full px-6 py-3 bg-gray-500 text-white rounded-lg hover:bg-gray-600 transition-all duration-300"
           >
