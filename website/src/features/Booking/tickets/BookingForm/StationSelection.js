@@ -27,19 +27,19 @@ export const StationSelection = ({ onNextStep, onPreviousStep }) => {
   };
 
   return (
-    <div className="space-y-4">
+    <div className="space-y-6">
       {/* Start Station Dropdown */}
       <div className="flex flex-col">
-        <label className="mb-1 text-sm font-semibold text-gray-700">
-          Start Station:
+        <label className="mb-2 text-sm font-semibold text-primary">
+          Departure Station:
         </label>
         <select
           name="startStation"
           value={bookingDetails.startStation?.id || ""}
           onChange={handleStationChange}
-          className="px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+          className="px-4 py-3 border-2 border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary transition-all duration-300"
         >
-          <option value="">Select start station</option>
+          <option value="">Select departure station</option>
           {stations.map((station) => (
             <option key={station.id} value={station.id}>
               {station.name}
@@ -50,16 +50,16 @@ export const StationSelection = ({ onNextStep, onPreviousStep }) => {
 
       {/* End Station Dropdown */}
       <div className="flex flex-col">
-        <label className="mb-1 text-sm font-semibold text-gray-700">
-          End Station:
+        <label className="mb-2 text-sm font-semibold text-primary">
+          Destination Station:
         </label>
         <select
           name="endStation"
           value={bookingDetails.endStation?.id || ""}
           onChange={handleStationChange}
-          className="px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+          className="px-4 py-3 border-2 border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary transition-all duration-300"
         >
-          <option value="">Select end station</option>
+          <option value="">Select destination station</option>
           {stations.map((station) => (
             <option key={station.id} value={station.id}>
               {station.name}
@@ -68,8 +68,24 @@ export const StationSelection = ({ onNextStep, onPreviousStep }) => {
         </select>
       </div>
 
+      {/* Route Summary */}
+      {bookingDetails.startStation && bookingDetails.endStation && (
+        <div className="p-4 bg-gradient-to-r from-primary/10 to-secondary/10 rounded-lg border border-primary/20">
+          <h4 className="font-semibold text-primary mb-2">Selected Route:</h4>
+          <p className="text-secondary">
+            <span className="font-medium">
+              {bookingDetails.startStation.name}
+            </span>
+            <span className="mx-3 text-primary">→</span>
+            <span className="font-medium">
+              {bookingDetails.endStation.name}
+            </span>
+          </p>
+        </div>
+      )}
+
       {/* Next Button */}
-      <div className="mt-4 flex space-x-4">
+      <div className="mt-8 flex justify-end">
         <button
           onClick={onNextStep}
           disabled={
@@ -77,23 +93,23 @@ export const StationSelection = ({ onNextStep, onPreviousStep }) => {
             !bookingDetails.endStation ||
             bookingDetails.startStation.id === bookingDetails.endStation.id
           }
-          className={`px-4 py-2 ${
+          className={`px-8 py-3 rounded-lg font-semibold transition-all duration-300 ${
             !bookingDetails.startStation ||
             !bookingDetails.endStation ||
             bookingDetails.startStation.id === bookingDetails.endStation.id
-              ? "bg-gray-400 cursor-not-allowed"
-              : "bg-blue-500 hover:bg-blue-600"
-          } text-white rounded-md`}
+              ? "bg-gray-300 text-gray-500 cursor-not-allowed"
+              : "bg-gradient-to-r from-primary to-secondary text-white hover:shadow-lg transform hover:scale-105"
+          }`}
         >
-          Continue
+          Continue to Train Selection
         </button>
       </div>
 
       {/* Error Message */}
       {bookingDetails.startStation?.id === bookingDetails.endStation?.id &&
         bookingDetails.startStation && (
-          <p className="text-red-500 text-sm">
-            Start and end stations cannot be the same
+          <p className="text-red-500 text-sm bg-red-50 p-3 rounded-lg border border-red-200">
+            ⚠️ Start and end stations cannot be the same
           </p>
         )}
     </div>

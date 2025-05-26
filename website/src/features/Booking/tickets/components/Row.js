@@ -6,6 +6,7 @@ const Row = ({
   startNumber,
   rotation,
   reservedSeats,
+  selectedSeats, // Add this prop
   onBook,
   ...props
 }) => (
@@ -16,6 +17,7 @@ const Row = ({
       startNumber={startNumber}
       position={[-1.2, -0.45, 9.75]}
       reservedSeats={reservedSeats}
+      selectedSeats={selectedSeats} // Add this line
       onBook={onBook}
     />
     <Quarter
@@ -24,6 +26,7 @@ const Row = ({
       startNumber={startNumber + 4}
       position={[1.2, -0.45, 9.75]}
       reservedSeats={reservedSeats}
+      selectedSeats={selectedSeats} // Add this line
       onBook={onBook}
     />
   </group>

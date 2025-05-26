@@ -53,16 +53,45 @@ const BookingForm = () => {
   ];
 
   return (
-    <div className="p-4 bg-white rounded-lg shadow-md">
-      <h2 className="text-xl font-semibold mb-4 text-gray-800">
+    <div className="p-6 bg-white rounded-lg shadow-lg border border-gray-200">
+      <h2 className="text-2xl font-bold mb-6 text-primary">
         {stepTitles[step - 1]}
       </h2>
-      <div className="mb-4 bg-gray-100 rounded-full h-2">
+
+      {/* Progress Bar */}
+      <div className="mb-8 bg-gray-200 rounded-full h-3">
         <div
-          className="bg-blue-500 h-2 rounded-full transition-all duration-300 ease-in-out"
+          className="bg-gradient-to-r from-primary to-secondary h-3 rounded-full transition-all duration-500 ease-in-out"
           style={{ width: `${(step / steps.length) * 100}%` }}
         ></div>
       </div>
+
+      {/* Step Indicators */}
+      <div className="flex justify-between mb-8">
+        {stepTitles.map((title, index) => (
+          <div key={index} className="flex flex-col items-center">
+            <div
+              className={`w-8 h-8 rounded-full flex items-center justify-center text-sm font-bold transition-all duration-300 ${
+                index + 1 <= step
+                  ? "bg-primary text-white"
+                  : "bg-gray-300 text-gray-600"
+              }`}
+            >
+              {index + 1}
+            </div>
+            <span
+              className={`text-xs mt-2 text-center ${
+                index + 1 <= step
+                  ? "text-primary font-semibold"
+                  : "text-gray-500"
+              }`}
+            >
+              {title}
+            </span>
+          </div>
+        ))}
+      </div>
+
       {steps[step - 1]}
     </div>
   );

@@ -1,9 +1,9 @@
-import { useMemo, useRef } from "react";
+import React, { useRef, useMemo } from "react";
 import { useFrame } from "@react-three/fiber";
 import { useGLTF, Merged } from "@react-three/drei";
 import Cabin from "./Cabin";
 
-function Train({ currentCabin, reservedSeats, onBook }) {
+function Train({ currentCabin, reservedSeats, selectedSeats, onBook }) {
   const ref = useRef();
   const [cabin, seat] = useGLTF([
     "/cabin-transformed.glb",
@@ -16,7 +16,9 @@ function Train({ currentCabin, reservedSeats, onBook }) {
 
   // Move the train based on current cabin index
   useFrame(() => {
-    ref.current.position.z = currentCabin * -26;
+    if (ref.current) {
+      ref.current.position.z = currentCabin * -26;
+    }
   });
 
   let seatNumber = 1;
@@ -32,6 +34,7 @@ function Train({ currentCabin, reservedSeats, onBook }) {
             name="1A"
             seatNumber={seatNumber}
             reservedSeats={reservedSeats}
+            selectedSeats={selectedSeats}
             onBook={onBook}
             position={[0, 0, 0]}
           />
@@ -42,6 +45,7 @@ function Train({ currentCabin, reservedSeats, onBook }) {
             name="2B"
             seatNumber={(seatNumber += 64)}
             reservedSeats={reservedSeats}
+            selectedSeats={selectedSeats}
             onBook={onBook}
             position={[0, 0, 26]}
           />
@@ -52,6 +56,7 @@ function Train({ currentCabin, reservedSeats, onBook }) {
             name="3A"
             seatNumber={(seatNumber += 64)}
             reservedSeats={reservedSeats}
+            selectedSeats={selectedSeats}
             onBook={onBook}
             position={[0, 0, 52]}
           />
@@ -62,6 +67,7 @@ function Train({ currentCabin, reservedSeats, onBook }) {
             name="4B"
             seatNumber={(seatNumber += 64)}
             reservedSeats={reservedSeats}
+            selectedSeats={selectedSeats}
             onBook={onBook}
             position={[0, 0, 78]}
           />
@@ -72,6 +78,7 @@ function Train({ currentCabin, reservedSeats, onBook }) {
             name="5B"
             seatNumber={(seatNumber += 64)}
             reservedSeats={reservedSeats}
+            selectedSeats={selectedSeats}
             onBook={onBook}
             position={[0, 0, 104]}
           />

@@ -14,7 +14,7 @@ export const ReviewAndPayment = ({ onPreviousStep }) => {
     journeyId,
     classType,
     noOfSeats,
-    passengerNic, // Use consistent naming
+    passengerNic,
     date,
     time,
     startStation,
@@ -31,11 +31,10 @@ export const ReviewAndPayment = ({ onPreviousStep }) => {
     setLoading(true);
     setError(null);
 
-    // Create booking data object with consistent field names
     const bookingData = {
       trainId,
       journeyId,
-      passengerNic, // Use consistent naming throughout
+      passengerNic,
       classType,
       noOfSeats: seatNumbers.length,
       email,
@@ -70,72 +69,154 @@ export const ReviewAndPayment = ({ onPreviousStep }) => {
   };
 
   return (
-    <div className="p-4 bg-white rounded-md shadow">
-      <h2 className="mb-4 text-xl font-semibold">Review Your Booking</h2>
+    <div className="space-y-6">
+      {/* Booking Summary Header */}
+      <div className="bg-gradient-to-r from-primary to-secondary p-6 rounded-lg text-white">
+        <h2 className="text-2xl font-bold mb-2">Booking Summary</h2>
+        <p className="text-blue-100">
+          Please review your booking details before proceeding to payment
+        </p>
+      </div>
 
-      {/* Booking Summary */}
-      <div className="space-y-3">
-        <div className="flex justify-between">
-          <span className="font-medium">Journey:</span>
-          <span>
-            {startStation?.name} to {endStation?.name}
-          </span>
+      {/* Journey Details */}
+      <div className="bg-white rounded-lg border border-gray-200 overflow-hidden">
+        <div className="bg-gray-50 px-6 py-4 border-b border-gray-200">
+          <h3 className="text-lg font-semibold text-primary">
+            Journey Details
+          </h3>
         </div>
-        <div className="flex justify-between">
-          <span className="font-medium">Train:</span>
-          <span>{bookingDetails.trainName}</span>
+        <div className="p-6 space-y-4">
+          <div className="flex justify-between items-center py-2 border-b border-gray-100">
+            <span className="font-medium text-gray-600">Route:</span>
+            <span className="text-secondary font-semibold">
+              {startStation?.name} → {endStation?.name}
+            </span>
+          </div>
+          <div className="flex justify-between items-center py-2 border-b border-gray-100">
+            <span className="font-medium text-gray-600">Train:</span>
+            <span className="text-gray-800 font-medium">
+              {bookingDetails.trainName}
+            </span>
+          </div>
+          <div className="flex justify-between items-center py-2 border-b border-gray-100">
+            <span className="font-medium text-gray-600">Class:</span>
+            <span className="text-gray-800 font-medium">{classType}</span>
+          </div>
+          <div className="flex justify-between items-center py-2 border-b border-gray-100">
+            <span className="font-medium text-gray-600">Date:</span>
+            <span className="text-gray-800 font-medium">{date}</span>
+          </div>
+          <div className="flex justify-between items-center py-2 border-b border-gray-100">
+            <span className="font-medium text-gray-600">Time:</span>
+            <span className="text-gray-800 font-medium">{time}</span>
+          </div>
+          <div className="flex justify-between items-center py-2">
+            <span className="font-medium text-gray-600">Seats:</span>
+            <span className="text-gray-800 font-medium">
+              {seatNumbers?.join(", ")}
+            </span>
+          </div>
         </div>
-        <div className="flex justify-between">
-          <span className="font-medium">Class:</span>
-          <span>{classType}</span>
+      </div>
+
+      {/* Passenger Details */}
+      <div className="bg-white rounded-lg border border-gray-200 overflow-hidden">
+        <div className="bg-gray-50 px-6 py-4 border-b border-gray-200">
+          <h3 className="text-lg font-semibold text-primary">
+            Passenger Information
+          </h3>
         </div>
-        <div className="flex justify-between">
-          <span className="font-medium">Seats:</span>
-          <span>{seatNumbers?.join(", ")}</span>
+        <div className="p-6 space-y-4">
+          <div className="flex justify-between items-center py-2 border-b border-gray-100">
+            <span className="font-medium text-gray-600">NIC:</span>
+            <span className="text-gray-800 font-medium">{passengerNic}</span>
+          </div>
+          <div className="flex justify-between items-center py-2">
+            <span className="font-medium text-gray-600">Contact:</span>
+            <span className="text-gray-800 font-medium">{email}</span>
+          </div>
         </div>
-        <div className="flex justify-between">
-          <span className="font-medium">Date:</span>
-          <span>{date}</span>
+      </div>
+
+      {/* Payment Summary */}
+      <div className="bg-gradient-to-r from-green-50 to-green-100 rounded-lg border border-green-200 overflow-hidden">
+        <div className="bg-green-200 px-6 py-4 border-b border-green-300">
+          <h3 className="text-lg font-semibold text-green-800">
+            Payment Summary
+          </h3>
         </div>
-        <div className="flex justify-between">
-          <span className="font-medium">Time:</span>
-          <span>{time}</span>
-        </div>
-        <div className="flex justify-between">
-          <span className="font-medium">Passenger NIC:</span>
-          <span>{passengerNic}</span>
-        </div>
-        <div className="flex justify-between">
-          <span className="font-medium">Contact:</span>
-          <span>{email}</span>
-        </div>
-        <div className="flex justify-between font-bold text-lg">
-          <span>Total Amount:</span>
-          <span>${totalAmount}</span>
+        <div className="p-6 space-y-4">
+          <div className="flex justify-between items-center py-2">
+            <span className="font-medium text-green-700">Price per seat:</span>
+            <span className="text-green-800 font-semibold">${price}</span>
+          </div>
+          <div className="flex justify-between items-center py-2">
+            <span className="font-medium text-green-700">Number of seats:</span>
+            <span className="text-green-800 font-semibold">
+              {seatNumbers.length}
+            </span>
+          </div>
+          <div className="border-t border-green-300 pt-4">
+            <div className="flex justify-between items-center">
+              <span className="text-xl font-bold text-green-800">
+                Total Amount:
+              </span>
+              <span className="text-2xl font-bold text-green-600">
+                ${totalAmount}
+              </span>
+            </div>
+          </div>
         </div>
       </div>
 
       {error && (
-        <div className="p-3 mt-4 text-red-700 bg-red-100 rounded-md">
-          {error}
+        <div className="p-4 text-red-700 bg-red-50 rounded-lg border border-red-200">
+          <p className="font-medium">⚠️ Payment Error</p>
+          <p className="text-sm mt-1">{error}</p>
         </div>
       )}
 
-      <div className="mt-6 flex flex-col space-y-2">
+      <div className="flex justify-between pt-6">
         <button
-          className="w-full px-4 py-2 font-bold text-white bg-blue-500 rounded-full hover:bg-blue-700 disabled:bg-gray-400"
-          onClick={handlePayment}
+          onClick={onPreviousStep}
+          className="px-6 py-3 bg-gray-300 text-gray-700 rounded-lg hover:bg-gray-400 transition-all duration-300"
           disabled={loading}
         >
-          {loading ? "Processing..." : "Proceed to Payment"}
+          ← Back to Passenger Details
         </button>
 
         <button
-          onClick={onPreviousStep}
-          className="w-full px-4 py-2 text-gray-700 bg-gray-200 rounded-full hover:bg-gray-300"
+          className="px-8 py-3 font-bold text-white bg-gradient-to-r from-primary to-secondary rounded-lg hover:shadow-lg transform hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none transition-all duration-300"
+          onClick={handlePayment}
           disabled={loading}
         >
-          Back to Previous Step
+          {loading ? (
+            <span className="flex items-center">
+              <svg
+                className="animate-spin -ml-1 mr-3 h-5 w-5 text-white"
+                xmlns="http://www.w3.org/2000/svg"
+                fill="none"
+                viewBox="0 0 24 24"
+              >
+                <circle
+                  className="opacity-25"
+                  cx="12"
+                  cy="12"
+                  r="10"
+                  stroke="currentColor"
+                  strokeWidth="4"
+                ></circle>
+                <path
+                  className="opacity-75"
+                  fill="currentColor"
+                  d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+                ></path>
+              </svg>
+              Processing...
+            </span>
+          ) : (
+            `Proceed to Payment ($${totalAmount}) →`
+          )}
         </button>
       </div>
     </div>

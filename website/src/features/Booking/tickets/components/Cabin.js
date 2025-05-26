@@ -8,6 +8,7 @@ const Cabin = ({
   name,
   seatNumber,
   reservedSeats,
+  selectedSeats, // Add this prop
   onBook,
   rotation,
   ...props
@@ -29,6 +30,7 @@ const Cabin = ({
         startNumber={seatNumber}
         position={[0, 0, 0]}
         reservedSeats={reservedSeats}
+        selectedSeats={selectedSeats} // Add this line
         onBook={onBook}
       />
       <Row
@@ -37,14 +39,17 @@ const Cabin = ({
         startNumber={seatNumber + 8}
         position={[0, 0, -1.9]}
         reservedSeats={reservedSeats}
+        selectedSeats={selectedSeats} // Add this line
         onBook={onBook}
       />
+      {/* Continue adding selectedSeats prop to all Row components */}
       <Row
         models={models}
         color={seatColor}
         startNumber={seatNumber + 16}
         position={[0, 0, -6.6]}
         reservedSeats={reservedSeats}
+        selectedSeats={selectedSeats}
         onBook={onBook}
       />
       <Row
@@ -53,6 +58,7 @@ const Cabin = ({
         startNumber={seatNumber + 24}
         position={[0, 0, -8.5]}
         reservedSeats={reservedSeats}
+        selectedSeats={selectedSeats}
         onBook={onBook}
       />
       <Row
@@ -61,6 +67,7 @@ const Cabin = ({
         startNumber={seatNumber + 32}
         position={[0, 0, -11]}
         reservedSeats={reservedSeats}
+        selectedSeats={selectedSeats}
         onBook={onBook}
       />
       <Row
@@ -69,6 +76,7 @@ const Cabin = ({
         startNumber={seatNumber + 40}
         position={[0, 0, -12.9]}
         reservedSeats={reservedSeats}
+        selectedSeats={selectedSeats}
         onBook={onBook}
       />
       <Row
@@ -77,6 +85,7 @@ const Cabin = ({
         startNumber={seatNumber + 48}
         position={[0, 0, -17.6]}
         reservedSeats={reservedSeats}
+        selectedSeats={selectedSeats}
         onBook={onBook}
       />
       <Row
@@ -85,6 +94,7 @@ const Cabin = ({
         startNumber={seatNumber + 56}
         position={[0, 0, -19.5]}
         reservedSeats={reservedSeats}
+        selectedSeats={selectedSeats}
         onBook={onBook}
       />
     </group>

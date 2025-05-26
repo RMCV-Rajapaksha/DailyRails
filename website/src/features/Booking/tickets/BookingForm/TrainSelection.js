@@ -155,83 +155,175 @@ export const TrainSelection = ({ onNextStep, onPreviousStep }) => {
   }, [bookingDetails.startStation?.id, bookingDetails.endStation?.id]);
 
   return (
-    <div className="flex flex-col">
-      <div className="mb-4">
-        <p className="text-sm font-medium text-gray-600">
-          Journey: {bookingDetails.startStation?.name} to{" "}
-          {bookingDetails.endStation?.name}
+    <div className="space-y-6">
+      {/* Route Information */}
+      <div className="p-4 bg-gradient-to-r from-primary/10 to-secondary/10 rounded-lg border border-primary/20">
+        <p className="text-sm font-medium text-primary">
+          Journey:{" "}
+          <span className="text-secondary font-semibold">
+            {bookingDetails.startStation?.name} →{" "}
+            {bookingDetails.endStation?.name}
+          </span>
         </p>
       </div>
 
-      <label className="mb-1 text-sm font-semibold text-gray-700">
-        Select Train:
-      </label>
-      <select
-        value={bookingDetails.trainId || ""}
-        onChange={handleTrainChange}
-        className="px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-        disabled={loading || availableTrains.length === 0}
-      >
-        <option value="">Select a train</option>
-        {availableTrains.map((train) => (
-          <option key={train.TrainID} value={train.TrainID}>
-            {train.Name || `Train ${train.TrainID}`}
-            {train.StartTime && train.EndTime
-              ? ` (${train.StartTime} - ${train.EndTime})`
-              : ""}
-          </option>
-        ))}
-      </select>
+      {/* Train Selection */}
+      <div className="space-y-3">
+        <label className="text-lg font-semibold text-primary block">
+          Available Trains:
+        </label>
 
-      {loading && (
-        <p className="mt-2 text-sm text-gray-500">
-          Loading available trains...
-        </p>
-      )}
-      {!loading && availableTrains.length === 0 && (
-        <p className="mt-2 text-sm text-red-500">
-          {bookingDetails.startStation?.name && bookingDetails.endStation?.name
-            ? "No trains available for this route"
-            : "Please select both start and end stations"}
-        </p>
-      )}
-
-      {/* Show selected train and journey info */}
-      {bookingDetails.trainId && (
-        <div className="mt-4 p-3 bg-green-50 rounded-md">
-          <h4 className="font-medium">Selected Train:</h4>
-          <p className="text-sm text-gray-600">
-            Train: {bookingDetails.trainName}
-          </p>
-          <p className="text-sm text-gray-600">
-            Journey ID: {bookingDetails.journeyId}
-          </p>
-          {bookingDetails.departureTime && (
-            <p className="text-sm text-gray-600">
-              Time: {bookingDetails.departureTime} -{" "}
-              {bookingDetails.arrivalTime}
+        {loading ? (
+          <div className="flex items-center justify-center p-8 bg-gray-50 rounded-lg">
+            <div className="flex items-center space-x-3">
+              <div className="animate-spin rounded-full h-6 w-6 border-2 border-primary border-t-transparent"></div>
+              <p className="text-secondary font-medium">
+                Loading available trains...
+              </p>
+            </div>
+          </div>
+        ) : availableTrains.length === 0 ? (
+          <div className="p-6 bg-red-50 rounded-lg border border-red-200 text-center">
+            <div className="text-red-500 text-4xl mb-3">🚫</div>
+            <p className="text-red-600 font-medium">
+              {bookingDetails.startStation?.name &&
+              bookingDetails.endStation?.name
+                ? "No trains available for this route"
+                : "Please select both start and end stations"}
             </p>
-          )}
+          </div>
+        ) : (
+          <div className="space-y-3">
+            {availableTrains.map((train) => (
+              <div
+                key={train.TrainID}
+                onClick={() =>
+                  handleTrainChange({ target: { value: train.TrainID } })
+                }
+                className={`p-4 rounded-lg border-2 cursor-pointer transition-all duration-300 transform hover:scale-102 ${
+                  bookingDetails.trainId === train.TrainID
+                    ? "border-primary bg-gradient-to-r from-primary/10 to-secondary/10 shadow-lg"
+                    : "border-gray-300 bg-white hover:border-primary/50 hover:shadow-md"
+                }`}
+              >
+                <div className="flex justify-between items-center">
+                  <div>
+                    <h3
+                      className={`text-lg font-bold ${
+                        bookingDetails.trainId === train.TrainID
+                          ? "text-primary"
+                          : "text-gray-800"
+                      }`}
+                    >
+                      {train.Name || `Train ${train.TrainID}`}
+                    </h3>
+                    <p
+                      className={`text-sm ${
+                        bookingDetails.trainId === train.TrainID
+                          ? "text-secondary"
+                          : "text-gray-600"
+                      }`}
+                    >
+                      Train ID: {train.TrainID}
+                    </p>
+                  </div>
+
+                  {train.StartTime && train.EndTime && (
+                    <div className="text-right">
+                      <p
+                        className={`font-semibold ${
+                          bookingDetails.trainId === train.TrainID
+                            ? "text-primary"
+                            : "text-gray-800"
+                        }`}
+                      >
+                        {train.StartTime} - {train.EndTime}
+                      </p>
+                      <p
+                        className={`text-sm ${
+                          bookingDetails.trainId === train.TrainID
+                            ? "text-secondary"
+                            : "text-gray-600"
+                        }`}
+                      >
+                        Departure - Arrival
+                      </p>
+                    </div>
+                  )}
+
+                  {bookingDetails.trainId === train.TrainID && (
+                    <div className="ml-4">
+                      <span className="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-primary text-white">
+                        ✓ Selected
+                      </span>
+                    </div>
+                  )}
+                </div>
+              </div>
+            ))}
+          </div>
+        )}
+      </div>
+
+      {/* Selected Train Information */}
+      {bookingDetails.trainId && (
+        <div className="p-6 bg-gradient-to-r from-green-50 to-green-100 rounded-lg border border-green-200">
+          <h4 className="font-bold text-green-800 mb-4 flex items-center">
+            <span className="text-green-500 mr-2">✓</span>
+            Train Selected
+          </h4>
+          <div className="space-y-2">
+            <div className="flex justify-between">
+              <span className="font-medium text-green-700">Train:</span>
+              <span className="text-green-800 font-semibold">
+                {bookingDetails.trainName}
+              </span>
+            </div>
+            <div className="flex justify-between">
+              <span className="font-medium text-green-700">Journey ID:</span>
+              <span className="text-green-800 font-mono text-sm">
+                {bookingDetails.journeyId}
+              </span>
+            </div>
+            {bookingDetails.departureTime && (
+              <div className="flex justify-between">
+                <span className="font-medium text-green-700">Schedule:</span>
+                <span className="text-green-800 font-semibold">
+                  {bookingDetails.departureTime} - {bookingDetails.arrivalTime}
+                </span>
+              </div>
+            )}
+          </div>
         </div>
       )}
 
-      <div className="mt-4 flex space-x-4">
+      {/* Navigation Buttons */}
+      <div className="flex justify-between pt-6">
         <button
           onClick={onPreviousStep}
-          className="px-4 py-2 bg-gray-300 text-gray-700 rounded-md hover:bg-gray-400"
+          className="px-6 py-3 bg-gray-300 text-gray-700 rounded-lg hover:bg-gray-400 transition-all duration-300"
         >
-          Back
+          ← Back to Stations
         </button>
         <button
           onClick={handleContinue}
-          disabled={!bookingDetails.trainId || !bookingDetails.journeyId}
-          className={`px-4 py-2 ${
-            !bookingDetails.trainId || !bookingDetails.journeyId
-              ? "bg-gray-400 cursor-not-allowed"
-              : "bg-blue-500 hover:bg-blue-600"
-          } text-white rounded-md`}
+          disabled={
+            !bookingDetails.trainId || !bookingDetails.journeyId || loading
+          }
+          className={`px-8 py-3 rounded-lg font-semibold transition-all duration-300 ${
+            !bookingDetails.trainId || !bookingDetails.journeyId || loading
+              ? "bg-gray-300 text-gray-500 cursor-not-allowed"
+              : "bg-gradient-to-r from-primary to-secondary text-white hover:shadow-lg transform hover:scale-105"
+          }`}
         >
-          Continue
+          {loading ? (
+            <span className="flex items-center">
+              <div className="animate-spin rounded-full h-4 w-4 border-2 border-white border-t-transparent mr-2"></div>
+              Loading...
+            </span>
+          ) : (
+            "Continue to Class Selection →"
+          )}
         </button>
       </div>
     </div>
