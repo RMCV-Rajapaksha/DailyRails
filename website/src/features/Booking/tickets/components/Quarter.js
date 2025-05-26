@@ -6,6 +6,7 @@ const Quarter = ({
   startNumber,
   rotation,
   reservedSeats,
+  selectedSeats, // Add this prop
   onBook,
   ...props
 }) => (
@@ -16,6 +17,7 @@ const Quarter = ({
       number={startNumber}
       position={[-0.35, 0, 0.7]}
       reservedSeats={reservedSeats}
+      selectedSeats={selectedSeats} // Add this line
       onBook={onBook}
     />
     <Seat
@@ -24,6 +26,7 @@ const Quarter = ({
       number={startNumber + 1}
       position={[0.35, 0, 0.7]}
       reservedSeats={reservedSeats}
+      selectedSeats={selectedSeats} // Add this line
       onBook={onBook}
     />
     <Seat
@@ -33,6 +36,7 @@ const Quarter = ({
       position={[-0.35, 0, -0.7]}
       rotation={[0, Math.PI, 0]}
       reservedSeats={reservedSeats}
+      selectedSeats={selectedSeats} // Add this line
       onBook={onBook}
     />
     <Seat
@@ -42,6 +46,7 @@ const Quarter = ({
       position={[0.35, 0, -0.7]}
       rotation={[0, Math.PI, 0]}
       reservedSeats={reservedSeats}
+      selectedSeats={selectedSeats} // Add this line
       onBook={onBook}
     />
   </group>

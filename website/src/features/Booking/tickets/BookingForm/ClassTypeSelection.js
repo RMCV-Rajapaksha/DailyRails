@@ -6,25 +6,35 @@ export const ClassTypeSelection = ({ onNextStep, onPreviousStep }) => {
   const [error, setError] = useState("");
 
   const classTypes = [
-    { id: "first", name: "First Class", price: 1500 },
-    { id: "second", name: "Second Class", price: 1000 },
-    { id: "third", name: "Third Class", price: 500 },
+    {
+      id: "first",
+      name: "First Class",
+      price: 1500,
+      features: ["Premium Seats", "Air Conditioning", "Complimentary Meals"],
+    },
+    {
+      id: "second",
+      name: "Second Class",
+      price: 1000,
+      features: ["Comfortable Seats", "Air Conditioning", "Window Views"],
+    },
+    {
+      id: "third",
+      name: "Third Class",
+      price: 500,
+      features: ["Standard Seats", "Basic Amenities", "Budget Friendly"],
+    },
   ];
 
-  const handleClassTypeChange = (e) => {
-    const selectedClassId = e.target.value;
-    const selectedClass = classTypes.find((cls) => cls.id === selectedClassId);
-
-    if (selectedClass) {
-      setBookingDetails((prev) => ({
-        ...prev,
-        classType: selectedClass.id,
-        className: selectedClass.name,
-        basePrice: selectedClass.price,
-        price: selectedClass.price,
-      }));
-      setError("");
-    }
+  const handleClassTypeChange = (selectedClass) => {
+    setBookingDetails((prev) => ({
+      ...prev,
+      classType: selectedClass.id,
+      className: selectedClass.name,
+      basePrice: selectedClass.price,
+      price: selectedClass.price,
+    }));
+    setError("");
   };
 
   const handleContinue = () => {
@@ -36,74 +46,133 @@ export const ClassTypeSelection = ({ onNextStep, onPreviousStep }) => {
   };
 
   return (
-    <div className="space-y-4">
-      <h3 className="text-lg font-semibold">Select Class Type</h3>
-
-      <div className="mb-4">
-        <p className="text-sm font-medium text-gray-600">
-          Journey: {bookingDetails.startStation?.name} to{" "}
-          {bookingDetails.endStation?.name}
-        </p>
-        <p className="text-sm text-gray-600">
-          Train: {bookingDetails.trainName}
-        </p>
+    <div className="space-y-6">
+      <div className="mb-6">
+        <div className="p-4 bg-gradient-to-r from-primary/10 to-secondary/10 rounded-lg border border-primary/20">
+          <p className="text-sm font-medium text-primary">
+            Journey:{" "}
+            <span className="text-secondary">
+              {bookingDetails.startStation?.name} →{" "}
+              {bookingDetails.endStation?.name}
+            </span>
+          </p>
+          <p className="text-sm text-secondary mt-1">
+            Train:{" "}
+            <span className="font-medium">{bookingDetails.trainName}</span>
+          </p>
+        </div>
       </div>
 
-      <div className="flex flex-col">
-        <label className="mb-1 text-sm font-semibold text-gray-700">
-          Class Type:
+      <div>
+        <label className="mb-4 text-lg font-semibold text-primary block">
+          Choose Your Class:
         </label>
-        <select
-          value={bookingDetails.classType || ""}
-          onChange={handleClassTypeChange}
-          className="px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-        >
-          <option value="">Select class type</option>
+
+        <div className="grid gap-4 md:grid-cols-3">
           {classTypes.map((classType) => (
-            <option key={classType.id} value={classType.id}>
-              {classType.name} - ${classType.price}
-            </option>
+            <div
+              key={classType.id}
+              onClick={() => handleClassTypeChange(classType)}
+              className={`p-6 rounded-lg border-2 cursor-pointer transition-all duration-300 transform hover:scale-105 ${
+                bookingDetails.classType === classType.id
+                  ? "border-primary bg-gradient-to-r from-primary/10 to-secondary/10 shadow-lg"
+                  : "border-gray-300 bg-white hover:border-primary/50 hover:shadow-md"
+              }`}
+            >
+              <div className="text-center">
+                <h3
+                  className={`text-xl font-bold mb-2 ${
+                    bookingDetails.classType === classType.id
+                      ? "text-primary"
+                      : "text-gray-800"
+                  }`}
+                >
+                  {classType.name}
+                </h3>
+                <p
+                  className={`text-2xl font-bold mb-4 ${
+                    bookingDetails.classType === classType.id
+                      ? "text-secondary"
+                      : "text-gray-600"
+                  }`}
+                >
+                  ${classType.price}
+                </p>
+                <ul className="text-sm space-y-2">
+                  {classType.features.map((feature, index) => (
+                    <li
+                      key={index}
+                      className={`${
+                        bookingDetails.classType === classType.id
+                          ? "text-secondary"
+                          : "text-gray-600"
+                      }`}
+                    >
+                      ✓ {feature}
+                    </li>
+                  ))}
+                </ul>
+              </div>
+
+              {bookingDetails.classType === classType.id && (
+                <div className="mt-4 text-center">
+                  <span className="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-primary text-white">
+                    ✓ Selected
+                  </span>
+                </div>
+              )}
+            </div>
           ))}
-        </select>
-        {error && <span className="text-red-500 text-sm">{error}</span>}
+        </div>
+
+        {error && (
+          <p className="text-red-500 text-sm bg-red-50 p-3 rounded-lg border border-red-200 mt-4">
+            ⚠️ {error}
+          </p>
+        )}
       </div>
 
       {bookingDetails.classType && (
-        <div className="p-3 bg-blue-50 rounded-md">
-          <h4 className="font-medium">Selected Class:</h4>
-          <p className="text-sm text-gray-600">
-            {
-              classTypes.find((cls) => cls.id === bookingDetails.classType)
-                ?.name
-            }
-          </p>
-          <p className="text-sm text-gray-600">
-            Base Price: $
-            {
-              classTypes.find((cls) => cls.id === bookingDetails.classType)
-                ?.price
-            }
+        <div className="p-4 bg-gradient-to-r from-green-50 to-green-100 rounded-lg border border-green-200">
+          <h4 className="font-semibold text-green-800 mb-2">
+            ✓ Class Selected:
+          </h4>
+          <p className="text-green-700">
+            <span className="font-medium">
+              {
+                classTypes.find((cls) => cls.id === bookingDetails.classType)
+                  ?.name
+              }
+            </span>
+            {" - "}
+            <span className="font-bold">
+              $
+              {
+                classTypes.find((cls) => cls.id === bookingDetails.classType)
+                  ?.price
+              }
+            </span>
           </p>
         </div>
       )}
 
-      <div className="mt-4 flex space-x-4">
+      <div className="mt-8 flex justify-between">
         <button
           onClick={onPreviousStep}
-          className="px-4 py-2 bg-gray-300 text-gray-700 rounded-md hover:bg-gray-400"
+          className="px-6 py-3 bg-gray-300 text-gray-700 rounded-lg hover:bg-gray-400 transition-all duration-300"
         >
-          Back
+          ← Back
         </button>
         <button
           onClick={handleContinue}
           disabled={!bookingDetails.classType}
-          className={`px-4 py-2 ${
+          className={`px-8 py-3 rounded-lg font-semibold transition-all duration-300 ${
             !bookingDetails.classType
-              ? "bg-gray-400 cursor-not-allowed"
-              : "bg-blue-500 hover:bg-blue-600"
-          } text-white rounded-md`}
+              ? "bg-gray-300 text-gray-500 cursor-not-allowed"
+              : "bg-gradient-to-r from-primary to-secondary text-white hover:shadow-lg transform hover:scale-105"
+          }`}
         >
-          Continue
+          Continue to Seat Selection →
         </button>
       </div>
     </div>
