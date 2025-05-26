@@ -21,12 +21,15 @@ function Success() {
       
       try {
         // Call the backend to process the successful payment
-        const response = await fetch(`http://localhost:4000/api/bookings/payment/success?ref=${bookingRef}`, {
-          method: 'GET',
-          headers: {
-            'Content-Type': 'application/json'
+        const response = await fetch(
+          `https://dailyrails.altero.dev//api/bookings/payment/success?ref=${bookingRef}`,
+          {
+            method: "GET",
+            headers: {
+              "Content-Type": "application/json",
+            },
           }
-        });
+        );
         
         const data = await response.json();
         

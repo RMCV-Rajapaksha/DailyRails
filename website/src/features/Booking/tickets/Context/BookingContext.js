@@ -1,23 +1,23 @@
-import { createContext, useState } from "react";
+import React, { createContext, useState } from "react";
 
 const BookingContext = createContext();
 
 export const BookingProvider = ({ children }) => {
   const [bookingDetails, setBookingDetails] = useState({
-    trainId: "",
-    journeyId: "",
-    classType: "1",
-    noOfSeats: 1,
-    passengerNic: "",
+    startStation: null,
+    endStation: null,
+    trainId: null,
+    trainName: null,
+    journeyId: null,
+    classType: null,
+    seatNumbers: [],
+    passengerNic: "", // Consistent naming
+    email: "",
     contactNumber: "",
-    email: "",  
     date: "",
     time: "",
-    startStation: { id: "", name: "" },
-    endStation: { id: "", name: "" },
-    seatNumbers: [],
-    price: "", // Default amount per seat
-    
+    price: 0,
+    totalAmount: 0,
   });
 
   return (

@@ -1,12 +1,24 @@
 const stripe = require("stripe")(process.env.STRIPE_SECRET_KEY);
-const { v4: uuidv4 } = require("uuid"); // Add this dependency
-const { createBooking } = require("../controller/BookingController");
+const { v4: uuidv4 } = require("uuid");
+// Fix this import - it should import the function, not require the whole module
+const { newBooking } = require("./BookingController"); // Changed from ../controller/BookingController
 
 // Store pending bookings with their payment details
 const pendingBookings = new Map();
 
 const createPaymentIntent = async (req, res) => {
   try {
+    console.log("Received payment intent request:", req.body);
+
+    // Validate Stripe key
+    if (!process.env.STRIPE_SECRET_KEY) {
+      console.error("STRIPE_SECRET_KEY is not set");
+      return res.status(500).json({
+        success: false,
+        message: "Payment service configuration error",
+      });
+    }
+
     // Generate a unique identifier for this booking attempt
     const bookingRef = uuidv4();
 
@@ -16,16 +28,19 @@ const createPaymentIntent = async (req, res) => {
       timestamp: Date.now(),
     });
 
-    console.log("Pending bookings:", pendingBookings);
-
-    // Clean up old entries every hour
-    setTimeout(() => {
-      if (pendingBookings.has(bookingRef)) {
-        pendingBookings.delete(bookingRef);
-      }
-    }, 3600000);
+    console.log("Stored booking with ref:", bookingRef);
 
     const { amount } = req.body;
+
+    if (!amount || amount <= 0) {
+      return res.status(400).json({
+        success: false,
+        message: "Valid amount is required",
+      });
+    }
+
+    // Validate frontend URL
+    const frontendUrl = process.env.FRONTEND_URL || "http://localhost:3000";
 
     const session = await stripe.checkout.sessions.create({
       line_items: [
@@ -35,21 +50,27 @@ const createPaymentIntent = async (req, res) => {
             product_data: {
               name: "Train Ticket Booking",
             },
-            unit_amount: amount * 100, // Convert to cents
+            unit_amount: Math.round(amount * 100),
           },
           quantity: 1,
         },
       ],
       mode: "payment",
-      success_url: `${process.env.FRONTEND_URL}/success?ref=${bookingRef}`,
-      cancel_url: `${process.env.FRONTEND_URL}/cancle`,
+      success_url: `${frontendUrl}/payment/success?ref=${bookingRef}`,
+      cancel_url: `${frontendUrl}/payment/cancel`,
     });
+
+    console.log("Created Stripe session:", session.id);
 
     // Send the session URL to the client
     res.json({ url: session.url });
   } catch (error) {
-    console.error("Error creating Stripe checkout session:", error.message);
-    res.status(500).send("Internal Server Error");
+    console.error("Error creating Stripe checkout session:", error);
+    res.status(500).json({
+      success: false,
+      message: "Failed to create payment session",
+      error: error.message,
+    });
   }
 };
 
@@ -57,27 +78,67 @@ const handlePaymentSuccess = async (req, res) => {
   try {
     const { ref } = req.query;
 
-    if (!ref || !pendingBookings.has(ref)) {
+    console.log("Processing payment success for ref:", ref);
+    console.log(
+      "Available pending bookings:",
+      Array.from(pendingBookings.keys())
+    );
+
+    if (!ref) {
+      return res.status(400).json({
+        success: false,
+        message: "Booking reference is required",
+      });
+    }
+
+    if (!pendingBookings.has(ref)) {
       return res.status(404).json({
         success: false,
         message: "Invalid or expired booking reference",
       });
     }
- 
+
     // Get the stored booking data
     const { bookingData } = pendingBookings.get(ref);
 
     // Delete the reference to prevent reuse
     pendingBookings.delete(ref);
 
-    // Update the payment status to completed
-    bookingData.paymentCompleted = true;
+    console.log("Original booking data:", bookingData);
+
+    // Use consistent field naming - no mapping needed now
+    const processedBookingData = {
+      ...bookingData,
+      totalAmount: bookingData.amount,
+      price: bookingData.amount / (bookingData.seatNumbers?.length || 1),
+      paymentCompleted: true,
+    };
+
+    console.log("Processed booking data:", processedBookingData);
+
+    // Validate required fields
+    const requiredFields = [
+      "trainId",
+      "journeyId",
+      "passengerNic",
+      "classType",
+      "email",
+    ];
+    for (const field of requiredFields) {
+      if (!processedBookingData[field]) {
+        console.error(`Missing required field: ${field}`);
+        return res.status(400).json({
+          success: false,
+          message: `Missing required field: ${field}`,
+        });
+      }
+    }
 
     // Forward the request to the booking controller
-    req.body = bookingData;
+    req.body = processedBookingData;
 
-    // Call the createBooking function (passing control)
-    return createBooking(req, res);
+    // Call the newBooking function
+    return await newBooking(req, res);
   } catch (error) {
     console.error("Error processing successful payment:", error);
     res.status(500).json({
@@ -88,8 +149,24 @@ const handlePaymentSuccess = async (req, res) => {
   }
 };
 
+// Clean up expired pending bookings (run every 30 minutes)
+const cleanupExpiredBookings = () => {
+  const now = Date.now();
+  const EXPIRY_TIME = 30 * 60 * 1000;
+
+  for (const [ref, data] of pendingBookings.entries()) {
+    if (now - data.timestamp > EXPIRY_TIME) {
+      pendingBookings.delete(ref);
+      console.log(`Cleaned up expired booking reference: ${ref}`);
+    }
+  }
+};
+
+// Run cleanup every 30 minutes
+setInterval(cleanupExpiredBookings, 30 * 60 * 1000);
+
 module.exports = {
   createPaymentIntent,
   handlePaymentSuccess,
-  pendingBookings, // Export for testing purposes
+  pendingBookings,
 };

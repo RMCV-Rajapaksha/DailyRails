@@ -18,7 +18,7 @@ Welcome to the **Real-Time Train Tracking System**, a state-of-the-art platform 
 
 ## 💡 About The Project
 
-The **Real-Time Train Tracking System** is designed to enhance the travel experience for passengers and improve train operations. With real-time GPS tracking, dynamic schedules, and instant notifications, the system keeps passengers, operators, and authorities informed at all times.
+The **Real-Time Train Tracking System** is designed to enhance the travel experience for passengers and improve train operations. With real-time GPS tracking, dynamic schedules, and instant notifications, the system keeps passengers, operators, and authorities informed at all times. 
 
 Key goals of the system:
 - **Efficiency**: Real-time tracking and automated schedule management.
@@ -31,7 +31,6 @@ Key goals of the system:
 - **Operational Efficiency**: Historical data analytics to improve future performance.
 
 ---
-
 ## 🔑 Features
 
 ### 🚆 Real-Time Train Location Tracking
@@ -50,7 +49,6 @@ Key goals of the system:
 - Simple-to-use dashboard for monitoring and managing train statuses, routes, and schedules.
 - Access detailed logs of past incidents, delays, and operational performance.
 
-
 ---
 
 ## 🛠️ Tech Stack
@@ -59,9 +57,10 @@ The **Real-Time Train Tracking System** is built with the following technologies
 
 | **Frontend**  | **Backend**  | **Database** |
 |---------------|--------------|--------------|
-| React.js      | Node.js      | MySql      |
-| TailwindCSS   | Express.js   | sequelize     |
-| Axios         | JWT          | Redis        |
+| React.js      | Node.js      | MySql        |
+| TailwindCSS   | Express.js   | sequelize    |
+| Axios         | JWT          |              |
+
 
 ---
 

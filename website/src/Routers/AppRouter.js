@@ -10,10 +10,13 @@ import Contact from "../features/Contact/pages/Contact";
 import Map from "../features/Map/pages/Map";
 import SubmitItem from "../features/Recovery/pages/SubmitItem";
 import News from "../features/News/pages/News";
-import NoUrl from "../features/NoUrl"; // Ensure this import is correct
+import NoUrl from "../features/NoUrl";
 import SeatBooking from "../features/Booking/pages/SelectSeat";
 import Success from "../features/Booking/pages/Success";
 import Cancle from "../features/Booking/pages/Cancle";
+// Import your payment success and cancel pages
+import PaymentSuccess from "../features/Booking/tickets/SuccessPage";
+import PaymentCancel from "../features/Booking/tickets/CancelPage";
 
 const router1 = createBrowserRouter([
   {
@@ -24,7 +27,6 @@ const router1 = createBrowserRouter([
         index: true,
         element: <Home />,
       },
-
       {
         path: "booking",
         element: <Booking />,
@@ -61,12 +63,22 @@ const router1 = createBrowserRouter([
         path: "news",
         element: <News />,
       },
+      // Payment routes - Add these new routes
       {
-        path: "success:id",
+        path: "payment/success",
+        element: <PaymentSuccess />,
+      },
+      {
+        path: "payment/cancel",
+        element: <PaymentCancel />,
+      },
+      // Your existing routes (I noticed some issues to fix)
+      {
+        path: "success/:id", // Fixed - should have slash before :id
         element: <Success />,
       },
       {
-        path: "cancle",
+        path: "cancel", // Fixed typo - was "cancle"
         element: <Cancle />,
       },
       {

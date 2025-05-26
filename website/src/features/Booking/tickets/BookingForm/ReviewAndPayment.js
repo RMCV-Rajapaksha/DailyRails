@@ -1,9 +1,9 @@
 import React, { useState, useContext } from "react";
 import BookingContext from "../Context/BookingContext";
 import { useNavigate } from "react-router-dom";
+import apiService from "../../../../http/index";
 
-// Step 5: Review and Payment
-export const ReviewAndPayment = () => {
+export const ReviewAndPayment = ({ onPreviousStep }) => {
   const { bookingDetails } = useContext(BookingContext);
   const navigate = useNavigate();
   const [loading, setLoading] = useState(false);
@@ -14,7 +14,7 @@ export const ReviewAndPayment = () => {
     journeyId,
     classType,
     noOfSeats,
-    passengerNic,
+    passengerNic, // Use consistent naming
     date,
     time,
     startStation,
@@ -31,11 +31,11 @@ export const ReviewAndPayment = () => {
     setLoading(true);
     setError(null);
 
-    // Create booking data object
+    // Create booking data object with consistent field names
     const bookingData = {
       trainId,
       journeyId,
-      passengerNIC: passengerNic,
+      passengerNic, // Use consistent naming throughout
       classType,
       noOfSeats: seatNumbers.length,
       email,
@@ -48,29 +48,22 @@ export const ReviewAndPayment = () => {
       amount: totalAmount,
     };
 
+    console.log("Sending booking data:", bookingData);
+
     try {
-      // Send booking data to create payment intent
-      const response = await fetch(
-        "http://localhost:4000/api/bookings/create-payment-intent",
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify(bookingData),
-        }
+      const response = await apiService.post(
+        "/api/bookings/create-payment-intent",
+        bookingData
       );
 
-      const data = await response.json();
-
-      if (data.url) {
-        // Redirect to Stripe checkout
-        window.location.href = data.url;
+      if (response.url) {
+        window.location.href = response.url;
       } else {
         setError("Error: No checkout URL returned");
       }
     } catch (error) {
-      setError(`Payment processing error: ${error.message}`);
+      console.error("Payment processing error:", error);
+      setError(`Payment processing error: ${error}`);
     } finally {
       setLoading(false);
     }
@@ -80,46 +73,46 @@ export const ReviewAndPayment = () => {
     <div className="p-4 bg-white rounded-md shadow">
       <h2 className="mb-4 text-xl font-semibold">Review Your Booking</h2>
 
-      <div className="space-y-2 text-gray-700">
-        <p>
-          <strong>Train ID:</strong> {trainId}
-        </p>
-        <p>
-          <strong>Journey ID:</strong> {journeyId}
-        </p>
-        <p>
-          <strong>Date:</strong> {date}
-        </p>
-        <p>
-          <strong>Time:</strong> {time}
-        </p>
-        <p>
-          <strong>Passenger NIC:</strong> {passengerNic}
-        </p>
-        <p>
-          <strong>Contact Number:</strong> {contactNumber}
-        </p>
-        <p>
-          <strong>Email:</strong> {email}
-        </p>
-        <p>
-          <strong>From:</strong> {startStation.name}
-        </p>
-        <p>
-          <strong>To:</strong> {endStation.name}
-        </p>
-        <p>
-          <strong>Class:</strong> {classType}
-        </p>
-        <p>
-          <strong>Seats Selected:</strong> {seatNumbers.join(", ")}
-        </p>
-        <p>
-          <strong>Price per Seat:</strong> ${price}
-        </p>
-        <p className="text-lg font-bold">
-          <strong>Total Amount:</strong> ${totalAmount}
-        </p>
+      {/* Booking Summary */}
+      <div className="space-y-3">
+        <div className="flex justify-between">
+          <span className="font-medium">Journey:</span>
+          <span>
+            {startStation?.name} to {endStation?.name}
+          </span>
+        </div>
+        <div className="flex justify-between">
+          <span className="font-medium">Train:</span>
+          <span>{bookingDetails.trainName}</span>
+        </div>
+        <div className="flex justify-between">
+          <span className="font-medium">Class:</span>
+          <span>{classType}</span>
+        </div>
+        <div className="flex justify-between">
+          <span className="font-medium">Seats:</span>
+          <span>{seatNumbers?.join(", ")}</span>
+        </div>
+        <div className="flex justify-between">
+          <span className="font-medium">Date:</span>
+          <span>{date}</span>
+        </div>
+        <div className="flex justify-between">
+          <span className="font-medium">Time:</span>
+          <span>{time}</span>
+        </div>
+        <div className="flex justify-between">
+          <span className="font-medium">Passenger NIC:</span>
+          <span>{passengerNic}</span>
+        </div>
+        <div className="flex justify-between">
+          <span className="font-medium">Contact:</span>
+          <span>{email}</span>
+        </div>
+        <div className="flex justify-between font-bold text-lg">
+          <span>Total Amount:</span>
+          <span>${totalAmount}</span>
+        </div>
       </div>
 
       {error && (
@@ -128,39 +121,21 @@ export const ReviewAndPayment = () => {
         </div>
       )}
 
-      <div className="mt-6">
+      <div className="mt-6 flex flex-col space-y-2">
         <button
-          className="w-full px-4 py-2 font-bold text-white bg-blue-500 rounded-full hover:bg-blue-700"
+          className="w-full px-4 py-2 font-bold text-white bg-blue-500 rounded-full hover:bg-blue-700 disabled:bg-gray-400"
           onClick={handlePayment}
           disabled={loading}
         >
-          {loading ? (
-            <span className="flex items-center justify-center">
-              <svg
-                className="w-5 h-5 mr-3 -ml-1 text-white animate-spin"
-                xmlns="http://www.w3.org/2000/svg"
-                fill="none"
-                viewBox="0 0 24 24"
-              >
-                <circle
-                  className="opacity-25"
-                  cx="12"
-                  cy="12"
-                  r="10"
-                  stroke="currentColor"
-                  strokeWidth="4"
-                ></circle>
-                <path
-                  className="opacity-75"
-                  fill="currentColor"
-                  d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
-                ></path>
-              </svg>
-              Processing...
-            </span>
-          ) : (
-            "Proceed to Payment"
-          )}
+          {loading ? "Processing..." : "Proceed to Payment"}
+        </button>
+
+        <button
+          onClick={onPreviousStep}
+          className="w-full px-4 py-2 text-gray-700 bg-gray-200 rounded-full hover:bg-gray-300"
+          disabled={loading}
+        >
+          Back to Previous Step
         </button>
       </div>
     </div>

@@ -8,15 +8,12 @@ const {
   updateBooking,
   deleteBooking,
   findBookedSeats,
+  newBooking,
 } = require("../controller/BookingController");
 const {
   createPaymentIntent,
   handlePaymentSuccess,
 } = require("../controller/PaymentController");
-const {
-  validateNewBooking,
-  validateBookingId,
-} = require("../validators/BookingValidators");
 
 const validate = (req, res, next) => {
   const errors = validationResult(req);
@@ -26,33 +23,17 @@ const validate = (req, res, next) => {
   next();
 };
 
-// Payment routes
+// Payment routes - IMPORTANT: These must come before other routes
 router.post("/create-payment-intent", createPaymentIntent);
 router.get("/payment/success", handlePaymentSuccess);
 
-// Create a new booking - Now this will only be called after payment success
-// router.post("/", validateNewBooking, validate, createBooking);
-router.post("/direct", createBooking); // Keep direct booking option for testing
-
-// Get all bookings with optional filters
+// Booking routes
+router.post("/newBooking", newBooking);
+router.post("/direct", createBooking);
 router.get("/", getBookings);
-
-// Get booked seats route - needs to be before /:id to prevent conflict
 router.get("/findBookedSeats", findBookedSeats);
-
-// Get a specific booking by ID
-router.get("/:id", validateBookingId, validate, getBookingById);
-
-// Update a booking
-router.put(
-  "/:id",
-  validateBookingId,
-  validateNewBooking,
-  validate,
-  updateBooking
-);
-
-// Delete a booking
-router.delete("/:id", validateBookingId, validate, deleteBooking);
+router.get("/:id", getBookingById);
+router.put("/:id", updateBooking);
+router.delete("/:id", deleteBooking);
 
 module.exports = router;
