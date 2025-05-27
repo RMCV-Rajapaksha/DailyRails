@@ -40,7 +40,7 @@ const createPaymentIntent = async (req, res) => {
     }
 
     // Validate frontend URL
-    const frontendUrl = process.env.FRONTEND_URL || "http://localhost:3000";
+    const frontendUrl = "https://dailyrails.altero.dev"; // Ensure this is the correct URL for your frontend
 
     const session = await stripe.checkout.sessions.create({
       line_items: [
