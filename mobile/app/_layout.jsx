@@ -1,10 +1,8 @@
-import { View, Text } from "react-native";
 import React, { useEffect, useState } from "react";
 import { SplashScreen, Stack } from "expo-router";
 import { useFonts } from "expo-font";
 import { AuthProvider } from "../context/AuthContext";
-
-// SplashScreen.preventAutoHideAsync()
+import "../global.css";
 
 const RootLayout = () => {
   const [fontsLoaded, error] = useFonts({

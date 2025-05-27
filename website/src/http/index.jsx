@@ -1,7 +1,7 @@
 import axios from "axios";
 
 const API_BASE_URL =
-  "https://dailyrails.altero.dev" || "http://localhost:4000";
+  "https://dailyrails.altero.dev";
 
 const apiService = axios.create({
     baseURL: API_BASE_URL,

@@ -28,7 +28,7 @@ const validate = (req, res, next) => {
 };
 
 // Route for creating a new user
-router.post("/register", validateNewUser, validate, postUser);
+router.post("/register", postUser);
 router.post("/login", validateLogin, validate, userLogin);
 // router.post("/logout", adminLogout);
 module.exports = router;

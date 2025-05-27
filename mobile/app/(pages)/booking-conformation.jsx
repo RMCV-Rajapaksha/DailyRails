@@ -5,7 +5,7 @@ import {
   ScrollView,
   ActivityIndicator,
 } from "react-native";
-import React, { useState, useEffect } from "react";
+import  { useState, useEffect } from "react";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { useLocalSearchParams, useRouter } from "expo-router";
 import { Ionicons } from "@expo/vector-icons";

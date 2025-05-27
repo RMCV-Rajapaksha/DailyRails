@@ -4,21 +4,41 @@ const User = db.User;
 const jwt = require("jsonwebtoken"); // Add this import
 
 // Add this helper function
-const generateNextUserId = async () => {
+const generateNextUserId = async (transaction) => {
   try {
-    const lastUser = await User.findOne({
-      order: [["UserID", "DESC"]],
-    });
+    let nextId;
+    let idExists = true;
+    let counter = 1;
 
-    if (!lastUser) {
-      return "USR0001";
+    while (idExists) {
+      // Get the highest existing ID
+      const lastUser = await User.findOne({
+        order: [["UserID", "DESC"]],
+        transaction,
+      });
+
+      if (!lastUser) {
+        nextId = "USR0001";
+      } else {
+        const lastId = lastUser.UserID;
+        const numericPart = parseInt(lastId.replace("USR", "")) + counter;
+        nextId = `USR${String(numericPart).padStart(4, "0")}`;
+      }
+
+      // Check if this ID already exists
+      const existingUser = await User.findOne({
+        where: { UserID: nextId },
+        transaction,
+      });
+
+      if (!existingUser) {
+        idExists = false;
+      } else {
+        counter++;
+      }
     }
 
-    const lastId = lastUser.UserID;
-    const numericPart = parseInt(lastId.replace("USR", ""));
-    const nextNumericPart = numericPart + 1;
-
-    return `USR${String(nextNumericPart).padStart(4, "0")}`;
+    return nextId;
   } catch (error) {
     throw new Error("Failed to generate user ID");
   }

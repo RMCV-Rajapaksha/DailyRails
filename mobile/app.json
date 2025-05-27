@@ -2,26 +2,33 @@
   "expo": {
     "name": "DailyRails",
     "slug": "dailyrails",
-    "scheme": "dailyrails",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
     "userInterfaceStyle": "light",
+    "splash": {
+      "image": "./assets/splash.png",
+      "resizeMode": "contain",
+      "backgroundColor": "#ffffff"
+    },
+    "assetBundlePatterns": [
+      "**/*"
+    ],
     "ios": {
       "supportsTablet": true
     },
     "android": {
-      "permissions": ["ACCESS_COARSE_LOCATION", "ACCESS_FINE_LOCATION"],
-      "config": {
-        "googleMaps": {
-          "apiKey": "https://maps.googleapis.com/maps/api/geocode/json?address=1600+Amphitheatre+Parkway,+Mountain+View,+CA&key=AIzaSyAOVYRIgupAurZup5y1PRh8Ismb1A3lLao"
-        }
+      "adaptiveIcon": {
+        "foregroundImage": "./assets/adaptive-icon.png",
+        "backgroundColor": "#ffffff"
       }
     },
-    "plugins": ["expo-router", "expo-location"],
-    "newArchEnabled": true,
-    "extra": {
-      "API_URL": "http://10.0.2.2:4000/api"
-    }
+    "web": {
+      "favicon": "./assets/favicon.png"
+    },
+    "sdkVersion": "53.0.0",
+    "plugins": [
+      "expo-router"
+    ]
   }
 }
